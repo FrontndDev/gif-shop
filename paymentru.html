@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Оплата | AeroDesign</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #00cfff;
+      --primary-dark: #00a8d9;
+      --accent: #ffffff;
+      --dark-bg: #0a0a0d;
+      --card-bg: #141820;
+      --border-color: rgba(0, 207, 255, 0.2);
+      --text-secondary: #aaa;
+      --success: #4dff7d;
+      --error: #ff4d4d;
+      --warning: #ffc107;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--dark-bg);
+      color: white;
+      min-height: 100vh;
+      background: radial-gradient(ellipse at top left, #151924, #0a0a0d);
+      overscroll-behavior: none;
+      line-height: 1.6;
+    }
+
+    /* Анимированный фон (частицы) */
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      background-color: var(--dark-bg);
+    }
+
+    /* Анимированный прелоадер */
+    .preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--dark-bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.5s ease;
+    }
+    
+    .preloader.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(0, 207, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 20px;
+    }
+    
+    .preloader-text {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+    
+    /* Хедер с анимацией при скролле */
+    header {
+      padding: 20px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(10, 10, 13, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
+    
+    header.scrolled {
+      padding: 15px 5%;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    
+    .logo-icon {
+      font-size: 1.8rem;
+      color: var(--primary);
+      transition: transform 0.5s ease;
+    }
+    
+    .logo:hover .logo-icon {
+      transform: rotate(15deg) scale(1.1);
+    }
+    
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #00cfff, #3399ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 0.5px;
+    }
+    
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: rgba(0, 207, 255, 0.1);
+    }
+    
+    .back-btn:hover {
+      background: rgba(0, 207, 255, 0.2);
+      transform: translateX(-3px);
+    }
+    
+    .back-btn:active {
+      transform: translateX(0);
+    }
+    
+    /* Основной контент с анимацией появления */
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 5%;
+      animation: fadeIn 0.8s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Карточка с эффектом неонового свечения */
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-color);
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(0,207,255,0.1) 0%, transparent 70%);
+      z-index: -1;
+      pointer-events: none;
+    }
+    
+    .card-header {
+      margin-bottom: 25px;
+      position: relative;
+    }
+    
+    .card-header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #00cfff, #3399ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 700;
+    }
+    
+    .card-header p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+    
+    /* Стили для товара с hover-эффектом */
+    .product {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      background: rgba(0, 207, 255, 0.05);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 30px;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+    }
+    
+    .product:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 207, 255, 0.1);
+      border-color: rgba(0, 207, 255, 0.4);
+    }
+    
+    .product-badge {
+      position: absolute;
+      top: -10px;
+      right: 20px;
+      background: var(--primary);
+      color: #000;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(0, 207, 255, 0.3);
+    }
+    
+    .product-image {
+      width: 120px;
+      height: 120px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid rgba(0, 207, 255, 0.3);
+      transition: transform 0.5s ease;
+    }
+    
+    .product:hover .product-image {
+      transform: scale(1.05) rotate(2deg);
+    }
+    
+    .product-info {
+      flex: 1;
+    }
+    
+    .product-title {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    
+    .product-description {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+    
+    .product-price {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    /* Форма с улучшенной валидацией */
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--primary);
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: white;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 207, 255, 0.2);
+      background: rgba(0, 207, 255, 0.03);
+    }
+    
+    .form-control.error {
+      border-color: var(--error);
+    }
+    
+    .error-message {
+      color: var(--error);
+      font-size: 0.8rem;
+      margin-top: 5px;
+      display: none;
+    }
+    
+    /* Стили для методов оплаты */
+    .payment-methods {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 15px;
+      margin: 25px 0;
+    }
+    
+    .payment-method {
+      position: relative;
+    }
+    
+    .payment-method input {
+      position: absolute;
+      opacity: 0;
+    }
+    
+    .payment-method label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      height: 100%;
+      justify-content: center;
+    }
+    
+    .payment-method:hover label {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 207, 255, 0.1);
+    }
+    
+    .payment-method input:checked + label {
+      background: rgba(0, 207, 255, 0.1);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+    
+    .payment-method input:focus + label {
+      box-shadow: 0 0 0 2px var(--primary);
+    }
+    
+    .payment-icon {
+      width: 60px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s ease;
+    }
+    
+    .payment-method:hover .payment-icon {
+      transform: scale(1.1);
+    }
+    
+    .paypal-icon {
+      width: 60px;
+      height: 16px;
+      object-fit: contain;
+    }
+    
+    .card-icon {
+      width: 40px;
+      height: 25px;
+      object-fit: contain;
+    }
+    
+    .yoo-logo {
+      font-family: 'YS Text', Arial, sans-serif;
+      font-weight: 500;
+      color: #21201F;
+      background: linear-gradient(90deg, #FFDB4D 0%, #FC0 50%, #FFDB4D 100%);
+      padding: 8px 12px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+      font-size: 14px;
+      letter-spacing: 0.5px;
+    }
+    
+    .payment-method span {
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-align: center;
+    }
+    
+    .payment-submethods {
+      display: flex;
+      gap: 8px;
+      margin-top: 5px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .payment-submethod {
+      width: 30px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+    }
+    
+    .payment-method:hover .payment-submethod {
+      opacity: 1;
+    }
+    
+    .payment-submethod img {
+      max-width: 100%;
+      max-height: 100%;
+      filter: grayscale(30%);
+      transition: filter 0.3s ease;
+    }
+    
+    .payment-method:hover .payment-submethod img {
+      filter: grayscale(0%);
+    }
+    
+    /* Кнопка с градиентом и анимацией */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 24px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      border: none;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #00cfff, #3399ff);
+      z-index: -1;
+      transition: opacity 0.3s ease;
+    }
+    
+    .btn-primary {
+      color: #000;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 207, 255, 0.4);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+    
+    .btn i {
+      transition: transform 0.3s ease;
+    }
+    
+    .btn:hover i {
+      transform: translateX(5px);
+    }
+    
+    /* Сумма заказа с анимацией */
+    .summary {
+      background: rgba(0, 207, 255, 0.05);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      margin-top: 30px;
+      transition: all 0.3s ease;
+    }
+    
+    .summary:hover {
+      border-color: rgba(0, 207, 255, 0.4);
+    }
+    
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      transition: transform 0.3s ease;
+    }
+    
+    .summary:hover .summary-item {
+      transform: translateX(5px);
+    }
+    
+    .summary-total {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .total-price {
+      color: var(--primary);
+      font-size: 1.4rem;
+      animation: pulse 2s infinite;
+    }
+    
+    /* Футер */
+    footer {
+      text-align: center;
+      padding: 40px 5%;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      background: rgba(10, 10, 13, 0.95);
+      border-top: 1px solid var(--border-color);
+      backdrop-filter: blur(10px);
+    }
+    
+    /* Адаптивность */
+    @media (max-width: 768px) {
+      .product {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .product-image {
+        width: 100%;
+        height: auto;
+        max-height: 200px;
+        margin: 0 auto 15px;
+      }
+      
+      .payment-methods {
+        grid-template-columns: 1fr;
+      }
+      
+      .card-header h2 {
+        font-size: 1.5rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      header {
+        padding: 15px 5%;
+        flex-direction: column;
+        gap: 15px;
+      }
+      
+      .logo {
+        margin-bottom: 10px;
+      }
+      
+      .container {
+        margin: 20px auto;
+      }
+      
+      .card {
+        padding: 20px;
+      }
+      
+      .product-badge {
+        right: 10px;
+        font-size: 0.7rem;
+      }
+      
+      .summary-total {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+      }
+    }
+    
+    /* Анимация успешной загрузки */
+    @keyframes successPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(77, 255, 125, 0.7); }
+      50% { box-shadow: 0 0 0 10px rgba(77, 255, 125, 0); }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <div class="preloader">
+    <div class="spinner"></div>
+    <div class="preloader-text">Загрузка безопасного платежа...</div>
+  </div>
+
+  <header>
+    <a href="shopru.html" class="logo">
+      <i class="fas fa-paintbrush logo-icon"></i>
+      <span class="logo-text">AeroDesign</span>
+    </a>
+    <a href="productru.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i>
+      Назад
+    </a>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h2>Оформление заказа</h2>
+        <p>Выберите удобный способ оплаты</p>
+      </div>
+      
+      <div class="product">
+        <span class="product-badge">Хит продаж</span>
+        <img src="https://via.placeholder.com/300x300/0a1e30/00cfff?text=AeroDesign" alt="Power — Анимированная иллюстрация Steam" class="product-image">
+        <div class="product-info">
+          <h3 class="product-title">Power — Анимированная иллюстрация Steam</h3>
+          <p class="product-description">Анимированный стиль для вашего профиля с эффектом параллакса</p>
+          <div class="product-price">6,00 €</div>
+        </div>
+      </div>
+      
+      <form id="payment-form">
+        <div class="form-group">
+          <label for="email" class="form-label">Электронная почта *</label>
+          <input type="email" id="email" class="form-control" placeholder="your@email.com" required>
+          <div class="error-message" id="email-error">Пожалуйста, введите корректный email</div>
+          <small style="color: var(--text-secondary); font-size: 0.8rem; display: block; margin-top: 5px;">
+            На эту почту будет отправлен чек и информация о заказе
+          </small>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Способ оплаты *</label>
+          <div class="payment-methods">
+            <div class="payment-method">
+              <input type="radio" id="paypal" name="payment" value="paypal" checked>
+              <label for="paypal">
+                <div class="payment-icon">
+                  <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal" class="paypal-icon">
+                </div>
+                <span>PayPal</span>
+                <div class="payment-submethods">
+                  <div class="payment-submethod">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
+                  </div>
+                  <div class="payment-submethod">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
+                  </div>
+                </div>
+              </label>
+            </div>
+            <div class="payment-method">
+              <input type="radio" id="yookassa" name="payment" value="yookassa">
+              <label for="yookassa">
+                <div class="payment-icon">
+                  <div class="yoo-logo">ЮKassa</div>
+                </div>
+                <span>ЮKassa</span>
+                <div class="payment-submethods">
+                  <div class="payment-submethod">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/SBP_logo_rus.svg" alt="СБП">
+                  </div>
+                  <div class="payment-submethod">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Sberbank_Logo_2020.svg" alt="Сбербанк">
+                  </div>
+                  <div class="payment-submethod">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Mir-logo.SVG.svg" alt="Мир">
+                  </div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="summary">
+          <div class="summary-item">
+            <span>Стоимость товара:</span>
+            <span>6,00 €</span>
+          </div>
+          <div class="summary-total">
+            <span>Итого к оплате:</span>
+            <span class="total-price">6,00 €</span>
+          </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">
+          Перейти к оплате
+          <i class="fas fa-arrow-right"></i>
+        </button>
+        
+        <p style="text-align: center; margin-top: 20px; font-size: 0.8rem; color: var(--text-secondary);">
+          Нажимая кнопку, вы соглашаетесь с <a href="ofertaru.html" style="color: var(--primary); text-decoration: none;">договором оферты</a>
+          и <a href="politru.html" style="color: var(--primary); text-decoration: none;">политикой конфиденциальности</a>
+        </p>
+        
+        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
+          <img src="https://www.freepnglogos.com/uploads/ssl-png/ssl-certificate-badge-vector-logo-3.png" alt="SSL Secure" style="height: 30px;">
+          <img src="https://www.freepnglogos.com/uploads/3d-secure-png-logo/3d-secure-png-logo-0.png" alt="3D Secure" style="height: 30px;">
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 AeroDesign — Все права защищены.
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Инициализация частиц для фона
+      particlesJS("particles-js", {
+        "particles": {
+          "number": {
+            "value": 80,
+            "density": {
+              "enable": true,
+              "value_area": 800
+            }
+          },
+          "color": {
+            "value": "#00cfff"
+          },
+          "shape": {
+            "type": "circle",
+            "stroke": {
+              "width": 0,
+              "color": "#000000"
+            }
+          },
+          "opacity": {
+            "value": 0.5,
+            "random": false,
+            "anim": {
+              "enable": false,
+              "speed": 1,
+              "opacity_min": 0.1,
+              "sync": false
+            }
+          },
+          "size": {
+            "value": 3,
+            "random": true,
+            "anim": {
+              "enable": false,
+              "speed": 40,
+              "size_min": 0.1,
+              "sync": false
+            }
+          },
+          "line_linked": {
+            "enable": true,
+            "distance": 150,
+            "color": "#00cfff",
+            "opacity": 0.2,
+            "width": 1
+          },
+          "move": {
+            "enable": true,
+            "speed": 2,
+            "direction": "none",
+            "random": false,
+            "straight": false,
+            "out_mode": "out",
+            "bounce": false,
+            "attract": {
+              "enable": false,
+              "rotateX": 600,
+              "rotateY": 1200
+            }
+          }
+        },
+        "interactivity": {
+          "detect_on": "canvas",
+          "events": {
+            "onhover": {
+              "enable": true,
+              "mode": "grab"
+            },
+            "onclick": {
+              "enable": true,
+              "mode": "push"
+            },
+            "resize": true
+          },
+          "modes": {
+            "grab": {
+              "distance": 140,
+              "line_linked": {
+                "opacity": 1
+              }
+            },
+            "push": {
+              "particles_nb": 4
+            }
+          }
+        }
+      });
+
+      // Анимация загрузки
+      setTimeout(function() {
+        document.querySelector('.preloader').classList.add('fade-out');
+        
+        setTimeout(function() {
+          document.querySelector('.preloader').style.display = 'none';
+        }, 500);
+      }, 1000);
+      
+      // Эффект при скролле для хедера
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 10) {
+          document.querySelector('header').classList.add('scrolled');
+        } else {
+          document.querySelector('header').classList.remove('scrolled');
+        }
+      });
+      
+      const form = document.getElementById('payment-form');
+      const emailInput = document.getElementById('email');
+      const emailError = document.getElementById('email-error');
+      
+      // Валидация формы
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        let isValid = true;
+        
+        // Валидация email
+        if (!validateEmail(emailInput.value)) {
+          emailInput.classList.add('error');
+          emailError.style.display = 'block';
+          isValid = false;
+        } else {
+          emailInput.classList.remove('error');
+          emailError.style.display = 'none';
+        }
+        
+        if (isValid) {
+          // Показать анимацию загрузки
+          const submitBtn = form.querySelector('button[type="submit"]');
+          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка платежа...';
+          submitBtn.disabled = true;
+          
+          // Сохраняем данные заказа
+          localStorage.setItem('orderDetails', JSON.stringify({
+            product: 'Power — Анимированная иллюстрация Steam',
+            price: '6,00 €',
+            email: emailInput.value,
+            paymentMethod: document.querySelector('input[name="payment"]:checked').value,
+            date: new Date().toLocaleString()
+          }));
+          
+          // Имитация отправки (в реальном проекте будет AJAX запрос)
+          setTimeout(function() {
+            // Перенаправление на выбранный метод оплаты
+            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+            if(paymentMethod === 'paypal') {
+              window.location.href = 'paypal-payment.html';
+            } else {
+              window.location.href = 'yookassa-payment.html';
+            }
+          }, 1500);
+        }
+      });
+      
+      // Валидация email в реальном времени
+      emailInput.addEventListener('input', function() {
+        if (validateEmail(this.value)) {
+          this.classList.remove('error');
+          emailError.style.display = 'none';
+        }
+      });
+      
+      function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      }
+      
+      // Анимация при наведении на элементы
+      const paymentMethods = document.querySelectorAll('.payment-method');
+      paymentMethods.forEach(method => {
+        method.addEventListener('mouseenter', function() {
+          this.querySelector('label').style.transform = 'translateY(-5px)';
+        });
+        
+        method.addEventListener('mouseleave', function() {
+          this.querySelector('label').style.transform = '';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

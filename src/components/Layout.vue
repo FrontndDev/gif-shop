@@ -1,0 +1,202 @@
+<template>
+  <div>
+    <div id="particles-js"></div>
+    <div class="glow-effect"></div>
+    <div class="glow-effect"></div>
+    <header class="header">
+      <RouterLink to="/" class="logo">
+        <i class="fa-solid fa-paintbrush logo-icon"></i>
+        <h1>AeroDesign</h1>
+      </RouterLink>
+      <nav>
+        <RouterLink to="/shop" active-class="active"><i class="fas fa-store"></i> Магазин</RouterLink>
+        <RouterLink to="/order"><i class="fas fa-pencil-ruler"></i> Заказать оформление</RouterLink>
+        <RouterLink to="/support"><i class="fas fa-question-circle"></i> Помощь</RouterLink>
+        <RouterLink to="/cart" class="cart-btn">
+          <i class="fas fa-shopping-cart"></i>
+          Корзина <span class="cart-count">{{ cartCount }}</span>
+        </RouterLink>
+      </nav>
+    </header>
+
+    <slot />
+
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h3>AeroDesign</h3>
+          <p style="color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 20px;">
+            Создаем уникальные витрины для Steam с 2021 года.
+          </p>
+          <div class="social-links">
+            <a href="https://t.me/OFFRLINE" target="_blank" class="social-link"><i class="fab fa-telegram"></i></a>
+            <a href="https://discord.gg/2GCebZRavP" target="_blank" class="social-link"><i class="fab fa-discord"></i></a>
+            <a href="https://www.deviantart.com/aeroidesign" target="_blank" class="social-link"><i class="fab fa-deviantart"></i></a>
+          </div>
+        </div>
+        <div class="footer-column">
+          <h3>Меню</h3>
+          <ul class="footer-links">
+            <li><RouterLink to="/shop"><i class="fas fa-chevron-right"></i> Магазин</RouterLink></li>
+            <li><RouterLink to="/order"><i class="fas fa-chevron-right"></i> Заказать оформление</RouterLink></li>
+            <li><RouterLink to="/support"><i class="fas fa-chevron-right"></i> Помощь</RouterLink></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h3>Правовые</h3>
+          <ul class="footer-links">
+            <li><RouterLink to="/offer"><i class="fas fa-file-contract"></i> Договор оферты</RouterLink></li>
+            <li><RouterLink to="/privacy"><i class="fas fa-shield-alt"></i> Политика конфиденциальности</RouterLink></li>
+          </ul>
+        </div>
+      </div>
+      <div class="copyright">© 2025 AeroDesign. Все права защищены.</div>
+    </footer>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed, onMounted } from 'vue';
+import { RouterLink } from 'vue-router';
+import { useCart } from '../stores/cart';
+
+const cart = useCart();
+const cartCount = computed(() => cart.items.length);
+
+onMounted(() => {
+  if (typeof window !== 'undefined' && (window as any).particlesJS) {
+    (window as any).particlesJS('particles-js', {
+      "particles": {
+        "number": {
+          "value": 80,
+          "density": {
+            "enable": true,
+            "value_area": 800
+          }
+        },
+        "color": {
+          "value": ["#00cfff", "#ffffff", "#3399ff"]
+        },
+        "shape": {
+          "type": "circle",
+          "stroke": {
+            "width": 0,
+            "color": "#000000"
+          },
+          "polygon": {
+            "nb_sides": 5
+          }
+        },
+        "opacity": {
+          "value": 0.5,
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 1,
+            "opacity_min": 0.1,
+            "sync": false
+          }
+        },
+        "size": {
+          "value": 3,
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 2,
+            "size_min": 0.1,
+            "sync": false
+          }
+        },
+        "line_linked": {
+          "enable": true,
+          "distance": 150,
+          "color": "#00cfff",
+          "opacity": 0.2,
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 1.5,
+          "direction": "none",
+          "random": true,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false,
+          "attract": {
+            "enable": true,
+            "rotateX": 600,
+            "rotateY": 1200
+          }
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": true,
+            "mode": "grab"
+          },
+          "onclick": {
+            "enable": true,
+            "mode": "push"
+          },
+          "resize": true
+        },
+        "modes": {
+          "grab": {
+            "distance": 140,
+            "line_linked": {
+              "opacity": 0.5
+            }
+          },
+          "bubble": {
+            "distance": 400,
+            "size": 40,
+            "duration": 2,
+            "opacity": 8,
+            "speed": 3
+          },
+          "repulse": {
+            "distance": 200,
+            "duration": 0.4
+          },
+          "push": {
+            "particles_nb": 4
+          },
+          "remove": {
+            "particles_nb": 2
+          }
+        }
+      },
+      "retina_detect": true
+    });
+  }
+});
+</script>
+
+<style scoped>
+.header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 5%; background: rgba(0, 10, 20, 0.85);
+  backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100;
+  border-bottom: 1px solid rgba(0, 207, 255, 0.2);
+}
+.logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+.logo-icon { font-size: 1.8rem; color: var(--primary); margin-right: 10px; }
+header h1 { font-size: 2rem; background: linear-gradient(90deg, #00cfff, #3399ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; }
+nav { display: flex; align-items: center; gap: 30px; }
+nav a { color: #99ccff; text-decoration: none; font-weight: 500; position: relative; padding: 8px 0; }
+nav a.active, nav a.router-link-active { color: #fff; }
+.cart-btn { background: rgba(0, 207, 255, 0.1); border: 1px solid var(--primary); border-radius: 8px; padding: 8px 16px; color: #fff; display: flex; align-items: center; gap: 8px; }
+.cart-count { background: var(--accent); color: #000; border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; }
+
+.footer { background: rgba(0, 10, 20, 0.85); padding: 40px 5%; margin-top: 60px; border-top: 1px solid rgba(0, 207, 255, 0.2); }
+.footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
+.footer-links { list-style: none; }
+.footer-links a { color: rgba(255,255,255,0.7); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+.social-links { display: flex; gap: 15px; margin-top: 20px; }
+.social-link { width: 36px; height: 36px; border-radius: 50%; background: rgba(0, 207, 255, 0.1); display: flex; align-items: center; justify-content: center; }
+.copyright { text-align: center; margin-top: 40px; padding-top: 20px; color: rgba(255,255,255,0.5); font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.1); }
+</style>
+
+

@@ -1,0 +1,198 @@
+/* Сброс стилей */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Верхняя панель */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 0;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #eee;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.author-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.subscribe-section {
+    display: flex;
+    gap: 10px;
+}
+
+.email-input {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    min-width: 250px;
+}
+
+.subscribe-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.subscribe-btn:hover {
+    background: #0056b3;
+}
+
+/* Витрина работ */
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.work-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.work-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.work-preview {
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+    display: block;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.work-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px;
+    background: #f8f9fa;
+}
+
+.price-tag {
+    font-weight: 700;
+    color: #e44d26;
+}
+
+.order-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.order-btn:hover {
+    background: #218838;
+}
+
+@media (max-width: 1400px) {
+    .gallery {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 1100px) {
+    .container {
+        padding: 0 40px;
+    }
+}
+
+@media (max-width: 900px) {
+    .gallery {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+    }
+    
+    .work-preview {
+        height: 280px;
+    }
+}
+
+@media (max-width: 650px) {
+    .container {
+        padding: 0 25px;
+    }
+    
+    .header {
+        flex-direction: column;
+        gap: 25px;
+        padding: 20px 0;
+    }
+    
+    .subscribe-section {
+        width: 100%;
+    }
+    
+    .email-input {
+        width: 100%;
+    }
+}
+
+@media (max-width: 500px) {
+    .gallery {
+        grid-template-columns: 1fr;
+    }
+    
+    .work-preview {
+        height: 350px;
+    }
+}
+
+a.order-btn {
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+a.order-btn:hover {
+    background: #218838;
+    text-decoration: none;
+}

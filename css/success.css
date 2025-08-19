@@ -1,0 +1,268 @@
+/* Страница чека */
+.receipt-page {
+    margin: 40px auto;
+    max-width: 1200px;
+}
+
+.receipt-container {
+    background: white;
+    border-radius: 18px;
+    box-shadow: 0 12px 50px rgba(0,0,0,0.12);
+    padding: 50px;
+    margin: 0 auto;
+}
+
+.receipt-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.receipt-header h1 {
+    font-size: 2.5rem;
+    color: #28a745;
+    margin-bottom: 15px;
+}
+
+.receipt-header p {
+    font-size: 1.2rem;
+    color: #555;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Карточка товара */
+.receipt-product-card {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    padding: 25px;
+    margin-bottom: 30px;
+    background: #f8f9fa;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.receipt-product-thumb {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.receipt-product-info {
+    flex: 1;
+}
+
+.receipt-product-title {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.receipt-product-price {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #e44d26;
+}
+
+/* Детали оплаты */
+.receipt-details {
+    background: #f8f9fa;
+    border-radius: 14px;
+    padding: 30px;
+    margin-bottom: 40px;
+    border: 1px solid #eaeaea;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px dashed #e0e0e0;
+    font-size: 1.1rem;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item.total {
+    font-weight: 700;
+    font-size: 1.4rem;
+    padding-top: 20px;
+    border-top: 2px solid #ddd;
+    border-bottom: none;
+    margin-top: 10px;
+}
+
+.detail-item.total span:last-child {
+    color: #28a745;
+}
+
+/* Инструкции */
+.instructions {
+    background: #f8f9fa;
+    border-radius: 14px;
+    padding: 40px;
+}
+
+.instructions h2 {
+    text-align: center;
+    margin-bottom: 35px;
+    color: #333;
+    font-size: 1.8rem;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.instructions h2::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: #28a745;
+    border-radius: 3px;
+}
+
+.instruction-step {
+    margin-bottom: 40px;
+}
+
+.instruction-step p {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: #444;
+    margin-bottom: 25px;
+}
+
+.instruction-image {
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    display: block;
+    margin: 0 auto 25px;
+    border: 1px solid #eee;
+}
+
+.download-section {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 30px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: #28a745;
+    color: white;
+    padding: 18px 35px;
+    border-radius: 12px;
+    font-size: 1.3rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s;
+    box-shadow: 0 5px 20px rgba(40, 167, 69, 0.3);
+}
+
+.download-btn:hover {
+    background: #218838;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+}
+
+.download-btn:active {
+    transform: translateY(0);
+}
+
+.download-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.download-note {
+    margin-top: 15px;
+    color: #6c757d;
+    font-size: 0.95rem;
+}
+
+/* Адаптив */
+@media (max-width: 992px) {
+    .receipt-container {
+        padding: 35px;
+    }
+    
+    .receipt-product-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .receipt-product-thumb {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .instructions {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 768px) {
+    .receipt-page {
+        margin: 20px 0;
+    }
+    
+    .receipt-container {
+        padding: 25px;
+    }
+    
+    .receipt-header h1 {
+        font-size: 2rem;
+    }
+    
+    .receipt-product-title {
+        font-size: 1.7rem;
+    }
+    
+    .receipt-product-price {
+        font-size: 1.5rem;
+    }
+    
+    .instruction-step p {
+        font-size: 1.05rem;
+    }
+    
+    .download-btn {
+        padding: 15px 25px;
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .receipt-header p {
+        font-size: 1rem;
+    }
+    
+    .detail-item {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .detail-item.total {
+        flex-direction: row;
+    }
+    
+    .instructions {
+        padding: 20px 15px;
+    }
+}
