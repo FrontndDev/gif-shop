@@ -64,11 +64,7 @@
           </div>
 
           <div class="local-video-container">
-            <video controls :poster="previewPoster">
-              <source :src="mp4Src" type="video/mp4" />
-              <source :src="webmSrc" type="video/webm" />
-              Ваш браузер не поддерживает HTML5 видео.
-            </video>
+            <img :src="previewPoster" alt="Demo" />
           </div>
 
           <div class="pro-tip">

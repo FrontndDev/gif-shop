@@ -49,6 +49,8 @@
           </button>
 
           <p class="notes">
+            ИНН самозанятого: <strong>910509844791</strong>
+            <br/>
             Нажимая кнопку, вы соглашаетесь с <RouterLink to="/offer">договором оферты</RouterLink>
             и <RouterLink to="/privacy">политикой конфиденциальности</RouterLink>
           </p>

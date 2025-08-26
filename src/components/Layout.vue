@@ -50,6 +50,7 @@
           </ul>
         </div>
       </div>
+      <div class="legal-note">ИНН самозанятого: 910509844791</div>
       <div class="copyright">© 2025 AeroDesign. Все права защищены.</div>
     </footer>
   </div>
@@ -196,6 +197,7 @@ nav a.active, nav a.router-link-active { color: #fff; }
 .footer-links a { color: rgba(255,255,255,0.7); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
 .social-links { display: flex; gap: 15px; margin-top: 20px; }
 .social-link { width: 36px; height: 36px; border-radius: 50%; background: rgba(0, 207, 255, 0.1); display: flex; align-items: center; justify-content: center; }
+.legal-note { text-align: center; margin-top: 10px; color: rgba(255,255,255,0.7); font-size: 0.9rem; }
 .copyright { text-align: center; margin-top: 40px; padding-top: 20px; color: rgba(255,255,255,0.5); font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.1); }
 </style>
 

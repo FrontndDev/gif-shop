@@ -41,9 +41,7 @@
           <div v-for="p in products" :key="p.id" class="product">
             <RouterLink :to="{ name: 'product', params: { id: p.id } }" class="product-link">
               <div class="preview">
-                <video autoplay loop muted playsinline :poster="p.poster">
-                  <source v-if="p.video" :src="p.video" type="video/mp4"/>
-                </video>
+                <img :src="p.video || p.poster" :alt="p.title" loading="lazy" decoding="async" />
                 <span class="product-badge" :class="p.badgeClass">{{ p.badge }}</span>
               </div>
               <div class="product-info">
@@ -55,8 +53,8 @@
               <RouterLink class="action-btn details-btn" :to="{ name: 'product', params: { id: p.id } }">
                 <i class="fas fa-eye"></i> Подробнее
               </RouterLink>
-              <button class="action-btn cart-add-btn" @click="addToCart(p)">
-                <i class="fas fa-cart-plus"></i> В корзину
+              <button class="action-btn cart-add-btn" :class="{ 'in-cart': isInCart(p.id) }" @click="addToCart(p)">
+                <i class="fas fa-cart-plus"></i> {{ isInCart(p.id) ? 'В корзине' : 'В корзину' }}
               </button>
             </div>
           </div>
@@ -139,8 +137,11 @@ const topics = [
  
 
 function addToCart(p: Product) {
-  cart.add({id: p.id, name: p.title, price: p.price, currency: '€', image: p.poster, quantity: 1});
+  cart.add({id: p.id, name: p.title, price: p.price, currency: '€', image: (p as any).video || p.poster, quantity: 1});
 }
+
+const inCartIds = computed(() => new Set(cart.items.map(i => i.id)));
+function isInCart(id: string) { return inCartIds.value.has(id); }
 </script>
 
 <style scoped>
@@ -309,7 +310,7 @@ function addToCart(p: Product) {
   overflow: hidden;
 }
 
-.preview video {
+.preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -392,6 +393,12 @@ function addToCart(p: Product) {
 .cart-add-btn {
   border-color: #fff;
   color: #fff;
+}
+
+.cart-add-btn.in-cart {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #000;
 }
 </style>
 
