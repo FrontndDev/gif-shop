@@ -1,11 +1,11 @@
 <template>
   <Layout>
-    <main class="main">
+    <main v-if="product" class="main">
       <div class="preview-wrapper">
         <div class="preview-container">
           <span v-if="product.badge" class="badge">{{ product.badge }}</span>
           <video class="protected-video" autoplay loop muted playsinline>
-            <source :src="product.video" type="video/mp4" />
+            <source v-if="product.video" :src="product.video" type="video/mp4" />
           </video>
         </div>
       </div>
@@ -32,31 +32,48 @@
         </div>
       </div>
     </main>
+    <div v-else class="fallback">
+      <div class="status" v-if="loading">Загрузка…</div>
+      <div class="status error" v-else-if="error">{{ error }}</div>
+      <div class="status" v-else>Товар не найден</div>
+    </div>
   </Layout>
 </template>
 
 <script setup lang="ts">
 import Layout from '../components/Layout.vue';
-import { computed } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useCart } from '../stores/cart';
+import { useProducts } from '../stores/products';
 
 const route = useRoute();
 const cart = useCart();
 
-const catalog = {
-  '1': { id: '1', title: 'Cyber Neon — Анимированная иллюстрация Steam', price: 8, video: '/mp4.mp4', badge: 'Хит продаж' },
-  '2': { id: '2', title: 'Power — Анимированная иллюстрация Steam', price: 6, video: '/mp4.mp4', badge: 'Новинка' },
-  '3': { id: '3', title: 'Cyberpunk 2077 — Анимированная иллюстрация Steam', price: 10, video: '/mp4.mp4', badge: 'Скидка' },
-  '4': { id: '4', title: 'Exclusive Showcase — Анимированная иллюстрация Steam', price: 15, video: '/mp4.mp4', badge: 'Эксклюзив' },
-};
+const product = ref<ReturnType<typeof useProducts>['items'][number] | null>(null);
+const productsStore = useProducts();
+const loading = computed(() => productsStore.loading);
+const error = computed(() => productsStore.error);
 
-const product = computed(() => {
-  const id = (route.params.id as string) || '2';
-  return catalog[id] || catalog['2'];
-});
+async function fetchProduct(id?: string) {
+  if (!id) return;
+  loading.value = true;
+  error.value = null;
+  try {
+    product.value = await productsStore.fetchById(id);
+  } catch (e: any) {
+    error.value = e?.message || 'Не удалось загрузить продукт';
+    product.value = null;
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(() => fetchProduct(route.params.id as string));
+watch(() => route.params.id as string, (id) => fetchProduct(id));
 
 function addToCart() {
+  if (!product.value) return;
   cart.add({ id: product.value.id, name: product.value.title, price: product.value.price, currency: '€', quantity: 1 });
 }
 </script>

@@ -5,24 +5,24 @@
       <p>Создаем уникальные и персонализированные оформления профиля Steam</p>
     </div>
     <div class="order-container">
-      <form class="order-form" @submit.prevent>
+      <form class="order-form" @submit.prevent="submit">
         <div class="form-row">
           <div class="form-group">
             <label for="name">Ваше имя</label>
-            <input id="name" type="text" class="form-control" placeholder="Как к вам обращаться?" required />
+            <input id="name" v-model="form.name" type="text" class="form-control" placeholder="Как к вам обращаться?" required />
           </div>
           <div class="form-group">
             <label>Telegram/Discord</label>
-            <input type="text" class="form-control" placeholder="username" required />
+            <input v-model="form.telegramDiscord" type="text" class="form-control" placeholder="username" required />
           </div>
         </div>
         <div class="form-group">
           <label for="steam">Ссылка на профиль Steam</label>
-          <input id="steam" type="url" class="form-control" placeholder="https://steamcommunity.com/id/yourprofile" required />
+          <input id="steam" v-model="form.steamProfile" type="url" class="form-control" placeholder="https://steamcommunity.com/id/yourprofile" required />
         </div>
         <div class="form-group">
           <label for="style">Стиль оформления</label>
-          <select id="style" class="form-control" required>
+          <select id="style" v-model="form.style" class="form-control" required>
             <option value="" disabled selected>Выберите стиль</option>
             <option value="minimal">Минимализм</option>
             <option value="cyberpunk">Киберпанк</option>
@@ -33,7 +33,7 @@
         </div>
         <div class="form-group">
           <label for="theme">Цветовая гамма</label>
-          <select id="theme" class="form-control" required>
+          <select id="theme" v-model="form.colorTheme" class="form-control" required>
             <option value="" disabled selected>Выберите цветовую гамму</option>
             <option value="blue">Синяя</option>
             <option value="red">Красная</option>
@@ -45,9 +45,9 @@
         </div>
         <div class="form-group">
           <label for="details">Детали оформления</label>
-          <textarea id="details" class="form-control" placeholder="Пожелания, любимые игры, персонажи..." required></textarea>
+          <textarea id="details" v-model="form.details" class="form-control" placeholder="Пожелания, любимые игры, персонажи..." required></textarea>
         </div>
-        <button class="form-submit"><i class="fas fa-paper-plane"></i> Отправить заявку</button>
+        <button class="form-submit" :disabled="submitting"><i class="fas fa-paper-plane"></i> {{ submitting ? 'Отправка...' : 'Отправить заявку' }}</button>
       </form>
       <div class="order-info">
         <h3>Как мы работаем</h3>
@@ -61,7 +61,40 @@
 </template>
 
 <script setup lang="ts">
+import { reactive, ref } from 'vue';
 import Layout from '../components/Layout.vue';
+import { useOrders } from '../stores/orders';
+import type { CreateOrderRequest } from '../lib/api';
+
+const form = reactive<CreateOrderRequest>({
+  name: '', telegramDiscord: '', steamProfile: '', style: '', colorTheme: '', details: ''
+});
+const submitting = ref(false);
+const success = ref(false);
+const error = ref<string | null>(null);
+const ordersStore = useOrders();
+
+async function submit() {
+  submitting.value = true;
+  error.value = null;
+  try {
+    await ordersStore.submit(form);
+    success.value = true;
+    // Optionally reset form
+    form.name = '';
+    form.telegramDiscord = '';
+    form.steamProfile = '';
+    form.style = '';
+    form.colorTheme = '';
+    form.details = '';
+    alert('Заявка отправлена! Мы свяжемся с вами.');
+  } catch (e: any) {
+    error.value = e?.message || 'Не удалось отправить заявку';
+    alert(error.value);
+  } finally {
+    submitting.value = false;
+  }
+}
 </script>
 
 <style scoped>
