@@ -7,13 +7,13 @@
           <p>Выберите удобный способ оплаты</p>
         </div>
 
-        <div class="product">
-          <span class="product-badge">Хит продаж</span>
-          <img :src="placeholder" alt="Товар" class="product-image" />
+        <div class="product" v-if="items.length">
+          <span class="product-badge">К оплате</span>
+          <img :src="items[0].image || placeholder" alt="Товар" class="product-image" />
           <div class="product-info">
-            <h3 class="product-title">Power — Анимированная иллюстрация Steam</h3>
-            <p class="product-description">Анимированный стиль для вашего профиля с эффектом параллакса</p>
-            <div class="product-price">6,00 €</div>
+            <h3 class="product-title">{{ items[0].name }}</h3>
+            <p class="product-description">Товары в корзине: {{ items.length }}</p>
+            <div class="product-price">{{ total.toFixed(2) }} €</div>
           </div>
         </div>
 
@@ -39,8 +39,8 @@
           </div>
 
           <div class="summary">
-            <div class="summary-item"><span>Стоимость товара:</span><span>6,00 €</span></div>
-            <div class="summary-total"><span>Итого к оплате:</span><span class="total-price">6,00 €</span></div>
+            <div class="summary-item"><span>Товары ({{ items.length }}):</span><span>{{ total.toFixed(2) }} €</span></div>
+            <div class="summary-total"><span>Итого к оплате:</span><span class="total-price">{{ total.toFixed(2) }} €</span></div>
           </div>
 
           <button type="submit" class="btn btn-primary">
@@ -62,23 +62,55 @@
 
 <script setup lang="ts">
 import Layout from '../components/Layout.vue';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useCart } from '../stores/cart';
+import { createPayment, createPaypalOrder } from '../lib/api';
 
 const router = useRouter();
 const email = ref('');
 const emailError = ref(false);
-const payment = ref<'paypal' | 'yookassa'>('paypal');
+const payment = ref<'paypal' | 'yookassa'>('yookassa');
 const placeholder = 'https://via.placeholder.com/300x300/0a1e30/00cfff?text=AeroDesign';
+const cart = useCart();
+const items = cart.items;
+const total = computed(() => items.reduce((s, i) => s + i.price, 0));
 
 function validateEmail(v: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 }
 
-function onSubmit() {
+async function onSubmit() {
   emailError.value = !validateEmail(email.value);
   if (emailError.value) return;
-  setTimeout(() => router.push('/success'), 1000);
+  if (payment.value === 'yookassa') {
+    const res = await createPayment({
+      amount: Number(total.value.toFixed(2)),
+      currency: 'RUB',
+      description: `Оплата заказа (${items.length} шт.)`,
+      returnUrl: window.location.origin + '/success',
+      metadata: {
+        email: email.value,
+        itemsCount: String(items.length),
+        ids: items.map(i => i.id).join(',')
+      }
+    });
+    const url = res?.confirmation?.confirmation_url;
+    if (url) {
+      window.location.href = url;
+      return;
+    }
+  }
+  if (payment.value === 'paypal') {
+    const res = await createPaypalOrder({ amount: Number(total.value.toFixed(2)), currency: 'USD' });
+    const approve = res?.links?.find((l: any) => l.rel === 'approve')?.href;
+    if (approve) {
+      window.location.href = approve;
+      return;
+    }
+  }
+  // fallback
+  setTimeout(() => router.push('/success'), 500);
 }
 </script>
 

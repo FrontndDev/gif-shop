@@ -7,6 +7,21 @@ export default defineConfig({
     port: 5173,
     open: true,
     proxy: {
+      '/api/payments': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false
+      },
+      '/api/paypal': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false
+      },
+      '/api/telegram': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false
+      },
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,

@@ -161,8 +161,6 @@ import { ref } from 'vue';
 import Layout from '../components/Layout.vue';
 import previewPoster from '../../preview.png';
 import primerGif from '../../primerru.gif';
-import mp4Src from '../../mp4.mp4';
-import webmSrc from '../../webm.webm';
 
 const isCopied1 = ref(false);
 const isCopied2 = ref(false);
@@ -219,14 +217,14 @@ function toggleFaq(index: number) {
 .extension-info h5 { color: var(--primary); margin-bottom: 5px; }
 
 .local-video-container { position: relative; width: 100%; margin: 15px 0; border-radius: 8px; overflow: hidden; border: 1px solid rgba(0, 207, 255, 0.3); }
-.local-video-container video { width: 100%; display: block; }
+.local-video-container img { width: 100%; height: auto; display: block; }
 
 .pro-tip { background: rgba(0, 207, 255, 0.1); border-left: 3px solid var(--primary); padding: 15px; margin-top: 20px; border-radius: 0 8px 8px 0; }
 .pro-tip h5 { color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
 
 .browser-commands { background: rgba(0,0,0,0.3); padding: 10px; border-radius: 8px; margin: 10px 0; }
-.code-block { background: rgba(0,0,0,0.3); border: 1px solid rgba(0,207,255,0.5); border-radius: 8px; padding: 12px; margin: 10px 0; position: relative; }
-.code-block code { display: block; font-family: monospace; white-space: pre-wrap; margin-bottom: 10px; color: var(--primary); }
+.code-block { background: rgba(0,0,0,0.3); border: 1px solid rgba(0,207,255,0.5); border-radius: 8px; padding: 12px; margin: 10px 0; position: relative; overflow-x: auto; }
+.code-block code { display: block; font-family: monospace; white-space: pre-wrap; word-break: break-word; margin-bottom: 10px; color: var(--primary); }
 .copy-btn { background: rgba(0,207,255,0.1); border: 1px solid var(--primary); color: var(--primary); padding: 5px 10px; border-radius: 6px; cursor: pointer; transition: all .3s ease; }
 .copy-btn:hover { background: var(--primary); color: #000; }
 .warning { color: #ff9f43; display: flex; align-items: center; gap: 8px; margin-top: 10px; }
@@ -240,11 +238,19 @@ function toggleFaq(index: number) {
 .contact-link { display: inline-flex; align-items: center; gap: 8px; color: var(--primary); text-decoration: none; transition: all .3s ease; padding: 8px 15px; background: rgba(0,207,255,0.1); border-radius: 8px; }
 .contact-link:hover { background: var(--primary); color: #000; }
 
+/* Длинные ссылки не должны ломать вёрстку на малых экранах */
+.steam-link { word-break: break-word; overflow-wrap: anywhere; }
+
 @media (max-width: 768px) {
   .page-header h2 { font-size: 2rem; }
   .help-section { padding: 20px; }
   .step { flex-direction: column; }
   .step-number { margin-bottom: 10px; margin-right: 0; }
+}
+
+@media (max-width: 480px) {
+  .page-header h2 { font-size: 1.8rem; }
+  .page-header p { font-size: 1rem; }
 }
 </style>
 

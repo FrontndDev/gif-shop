@@ -63,8 +63,8 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import Layout from '../components/Layout.vue';
-import { useOrders } from '../stores/orders';
 import type { CreateOrderRequest } from '../lib/api';
+import { sendTelegramOrder } from '../lib/api';
 
 const form = reactive<CreateOrderRequest>({
   name: '', telegramDiscord: '', steamProfile: '', style: '', colorTheme: '', details: ''
@@ -72,13 +72,12 @@ const form = reactive<CreateOrderRequest>({
 const submitting = ref(false);
 const success = ref(false);
 const error = ref<string | null>(null);
-const ordersStore = useOrders();
 
 async function submit() {
   submitting.value = true;
   error.value = null;
   try {
-    await ordersStore.submit(form);
+    await sendTelegramOrder(form);
     success.value = true;
     // Optionally reset form
     form.name = '';

@@ -58,4 +58,29 @@ export function createOrder(payload: CreateOrderRequest): Promise<{ id: string }
   return request(`/api/orders`, { method: 'POST', body: JSON.stringify(payload) });
 }
 
+// Payments
+export function createPayment(payload: {
+  amount: number;
+  currency: 'RUB' | 'EUR' | 'USD';
+  description?: string;
+  returnUrl: string;
+  metadata?: Record<string, unknown>;
+}): Promise<{ confirmation?: { confirmation_url?: string } } & Record<string, any>> {
+  return request(`/api/payments/create`, { method: 'POST', body: JSON.stringify(payload) });
+}
+
+// PayPal
+export function createPaypalOrder(payload: { amount: number; currency: 'USD' | 'EUR'; }): Promise<{ id: string; links?: Array<{ rel: string; href: string }> }> {
+  return request(`/api/paypal/orders/create`, { method: 'POST', body: JSON.stringify(payload) });
+}
+
+export function capturePaypalOrder(orderId: string): Promise<Record<string, any>> {
+  return request(`/api/paypal/orders/${orderId}/capture`, { method: 'POST' });
+}
+
+// Telegram order relay
+export function sendTelegramOrder(payload: CreateOrderRequest): Promise<{ ok: boolean } & Record<string, any>> {
+  return request(`/api/telegram/order`, { method: 'POST', body: JSON.stringify(payload) });
+}
+
 
