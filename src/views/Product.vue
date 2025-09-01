@@ -9,7 +9,7 @@
       </div>
       <div class="info">
         <h2>{{ product.title }}</h2>
-        <div class="price">{{ product.price.toFixed(2) }} €</div>
+        <div class="price">{{ product.price.toFixed(2) }} ₽</div>
         <div class="actions">
           <button class="btn btn-cart" :class="{ 'in-cart': isInCart }" @click="addToCart">
             <i class="fas fa-cart-plus"></i> {{ isInCart ? 'В корзине' : 'В корзину' }}
@@ -72,7 +72,7 @@ watch(() => route.params.id as string, (id) => fetchProduct(id));
 
 function addToCart() {
   if (!product.value) return;
-  cart.add({ id: product.value.id, name: product.value.title, price: product.value.price, currency: '€', image: (product.value as any).video, quantity: 1 });
+  cart.add({ id: product.value.id, name: product.value.title, price: product.value.price, currency: '₽', image: (product.value as any).video, quantity: 1 });
 }
 
 const isInCart = computed(() => !!cart.items.find(i => i.id === (product.value?.id || '')));
@@ -96,6 +96,12 @@ const isInCart = computed(() => !!cart.items.find(i => i.id === (product.value?.
 .features { margin-top: 10px; padding-left: 0; list-style: none; }
 .features li { margin-bottom: 12px; padding-left: 28px; position: relative; }
 .features li::before { content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--primary); position: absolute; left: 0; top: 2px; }
+
+@media (max-width: 768px) {
+  .main { gap: 24px; margin: 20px auto; }
+  .info { padding: 20px; }
+  .actions { flex-direction: column; align-items: stretch; }
+}
 </style>
 
 

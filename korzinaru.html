@@ -709,15 +709,15 @@
         <h3 class="summary-title">Итого</h3>
         <div class="summary-row">
           <span>Товары (<span id="itemsCount">0</span>)</span>
-          <span class="summary-price" id="subtotal">0,00 €</span>
+          <span class="summary-price" id="subtotal">0,00 ₽</span>
         </div>
         <div class="summary-row">
           <span>Скидка</span>
-          <span class="summary-price">-0,00 €</span>
+          <span class="summary-price">-0,00 ₽</span>
         </div>
         <div class="summary-row">
           <span class="summary-total">Общая сумма</span>
-          <span class="summary-price" id="total">0,00 €</span>
+          <span class="summary-price" id="total">0,00 ₽</span>
         </div>
         <button class="checkout-btn" onclick="window.location.href='paymentru.html'">
           <i class="fas fa-credit-card"></i> Оформить заказ
@@ -967,8 +967,8 @@
         
         // Обновление итогов
         document.getElementById('itemsCount').textContent = cart.length;
-        document.getElementById('subtotal').textContent = `${total.toFixed(2)} €`;
-        document.getElementById('total').textContent = `${total.toFixed(2)} €`;
+        document.getElementById('subtotal').textContent = `${total.toFixed(2)} ₽`;
+        document.getElementById('total').textContent = `${total.toFixed(2)} ₽`;
         
         // Назначение обработчиков событий для удаления
         document.querySelectorAll('.remove-btn').forEach(btn => {

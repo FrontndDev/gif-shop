@@ -13,7 +13,7 @@
           <div class="product-info">
             <h3 class="product-title">{{ items[0].name }}</h3>
             <p class="product-description">Товары в корзине: {{ items.length }}</p>
-            <div class="product-price">{{ total.toFixed(2) }} €</div>
+            <div class="product-price">{{ total.toFixed(2) }} ₽</div>
           </div>
         </div>
 
@@ -39,8 +39,8 @@
           </div>
 
           <div class="summary">
-            <div class="summary-item"><span>Товары ({{ items.length }}):</span><span>{{ total.toFixed(2) }} €</span></div>
-            <div class="summary-total"><span>Итого к оплате:</span><span class="total-price">{{ total.toFixed(2) }} €</span></div>
+            <div class="summary-item"><span>Товары ({{ items.length }}):</span><span>{{ total.toFixed(2) }} ₽</span></div>
+            <div class="summary-total"><span>Итого к оплате:</span><span class="total-price">{{ total.toFixed(2) }} ₽</span></div>
           </div>
 
           <button type="submit" class="btn btn-primary">

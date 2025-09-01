@@ -43,11 +43,11 @@
           <h3 class="summary-title">Итого</h3>
           <div class="summary-row">
             <span>Товары ({{ items.length }})</span>
-            <span class="summary-price">{{ total.toFixed(2) }} €</span>
+            <span class="summary-price">{{ total.toFixed(2) }} ₽</span>
           </div>
           <div class="summary-row">
             <span class="summary-total">Общая сумма</span>
-            <span class="summary-price">{{ total.toFixed(2) }} €</span>
+            <span class="summary-price">{{ total.toFixed(2) }} ₽</span>
           </div>
           <RouterLink class="checkout-btn" to="/payment">
             <i class="fas fa-credit-card"></i> Оформить заказ
@@ -91,6 +91,16 @@ function clearCart() { cart.clear(); }
 .summary-total { font-size: 1.2rem; font-weight: 700; color: #e0f7ff; }
 .summary-price { color: var(--primary); font-weight: 700; }
 .checkout-btn { width: 100%; padding: 15px; background: linear-gradient(90deg, #00cfff, #3399ff); color: #000; border: none; border-radius: 8px; font-weight: 600; font-size: 1rem; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 10px; }
+
+@media (max-width: 768px) {
+  .cart-items thead { display: none; }
+  .cart-items, .cart-items tbody, .cart-items tr, .cart-items td { display: block; width: 100%; }
+  .cart-items tr { border: 1px solid rgba(0,207,255,0.2); border-radius: 12px; margin-bottom: 15px; padding: 12px; }
+  .cart-items td { padding: 10px 0; border: none; }
+  .cart-item { gap: 12px; }
+  .cart-item-img { width: 64px; height: 64px; }
+  .cart-summary { max-width: none; margin-left: 0; }
+}
 .empty-cart { text-align: center; padding: 60px 0; }
 .empty-cart-icon { font-size: 5rem; color: var(--primary); margin-bottom: 20px; opacity: 0.5; }
 .empty-cart-text { font-size: 1.5rem; color: #e0f7ff; margin-bottom: 30px; }

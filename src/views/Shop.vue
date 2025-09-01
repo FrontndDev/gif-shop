@@ -46,7 +46,7 @@
               </div>
               <div class="product-info">
                 <h3 class="product-title">{{ p.title }}</h3>
-                <div class="product-price">{{ p.price }} €</div>
+                <div class="product-price">{{ p.price }} ₽</div>
               </div>
             </RouterLink>
             <div class="product-actions">
@@ -137,7 +137,7 @@ const topics = [
  
 
 function addToCart(p: Product) {
-  cart.add({id: p.id, name: p.title, price: p.price, currency: '€', image: (p as any).video || p.poster, quantity: 1});
+  cart.add({id: p.id, name: p.title, price: p.price, currency: '₽', image: (p as any).video || p.poster, quantity: 1});
 }
 
 const inCartIds = computed(() => new Set(cart.items.map(i => i.id)));
@@ -399,6 +399,17 @@ function isInCart(id: string) { return inCartIds.value.has(id); }
   border-color: var(--primary);
   background: var(--primary);
   color: #000;
+}
+
+@media (max-width: 1024px) {
+  .layout { flex-direction: column; }
+  .sidebar { position: static; width: 100%; }
+}
+
+@media (max-width: 640px) {
+  .preview { height: 220px; }
+  .gallery { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 18px; }
+  .search-container { margin: 20px auto; }
 }
 </style>
 
