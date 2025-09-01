@@ -117,7 +117,7 @@ async function onSubmit() {
 <style scoped>
 .container { max-width: 800px; margin: 40px auto; padding: 0 5%; }
 .card { background: #141820; border-radius: 16px; padding: 30px; border: 1px solid rgba(0,207,255,0.2); }
-.card-header h2 { font-size: 1.8rem; margin-bottom: 8px; background: linear-gradient(90deg,#00cfff,#3399ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; }
+.card-header h2 { font-size: 1.8rem; margin-bottom: 8px; background: linear-gradient(90deg,#00cfff,#3399ff); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; }
 .card-header p { color: #aaa; }
 .product { display: flex; gap: 20px; padding: 20px; background: rgba(0,207,255,0.05); border-radius: 12px; border: 1px solid rgba(0,207,255,0.2); margin: 25px 0; position: relative; }
 .product-badge { position: absolute; top: -10px; right: 20px; background: var(--primary); color: #000; padding: 4px 12px; border-radius: 20px; font-size: .8rem; font-weight: 600; }
@@ -138,6 +138,21 @@ async function onSubmit() {
 .total-price { color: var(--primary); font-size: 1.2rem; font-weight: 700; }
 .notes { text-align: center; margin-top: 20px; font-size: .85rem; color: #aaa; }
 .notes a { color: var(--primary); text-decoration: none; }
+
+@media (max-width: 768px) {
+  .container { margin: 20px auto; padding: 0 4%; }
+  .card { padding: 20px; }
+  .product { flex-direction: column; align-items: center; text-align: center; }
+  .product-image { width: 100%; max-width: 260px; height: auto; }
+  .payment-methods { grid-template-columns: 1fr; }
+  .btn { padding: 12px 18px; }
+}
+
+@media (max-width: 420px) {
+  .card-header h2 { font-size: 1.4rem; }
+  .summary { padding: 16px; }
+  .product { padding: 14px; }
+}
 </style>
 
 

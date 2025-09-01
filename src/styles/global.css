@@ -45,4 +45,11 @@ a:hover, a:focus { text-decoration: none; }
   filter: blur(80px);
 }
 
+/* Global responsive improvements */
+img { max-width: 100%; height: auto; }
+
+@media (max-width: 768px) {
+  .glow-effect { width: 200px; height: 200px; filter: blur(80px); }
+}
+
 

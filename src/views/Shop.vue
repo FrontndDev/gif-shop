@@ -7,8 +7,16 @@
       </div>
     </div>
 
+    <div class="filters-mobile-bar">
+      <button class="filters-toggle" @click="isSidebarOpen = true">
+        <i class="fas fa-sliders"></i> Фильтры
+      </button>
+    </div>
+
+    <div class="sidebar-overlay" v-if="isSidebarOpen" @click="isSidebarOpen = false"></div>
+
     <div class="layout">
-      <aside class="sidebar">
+      <aside class="sidebar" :class="{ open: isSidebarOpen }">
         <div class="sidebar-title"><h3>Фильтры</h3></div>
         <div class="sidebar-section">
           <h4><i class="fas fa-star"></i> Выбор витрины</h4>
@@ -41,7 +49,7 @@
           <div v-for="p in products" :key="p.id" class="product">
             <RouterLink :to="{ name: 'product', params: { id: p.id } }" class="product-link">
               <div class="preview">
-                <img :src="p.video || p.poster" :alt="p.title" loading="lazy" decoding="async" />
+                <img :src="p.video || p.poster" :alt="p.title" loading="lazy" decoding="async"/>
                 <span class="product-badge" :class="p.badgeClass">{{ p.badge }}</span>
               </div>
               <div class="product-info">
@@ -73,7 +81,12 @@ import {useProducts} from '../stores/products';
 const query = ref('');
 const cart = useCart();
 
-type Product = ReturnType<typeof useProducts>['items'][number] & { poster?: string; badgeClass?: string; colors?: string[]; topics?: string[] };
+type Product = ReturnType<typeof useProducts>['items'][number] & {
+  poster?: string;
+  badgeClass?: string;
+  colors?: string[];
+  topics?: string[]
+};
 
 const products = ref<Product[]>([]);
 const productsStore = useProducts();
@@ -81,6 +94,7 @@ const loading = computed(() => productsStore.loading);
 const error = computed(() => productsStore.error);
 
 const filters = reactive({showcase: [] as string[], colors: [] as string[], topics: [] as string[]});
+const isSidebarOpen = ref(false);
 
 function mapProducts(list: ReturnType<typeof useProducts>['items']): Product[] {
   return list.map(p => ({
@@ -134,17 +148,22 @@ const topics = [
   {id: 'free', label: 'Бесплатные'},
 ];
 
- 
 
 function addToCart(p: Product) {
   cart.add({id: p.id, name: p.title, price: p.price, currency: '₽', image: (p as any).video || p.poster, quantity: 1});
 }
 
 const inCartIds = computed(() => new Set(cart.items.map(i => i.id)));
-function isInCart(id: string) { return inCartIds.value.has(id); }
+
+function isInCart(id: string) {
+  return inCartIds.value.has(id);
+}
 </script>
 
 <style scoped>
+.filters-mobile-bar {
+  display: none;
+}
 .search-container {
   display: flex;
   justify-content: center;
@@ -401,15 +420,22 @@ function isInCart(id: string) { return inCartIds.value.has(id); }
   color: #000;
 }
 
-@media (max-width: 1024px) {
-  .layout { flex-direction: column; }
-  .sidebar { position: static; width: 100%; }
+@media (max-width: 700px) {
+  .layout { position: relative; }
+  .filters-mobile-bar { display: flex; justify-content: center; padding: 0 5%; margin: 10px 0 -10px; }
+  .filters-toggle { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--primary); background: rgba(0, 207, 255, 0.1); color: var(--primary); font-weight: 600; }
+  .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 250; }
+  .sidebar { position: fixed; top: 0; left: 0; height: 100vh; width: 80%; max-width: 320px; transform: translateX(-110%); transition: transform .3s ease; z-index: 300; overflow-y: auto; }
+  .sidebar.open { transform: translateX(0); }
 }
 
 @media (max-width: 640px) {
-  .preview { height: 220px; }
-  .gallery { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 18px; }
-  .search-container { margin: 20px auto; }
+  .preview {
+  }
+
+  .search-container {
+    margin: 20px auto;
+  }
 }
 </style>
 

@@ -65,6 +65,14 @@ function simulateDownload(e: Event) {
 .action-btn { padding: 12px 24px; border-radius: 8px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
 .btn-primary { background: linear-gradient(to right,#00cfff,#3399ff); color: #000; }
 .btn-secondary { background: rgba(0,207,255,0.1); color: var(--primary); border: 1px solid var(--primary); }
+
+@media (max-width: 768px) {
+  .success-container { margin: 30px auto; padding: 0 16px; }
+  .success-card { padding: 24px; }
+  .success-header h1 { font-size: 1.6rem; }
+  .download-header { flex-direction: column; align-items: stretch; gap: 12px; }
+  .file-info { flex-direction: column; }
+}
 </style>
 
 
