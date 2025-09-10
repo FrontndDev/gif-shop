@@ -18,7 +18,7 @@ const router = createRouter({
     { path: '/product/:id', name: 'product', component: Product, props: true },
     { path: '/cart', name: 'cart', component: Cart },
     { path: '/payment', name: 'payment', component: Payment },
-    { path: '/success', name: 'success', component: Success },
+    { path: '/success/:orderId?', name: 'success', component: Success, props: true },
     { path: '/support', name: 'support', component: Support },
     { path: '/order', name: 'order', component: Order },
     { path: '/privacy', name: 'privacy', component: Privacy },

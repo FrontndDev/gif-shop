@@ -43,7 +43,7 @@
             <div class="summary-total"><span>Итого к оплате:</span><span class="total-price">{{ total.toFixed(2) }} ₽</span></div>
           </div>
 
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" class="btn btn-primary" :disabled="submitting || !items.length">
             Перейти к оплате
             <i class="fas fa-arrow-right"></i>
           </button>
@@ -75,24 +75,41 @@ const placeholder = 'https://via.placeholder.com/300x300/0a1e30/00cfff?text=Aero
 const cart = useCart();
 const items = cart.items;
 const total = computed(() => items.reduce((s, i) => s + i.price, 0));
+const submitting = ref(false);
+
+function generateOrderId(): string {
+  try {
+    return crypto.randomUUID();
+  } catch (_) {
+    return 'ord_' + Math.random().toString(36).slice(2) + Date.now();
+  }
+}
 
 function validateEmail(v: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 }
 
 async function onSubmit() {
+  if (!items.length) {
+    alert('Корзина пуста. Добавьте товары перед оплатой.');
+    return;
+  }
   emailError.value = !validateEmail(email.value);
   if (emailError.value) return;
+  submitting.value = true;
+  const orderId = generateOrderId();
+  sessionStorage.setItem('orderId', orderId);
   if (payment.value === 'yookassa') {
     const res = await createPayment({
       amount: Number(total.value.toFixed(2)),
       currency: 'RUB',
       description: `Оплата заказа (${items.length} шт.)`,
-      returnUrl: window.location.origin + '/success',
+      returnUrl: window.location.origin + '/success/' + orderId,
       metadata: {
         email: email.value,
         itemsCount: String(items.length),
-        ids: items.map(i => i.id).join(',')
+        ids: items.map(i => i.id).join(','),
+        orderId
       }
     });
     const url = res?.confirmation?.confirmation_url;
@@ -111,6 +128,7 @@ async function onSubmit() {
   }
   // fallback
   setTimeout(() => router.push('/success'), 500);
+  submitting.value = false;
 }
 </script>
 

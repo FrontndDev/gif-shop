@@ -34,6 +34,22 @@
 
 <script setup lang="ts">
 import Layout from '../components/Layout.vue';
+import { onMounted } from 'vue';
+import { useCart } from '../stores/cart';
+import { useRoute } from 'vue-router';
+
+const route = useRoute();
+const cart = useCart();
+
+onMounted(() => {
+  const paramOrderId = route.params.orderId as string | undefined;
+  const storedOrderId = sessionStorage.getItem('orderId') || undefined;
+  const effectiveOrderId = paramOrderId || storedOrderId;
+  if (effectiveOrderId) {
+    cart.clear();
+    if (storedOrderId) sessionStorage.removeItem('orderId');
+  }
+});
 
 function simulateDownload(e: Event) {
   const btn = e.currentTarget as HTMLButtonElement;
