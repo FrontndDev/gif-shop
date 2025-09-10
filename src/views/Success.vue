@@ -11,15 +11,22 @@
         <div class="download-section">
           <div class="download-header">
             <h2><i class="fas fa-download"></i> Ваши файлы готовы</h2>
-            <button class="download-btn" @click="simulateDownload">
-              <i class="fas fa-file-archive"></i> Скачать архив
-            </button>
+            <div class="download-list" v-if="orderData?.downloads?.length">
+              <a
+                v-for="(d, idx) in orderData.downloads"
+                :key="d.url || idx"
+                class="download-btn"
+                :href="d.url"
+                target="_blank"
+                rel="noopener"
+              >
+                <i class="fas fa-file-arrow-down"></i> Скачать файл {{ idx + 1 }}
+              </a>
+            </div>
           </div>
-          <p class="muted">Архив содержит все необходимые файлы для оформления вашего профиля Steam.</p>
+          <p class="muted">Ссылки для скачивания ваших материалов доступны ниже.</p>
           <div class="file-info">
-            <div class="file-info-item"><i class="fas fa-file"></i> 1 GIF файл</div>
-            <div class="file-info-item"><i class="fas fa-weight-hanging"></i> 2.4 MB</div>
-            <div class="file-info-item"><i class="fas fa-clock"></i> Доступен 30 дней</div>
+            <div class="file-info-item"><i class="fas fa-clock"></i> Ссылки активны 24 часа</div>
           </div>
         </div>
 
@@ -31,10 +38,13 @@
 
       <div class="success-card" v-else>
         <div class="success-header" style="text-align: center;">
-          <div class="success-icon"><i class="fas fa-spinner fa-spin"></i></div>
-          <h1>Подтверждаем оплату…</h1>
+          <div class="success-icon" v-if="status !== 'error'"><i class="fas fa-spinner fa-spin"></i></div>
+          <div class="success-icon" v-else><i class="fas fa-exclamation-triangle"></i></div>
+          <h1 v-if="status !== 'error'">Подтверждаем оплату…</h1>
+          <h1 v-else>Ошибка заказа</h1>
           <p class="muted" v-if="status === 'checking'">Проверяем статус вашего платежа. Это может занять до минуты.</p>
           <p class="muted" v-else-if="status === 'pending'">Платеж еще подтверждается банком. Обновим страницу автоматически, как только YooKassa пришлет подтверждение.</p>
+          <p class="muted" v-else-if="status === 'error'">{{ error || 'Заказ не найден. Проверьте ссылку или свяжитесь с поддержкой.' }}</p>
           <p class="muted" v-else>Не удалось определить статус заказа. Если вы оплатили — обновите страницу позже или свяжитесь с поддержкой.</p>
         </div>
         <div class="action-buttons">
@@ -56,14 +66,16 @@ import { getOrderStatus } from '../lib/api';
 const route = useRoute();
 const cart = useCart();
 
-const status = ref<'checking' | 'paid' | 'pending' | 'unknown'>('checking');
+const status = ref<'checking' | 'paid' | 'pending' | 'unknown' | 'error'>('checking');
 const error = ref<string | null>(null);
+const orderData = ref<Record<string, any> | null>(null);
 let pollTimer: number | undefined;
 
 async function pollStatus(orderId: string) {
   // Первый запрос сразу
   try {
     const order = await getOrderStatus(orderId);
+    orderData.value = order as any;
     if (order?.status === 'paid') { status.value = 'paid'; return; }
   } catch (_) { /* ignore */ }
 
@@ -72,11 +84,25 @@ async function pollStatus(orderId: string) {
   pollTimer = window.setInterval(async () => {
     try {
       const order = await getOrderStatus(orderId);
+      orderData.value = order as any;
       if (order?.status === 'paid') {
         status.value = 'paid';
         if (pollTimer) { clearInterval(pollTimer); pollTimer = undefined; }
       }
-    } catch (_) { /* ignore */ }
+    } catch (e: any) {
+      try {
+        const msg = typeof e?.message === 'string' ? e.message : '';
+        const parsed = msg && msg.trim().startsWith('{') ? JSON.parse(msg) : null;
+        const apiError = parsed?.error || msg;
+        if (apiError && String(apiError).toLowerCase().includes('order not found')) {
+          error.value = 'Заказ не найден. Проверьте ссылку или свяжитесь с поддержкой.';
+          status.value = 'error';
+          if (pollTimer) { clearInterval(pollTimer); pollTimer = undefined; }
+          return;
+        }
+      } catch (_) { /* ignore */ }
+      // прочие ошибки игнорируем, продолжаем поллинг
+    }
   }, 5000);
 }
 
@@ -87,7 +113,29 @@ onMounted(async () => {
   if (effectiveOrderId) {
     cart.clear();
     if (storedOrderId) sessionStorage.removeItem('orderId');
-    await pollStatus(effectiveOrderId);
+    try {
+      // Пробуем сразу получить заказ; если 404 — покажем ошибку и не запускаем поллинг
+      const order = await getOrderStatus(effectiveOrderId);
+      orderData.value = order as any;
+      if (order?.status === 'paid') {
+        status.value = 'paid';
+      } else {
+        await pollStatus(effectiveOrderId);
+      }
+    } catch (e: any) {
+      const msg = typeof e?.message === 'string' ? e.message : '';
+      try {
+        const parsed = msg && msg.trim().startsWith('{') ? JSON.parse(msg) : null;
+        const apiError = parsed?.error || msg;
+        if (apiError && String(apiError).toLowerCase().includes('order not found')) {
+          error.value = 'Заказ не найден. Проверьте ссылку или свяжитесь с поддержкой.';
+          status.value = 'error';
+          return;
+        }
+      } catch (_) { /* ignore */ }
+      // прочие ошибки: остаёмся в checking и запустим поллинг
+      await pollStatus(effectiveOrderId);
+    }
   } else {
     status.value = 'unknown';
   }
@@ -101,18 +149,7 @@ onBeforeRouteLeave(() => {
   if (pollTimer) { clearInterval(pollTimer); pollTimer = undefined; }
 });
 
-function simulateDownload(e: Event) {
-  const btn = e.currentTarget as HTMLButtonElement;
-  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Подготовка файла...';
-  setTimeout(() => {
-    btn.innerHTML = '<i class="fas fa-check"></i> Скачано!';
-    btn.style.background = 'linear-gradient(to right, #4CAF50, #8BC34A)';
-    setTimeout(() => {
-      btn.innerHTML = '<i class="fas fa-file-archive"></i> Скачать архив';
-      btn.style.background = '';
-    }, 3000);
-  }, 1500);
-}
+//
 </script>
 
 <style scoped>
