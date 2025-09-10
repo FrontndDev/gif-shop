@@ -131,7 +131,7 @@ async function onSubmit() {
         (res as any)?.confirmationUrl ||
         (res as any)?.redirectUrl;
       if (url) {
-        // window.location.replace(url);
+        window.location.replace(url);
         return;
       }
       if ((res as any)?.status === 'succeeded' || (res as any)?.paid === true) {
