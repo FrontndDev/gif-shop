@@ -65,9 +65,17 @@ export function createPayment(payload: {
   description?: string;
   returnUrl: string;
   metadata?: Record<string, unknown>;
-}): Promise<{ confirmation?: { confirmation_url?: string } } & Record<string, any>> {
+}): Promise<{ id?: string; confirmation?: { confirmation_url?: string } } & Record<string, any>> {
   return request(`/api/payments/create`, { method: 'POST', body: JSON.stringify(payload) });
 }
+
+// Orders status
+export function getOrderStatus(orderId: string): Promise<{ status: string } & Record<string, any>> {
+  return request(`/api/orders/${orderId}`);
+}
+
+// YooKassa payment status passthrough
+// Removed payment status passthrough from frontend usage per new flow
 
 // PayPal
 export function createPaypalOrder(payload: { amount: number; currency: 'USD' | 'EUR'; }): Promise<{ id: string; links?: Array<{ rel: string; href: string }> }> {

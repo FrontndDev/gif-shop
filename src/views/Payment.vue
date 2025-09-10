@@ -126,8 +126,8 @@ async function onSubmit() {
       return;
     }
   }
-  // fallback
-  setTimeout(() => router.push('/success'), 500);
+  // fallback (например, в тестовом режиме)
+  setTimeout(() => router.push(`/success/${orderId}`), 500);
   submitting.value = false;
 }
 </script>

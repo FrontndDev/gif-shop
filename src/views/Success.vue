@@ -1,7 +1,7 @@
 <template>
   <Layout>
     <div class="success-container">
-      <div class="success-card">
+      <div class="success-card" v-if="status === 'paid'">
         <div class="success-header">
           <div class="success-icon"><i class="fas fa-check-circle"></i></div>
           <h1>Оплата прошла успешно!</h1>
@@ -28,27 +28,77 @@
           <RouterLink to="/shop" class="action-btn btn-secondary"><i class="fas fa-store"></i> Вернуться в магазин</RouterLink>
         </div>
       </div>
+
+      <div class="success-card" v-else>
+        <div class="success-header" style="text-align: center;">
+          <div class="success-icon"><i class="fas fa-spinner fa-spin"></i></div>
+          <h1>Подтверждаем оплату…</h1>
+          <p class="muted" v-if="status === 'checking'">Проверяем статус вашего платежа. Это может занять до минуты.</p>
+          <p class="muted" v-else-if="status === 'pending'">Платеж еще подтверждается банком. Обновим страницу автоматически, как только YooKassa пришлет подтверждение.</p>
+          <p class="muted" v-else>Не удалось определить статус заказа. Если вы оплатили — обновите страницу позже или свяжитесь с поддержкой.</p>
+        </div>
+        <div class="action-buttons">
+          <RouterLink to="/support" class="action-btn btn-primary"><i class="fas fa-life-ring"></i> Поддержка</RouterLink>
+          <RouterLink to="/shop" class="action-btn btn-secondary"><i class="fas fa-store"></i> Магазин</RouterLink>
+        </div>
+      </div>
     </div>
   </Layout>
 </template>
 
 <script setup lang="ts">
 import Layout from '../components/Layout.vue';
-import { onMounted } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { useCart } from '../stores/cart';
-import { useRoute } from 'vue-router';
+import { useRoute, onBeforeRouteLeave } from 'vue-router';
+import { getOrderStatus } from '../lib/api';
 
 const route = useRoute();
 const cart = useCart();
 
-onMounted(() => {
+const status = ref<'checking' | 'paid' | 'pending' | 'unknown'>('checking');
+const error = ref<string | null>(null);
+let pollTimer: number | undefined;
+
+async function pollStatus(orderId: string) {
+  // Первый запрос сразу
+  try {
+    const order = await getOrderStatus(orderId);
+    if (order?.status === 'paid') { status.value = 'paid'; return; }
+  } catch (_) { /* ignore */ }
+
+  // Далее каждые 5 секунд
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = undefined; }
+  pollTimer = window.setInterval(async () => {
+    try {
+      const order = await getOrderStatus(orderId);
+      if (order?.status === 'paid') {
+        status.value = 'paid';
+        if (pollTimer) { clearInterval(pollTimer); pollTimer = undefined; }
+      }
+    } catch (_) { /* ignore */ }
+  }, 5000);
+}
+
+onMounted(async () => {
   const paramOrderId = route.params.orderId as string | undefined;
   const storedOrderId = sessionStorage.getItem('orderId') || undefined;
   const effectiveOrderId = paramOrderId || storedOrderId;
   if (effectiveOrderId) {
     cart.clear();
     if (storedOrderId) sessionStorage.removeItem('orderId');
+    await pollStatus(effectiveOrderId);
+  } else {
+    status.value = 'unknown';
   }
+});
+
+onUnmounted(() => {
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = undefined; }
+});
+
+onBeforeRouteLeave(() => {
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = undefined; }
 });
 
 function simulateDownload(e: Event) {
@@ -70,7 +120,7 @@ function simulateDownload(e: Event) {
 .success-card { background: rgba(0,15,30,0.7); border-radius: 16px; border: 1px solid rgba(0,207,255,0.2); padding: 40px; }
 .success-header { text-align: center; margin-bottom: 30px; }
 .success-icon { font-size: 5rem; color: var(--primary); margin-bottom: 20px; }
-.success-header h1 { font-size: 2.2rem; background: linear-gradient(90deg,#00cfff,#3399ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 15px; font-weight: 800; }
+.success-header h1 { font-size: 2.2rem; background: linear-gradient(90deg,#00cfff,#3399ff); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 15px; font-weight: 800; }
 .muted { color: rgba(255,255,255,0.7); }
 .download-section { background: rgba(0,207,255,0.05); border: 1px dashed rgba(0,207,255,0.3); border-radius: 12px; padding: 25px; margin-bottom: 30px; }
 .download-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
