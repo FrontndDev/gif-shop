@@ -65,7 +65,7 @@ import Layout from '../components/Layout.vue';
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useCart } from '../stores/cart';
-import { createPayment, createPaypalOrder } from '../lib/api';
+import { createPayment, createPaypalOrder, createOrder } from '../lib/api';
 
 const router = useRouter();
 const email = ref('');
@@ -76,14 +76,6 @@ const cart = useCart();
 const items = cart.items;
 const total = computed(() => items.reduce((s, i) => s + i.price, 0));
 const submitting = ref(false);
-
-function generateOrderId(): string {
-  try {
-    return crypto.randomUUID();
-  } catch (_) {
-    return 'ord_' + Math.random().toString(36).slice(2) + Date.now();
-  }
-}
 
 function validateEmail(v: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -97,25 +89,60 @@ async function onSubmit() {
   emailError.value = !validateEmail(email.value);
   if (emailError.value) return;
   submitting.value = true;
-  const orderId = generateOrderId();
+  // 1) Создаем заказ на бэкенде (pending)
+  const orderPayload = {
+    name: 'Store purchase',
+    telegramDiscord: email.value || 'unknown',
+    steamProfile: '-',
+    style: 'store',
+    colorTheme: 'store',
+    details: JSON.stringify({
+      items: items.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+      total: Number(total.value.toFixed(2)),
+      email: email.value
+    })
+  };
+  const created = await createOrder(orderPayload as any);
+  const orderId = (created as any)?.id as string;
+  if (!orderId) {
+    alert('Не удалось создать заказ. Попробуйте позже.');
+    submitting.value = false;
+    return;
+  }
   sessionStorage.setItem('orderId', orderId);
   if (payment.value === 'yookassa') {
-    const res = await createPayment({
-      amount: Number(total.value.toFixed(2)),
-      currency: 'RUB',
-      description: `Оплата заказа (${items.length} шт.)`,
-      returnUrl: window.location.origin + '/success/' + orderId,
-      metadata: {
-        email: email.value,
-        itemsCount: String(items.length),
-        ids: items.map(i => i.id).join(','),
-        orderId
+    try {
+      const res = await createPayment({
+        amount: Number(total.value.toFixed(2)),
+        currency: 'RUB',
+        description: `Оплата заказа (${items.length} шт.)`,
+        returnUrl: window.location.origin + '/success/' + orderId,
+        metadata: {
+          email: email.value,
+          itemsCount: String(items.length),
+          ids: items.map(i => i.id).join(','),
+          orderId
+        }
+      });
+      const url =
+        res?.confirmation?.confirmation_url ||
+        (res as any)?.confirmation?.url ||
+        (res as any)?.confirmation_url ||
+        (res as any)?.confirmationUrl ||
+        (res as any)?.redirectUrl;
+      if (url) {
+        // window.location.replace(url);
+        return;
       }
-    });
-    const url = res?.confirmation?.confirmation_url;
-    if (url) {
-      window.location.href = url;
-      return;
+      if ((res as any)?.status === 'succeeded' || (res as any)?.paid === true) {
+        await router.push(`/success/${orderId}`);
+        return;
+      }
+      console.error('Не удалось получить ссылку на оплату. Ответ:', res);
+      alert('Не удалось получить ссылку на оплату. Попробуйте позже.');
+    } catch (e: any) {
+      console.error('Ошибка создания платежа:', e);
+      alert(e?.message || 'Ошибка создания платежа');
     }
   }
   if (payment.value === 'paypal') {
