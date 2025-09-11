@@ -227,6 +227,7 @@ const colors = [
   {id: 'red', label: 'Красный', color: '#ff3e3e'},
   {id: 'blue', label: 'Синий', color: '#3e7dff'},
   {id: 'black', label: 'Черный', color: '#000000'},
+  {id: 'black-white', label: 'Чёрно-белый', color: 'linear-gradient(90deg, #000 50%, #fff 50%)'},
   {id: 'purple', label: 'Фиолетовый', color: '#9c4dff'},
   {id: 'pink', label: 'Розовый', color: '#ff4d8d'},
   {id: 'green', label: 'Зелёный', color: '#4dff7d'},
