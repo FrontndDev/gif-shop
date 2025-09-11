@@ -22,7 +22,7 @@ const baseUrl = import.meta.env?.VITE_API_URL || '';
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${baseUrl}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...(init?.headers || {}) },
+    headers: {'Content-Type': 'application/json', ...(init?.headers || {})},
     ...init
   });
   if (!res.ok) {
@@ -32,12 +32,18 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export function getProducts(params?: { showcase?: string | string[]; profileColor?: string | string[]; theme?: string | string[] }): Promise<ApiProduct[]> {
+export function getProducts(params?: {
+  showcase?: string | string[];
+  profileColor?: string | string[];
+  theme?: string | string[]
+}): Promise<ApiProduct[]> {
   const search = new URLSearchParams();
   const appendParam = (key: string, value?: string | string[]) => {
     if (!value) return;
     if (Array.isArray(value)) {
-      value.forEach(v => { if (v) search.append(key, v); });
+      value.forEach(v => {
+        if (v) search.append(key, v);
+      });
     } else {
       search.append(key, value);
     }
@@ -50,12 +56,35 @@ export function getProducts(params?: { showcase?: string | string[]; profileColo
   return request<ApiProduct[]>(path);
 }
 
+export function getProductsPaged(params: {
+  page: number;
+  per?: number;
+  showcase?: string | string[];
+  profileColor?: string | string[];
+  theme?: string | string[]
+}): Promise<{ items: ApiProduct[]; total: number; page: number; per: number; pages: number }> {
+  const search = new URLSearchParams();
+  search.set('page', String(params.page));
+  if (params.per) search.set('per', String(params.per));
+  const appendParam = (key: string, value?: string | string[]) => {
+    if (!value) return;
+    if (Array.isArray(value)) value.forEach(v => {
+      if (v) search.append(key, v);
+    }); else search.append(key, value);
+  };
+  appendParam('showcase', params?.showcase);
+  appendParam('profileColor', params?.profileColor);
+  appendParam('theme', params?.theme);
+  const qs = search.toString();
+  return request(`/api/products?${qs}`);
+}
+
 export function getProductById(id: string): Promise<ApiProduct> {
   return request<ApiProduct>(`/api/products/${id}`);
 }
 
 export function createOrder(payload: CreateOrderRequest): Promise<{ id: string } & Record<string, unknown>> {
-  return request(`/api/orders`, { method: 'POST', body: JSON.stringify(payload) });
+  return request(`/api/orders`, {method: 'POST', body: JSON.stringify(payload)});
 }
 
 // Payments
@@ -66,7 +95,7 @@ export function createPayment(payload: {
   returnUrl: string;
   metadata?: Record<string, unknown>;
 }): Promise<{ id?: string; confirmation?: { confirmation_url?: string } } & Record<string, any>> {
-  return request(`/api/payments/create`, { method: 'POST', body: JSON.stringify(payload) });
+  return request(`/api/payments/create`, {method: 'POST', body: JSON.stringify(payload)});
 }
 
 // Orders status
@@ -78,17 +107,20 @@ export function getOrderStatus(orderId: string): Promise<{ status: string } & Re
 // Removed payment status passthrough from frontend usage per new flow
 
 // PayPal
-export function createPaypalOrder(payload: { amount: number; currency: 'USD' | 'EUR'; }): Promise<{ id: string; links?: Array<{ rel: string; href: string }> }> {
-  return request(`/api/paypal/orders/create`, { method: 'POST', body: JSON.stringify(payload) });
+export function createPaypalOrder(payload: { amount: number; currency: 'USD' | 'EUR'; }): Promise<{
+  id: string;
+  links?: Array<{ rel: string; href: string }>
+}> {
+  return request(`/api/paypal/orders/create`, {method: 'POST', body: JSON.stringify(payload)});
 }
 
 export function capturePaypalOrder(orderId: string): Promise<Record<string, any>> {
-  return request(`/api/paypal/orders/${orderId}/capture`, { method: 'POST' });
+  return request(`/api/paypal/orders/${orderId}/capture`, {method: 'POST'});
 }
 
 // Telegram order relay
 export function sendTelegramOrder(payload: CreateOrderRequest): Promise<{ ok: boolean } & Record<string, any>> {
-  return request(`/api/telegram/order`, { method: 'POST', body: JSON.stringify(payload) });
+  return request(`/api/telegram/order`, {method: 'POST', body: JSON.stringify(payload)});
 }
 
 
