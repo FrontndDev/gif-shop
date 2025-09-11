@@ -32,8 +32,6 @@
 
         <div class="summary-details">
           <div class="summary-row"><span>Подытог:</span><span>{{ total.toFixed(2) }} ₽</span></div>
-          <div class="summary-row"><span>Скидка:</span><span style="color:#00d26a">0 ₽</span></div>
-          <div class="summary-row"><span>Налог:</span><span>0 ₽</span></div>
           <div class="summary-total"><span>Итого:</span><span class="total-amount">{{ total.toFixed(2) }} ₽</span></div>
         </div>
       </aside>
@@ -262,6 +260,15 @@ onMounted(async () => {
   padding: 25px;
   border-radius: 16px;
   border: 1px solid rgba(0, 207, 255, 0.2);
+}
+
+.payment-section {
+  background: rgba(0, 15, 30, 0.45);
+  padding: 25px;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 207, 255, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .order-summary h3 {
