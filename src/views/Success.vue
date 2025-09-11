@@ -161,6 +161,7 @@ onBeforeRouteLeave(() => {
 .muted { color: rgba(255,255,255,0.7); }
 .download-section { background: rgba(0,207,255,0.05); border: 1px dashed rgba(0,207,255,0.3); border-radius: 12px; padding: 25px; margin-bottom: 30px; }
 .download-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.download-list { display: flex; gap: 10px; flex-wrap: wrap; }
 .download-btn { background: linear-gradient(to right,#00cfff,#3399ff); color: #000; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
 .file-info { display: flex; gap: 15px; margin-top: 15px; }
 .file-info-item { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px 15px; display: flex; align-items: center; gap: 8px; font-size: .9rem; }

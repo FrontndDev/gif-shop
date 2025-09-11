@@ -28,7 +28,7 @@ export function useCart() {
     persist();
   }
   function clear() {
-    state.items = [];
+    state.items.length = 0;
     persist();
   }
   return {

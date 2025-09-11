@@ -64,8 +64,8 @@ import { computed } from 'vue';
 import { useCart } from '../stores/cart';
 
 const cart = useCart();
-const items = cart.items;
-const total = computed(() => items.reduce((s, i) => s + i.price, 0));
+const items = computed(() => cart.items);
+const total = computed(() => items.value.reduce((s, i) => s + i.price, 0));
 const placeholder = 'https://via.placeholder.com/80x80/0a1e30/00cfff?text=Product';
 
 function remove(index: number) { cart.removeByIndex(index); }
