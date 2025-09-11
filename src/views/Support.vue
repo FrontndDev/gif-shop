@@ -2,7 +2,7 @@
   <Layout>
     <div class="page-header">
       <h2>Центр помощи AeroDesign</h2>
-      <p>Подробные инструкции и ответы на все вопросы по установке оформления</p>
+      <p>Подробные инструкции по загрузке и ответы на все частые вопросы</p>
     </div>
 
     <div class="help-container">
@@ -13,11 +13,10 @@
         <div class="faq-item">
           <div class="faq-question" :class="{ active: openFaqIndex === 0 }" @click="toggleFaq(0)">
             <i class="fas fa-chevron-right"></i>
-            <span>Как купить оформление в магазине?</span>
+            <span>Можно ли изменить никнейм, фон или другие элементы оформления?</span>
           </div>
           <div class="faq-answer" :class="{ show: openFaqIndex === 0 }">
-            <p>1. Выберите понравившееся оформление в нашем магазине<br>2. Нажмите кнопку "В корзину"<br>3. Перейдите в
-              корзину и оформите заказ<br>4. После оплаты вы получите инструкцию по установке</p>
+            <p>Да, это возможно. После покупки вы можете связаться с нами через контакты, указанные внизу страницы, и уточнить, что именно нужно поменять (ник, фон или другие детали). Мы поможем сделать кастомизацию под вас.</p>
           </div>
         </div>
 
@@ -27,19 +26,17 @@
             <span>Какие способы оплаты доступны?</span>
           </div>
           <div class="faq-answer" :class="{ show: openFaqIndex === 1 }">
-            <p>Мы принимаем:<br>- Банковские карты (Visa, Mastercard, Мир)<br>- ЮMoney<br>- Qiwi<br>- Криптовалюту (BTC,
-              ETH, USDT)<br>- Другие способы по согласованию</p>
+            <p>Мы принимаем:<br>- Банковские карты (Visa, Mastercard, Мир)<br>- Криптовалюту (BTC, ETH, USDT)<br>- Другие способы по согласованию</p>
           </div>
         </div>
 
         <div class="faq-item">
           <div class="faq-question" :class="{ active: openFaqIndex === 2 }" @click="toggleFaq(2)">
             <i class="fas fa-chevron-right"></i>
-            <span>Можно ли вернуть оформление?</span>
+            <span>Изображение некорректно отображается в витрине?</span>
           </div>
           <div class="faq-answer" :class="{ show: openFaqIndex === 2 }">
-            <p>Цифровые товары возврату не подлежат, если они были скачаны. В случае технических проблем мы поможем
-              решить их или предложим замену.</p>
+            <p>Мы подготовили инструкцию с решениями основных проблем ниже на странице. Если после этого изображение всё ещё ставится неправильно — свяжитесь с нами, контакты указаны внизу сайта.</p>
           </div>
         </div>
       </div>
@@ -89,10 +86,20 @@
             </video>
           </div>
 
-          <div class="pro-tip">
-            <h5><i class="fas fa-lightbulb"></i> Важно!</h5>
-            <p>Некоторые пользователи загружают GIF в "Витрину иллюстраций". Обязательно выбирайте "Витрину избранных"
-              для корректного отображения лишь 1 GIF файла.</p>
+          <div class="pro-tip compact">
+            <h5><i class="fas fa-lightbulb"></i> Решение распространенной проблемы</h5>
+            <div class="problem-image-container">
+              <img :src="problemImage" alt="Пример проблемы с выбором витрины" class="problem-image" />
+              <div class="image-caption">Неправильно выбрана витрина</div>
+            </div>
+            <div class="solution-steps">
+              <h5><i class="fas fa-check-circle"></i> Как исправить:</h5>
+              <ol>
+                <li>Убедитесь, что выбрана <strong>"Витрина избранных иллюстраций"</strong></li>
+                <li>Проверьте размеры изображения после загрузки (1000x1)</li>
+                <li>Используйте расширение для автоматической загрузки</li>
+              </ol>
+            </div>
           </div>
         </div>
 
@@ -195,6 +202,7 @@
 import {ref} from 'vue';
 import Layout from '../components/Layout.vue';
 import primerGif from '../../primerru.gif';
+import problemImage from '../../ProblebaRu.png';
 
 const isCopied1 = ref(false);
 const isCopied2 = ref(false);
@@ -404,6 +412,20 @@ function toggleFaq(index: number) {
   height: auto;
   display: block;
 }
+
+/* Улучшенное отображение изображения проблемы */
+.problem-image-container { position: relative; margin: 15px 0; text-align: center; }
+.problem-image { max-width: 100%; border-radius: 10px; border: 2px solid rgba(0, 207, 255, 0.4); box-shadow: 0 5px 20px rgba(0, 207, 255, 0.2); }
+.image-caption { font-size: 0.9rem; color: var(--primary); margin-top: 10px; text-align: center; padding: 6px 12px; background: rgba(0, 207, 255, 0.1); border-radius: 6px; display: inline-block; }
+
+.solution-steps { background: rgba(0, 207, 255, 0.1); border-left: 3px solid var(--primary); padding: 15px; margin-top: 15px; border-radius: 0 10px 10px 0; }
+.solution-steps h5 { color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; font-size: 1.1rem; }
+.solution-steps ol { padding-left: 20px; color: rgba(255, 255, 255, 0.8); margin: 0; }
+.solution-steps li { margin-bottom: 8px; line-height: 1.4; font-size: 0.95rem; }
+.solution-steps strong { color: var(--primary); }
+
+.pro-tip.compact { padding: 12px; margin-top: 15px; }
+.pro-tip.compact h5 { margin-bottom: 8px; font-size: 1.1rem; }
 
 .pro-tip {
   background: rgba(0, 207, 255, 0.1);
