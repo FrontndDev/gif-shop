@@ -14,7 +14,7 @@
           <button class="btn btn-cart" :class="{ 'in-cart': isInCart }" @click="addToCart">
             <i class="fas fa-cart-plus"></i> {{ isInCart ? 'В корзине' : 'В корзину' }}
           </button>
-          <RouterLink class="btn btn-buy" to="/payment">
+          <RouterLink class="btn btn-buy" :to="{ name: 'payment', params: { productId: product.id } }">
             <i class="fas fa-credit-card"></i> Купить
           </RouterLink>
         </div>
@@ -31,7 +31,23 @@
       </div>
     </main>
     <div v-else class="fallback">
-      <div class="status" v-if="loading">Загрузка…</div>
+      <div v-if="loading" class="loader">
+        <div class="loader-preview shimmer"></div>
+        <div class="loader-info">
+          <div class="bar title shimmer"></div>
+          <div class="bar shimmer"></div>
+          <div class="bar w60 shimmer"></div>
+          <div class="buttons">
+            <div class="btn-skel shimmer"></div>
+            <div class="btn-skel shimmer"></div>
+          </div>
+          <div class="lines">
+            <div class="line shimmer"></div>
+            <div class="line shimmer"></div>
+            <div class="line w70 shimmer"></div>
+          </div>
+        </div>
+      </div>
       <div class="status error" v-else-if="error">{{ error }}</div>
       <div class="status" v-else>Товар не найден</div>
     </div>
@@ -96,6 +112,34 @@ const isInCart = computed(() => !!cart.items.find(i => i.id === (product.value?.
 .features { margin-top: 10px; padding-left: 0; list-style: none; }
 .features li { margin-bottom: 12px; padding-left: 28px; position: relative; }
 .features li::before { content: "\f00c"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: var(--primary); position: absolute; left: 0; top: 2px; }
+
+.fallback { max-width: 1200px; margin: 40px auto; padding: 0 5%; }
+.loader { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+.loader-preview { border-radius: 16px; background: rgba(255,255,255,0.06); height: 0; padding-top: 56%; border: 1px solid rgba(0,207,255,0.2); }
+.loader-info { background: rgba(0, 15, 30, 0.45); padding: 30px; border-radius: 16px; border: 1px solid rgba(0,207,255,0.2); }
+.bar { height: 22px; border-radius: 6px; background: rgba(255,255,255,0.06); margin-bottom: 14px; }
+.bar.title { height: 28px; width: 70%; }
+.bar.w60 { width: 60%; }
+.buttons { display: flex; gap: 12px; margin: 16px 0; }
+.btn-skel { height: 40px; width: 140px; border-radius: 8px; background: rgba(255,255,255,0.06); }
+.lines { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+.line { height: 10px; border-radius: 6px; background: rgba(255,255,255,0.06); }
+.line.w70 { width: 70%; }
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.16) 37%, rgba(255,255,255,0.06) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@media (max-width: 768px) {
+  .loader { grid-template-columns: 1fr; gap: 20px; }
+  .loader-info { padding: 20px; }
+}
 
 @media (max-width: 768px) {
   .main { gap: 24px; margin: 20px auto; }

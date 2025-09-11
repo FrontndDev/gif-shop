@@ -7,7 +7,16 @@
           <p>Выберите удобный способ оплаты</p>
         </div>
 
-        <div class="product" v-if="items.length">
+        <div class="product skeleton" v-if="loadingProduct">
+          <div class="skeleton-image shimmer"></div>
+          <div class="product-info">
+            <div class="skeleton-line title shimmer"></div>
+            <div class="skeleton-line shimmer"></div>
+            <div class="skeleton-line w50 shimmer"></div>
+          </div>
+        </div>
+
+        <div class="product" v-else-if="items.length">
           <span class="product-badge">К оплате</span>
           <img :src="items[0].image || placeholder" alt="Товар" class="product-image" />
           <div class="product-info">
@@ -44,8 +53,13 @@
           </div>
 
           <button type="submit" class="btn btn-primary" :disabled="submitting || !items.length">
-            Перейти к оплате
-            <i class="fas fa-arrow-right"></i>
+            <template v-if="submitting">
+              <i class="fas fa-spinner fa-spin"></i> Обработка…
+            </template>
+            <template v-else>
+              Перейти к оплате
+              <i class="fas fa-arrow-right"></i>
+            </template>
           </button>
 
           <p class="notes">
@@ -62,19 +76,27 @@
 
 <script setup lang="ts">
 import Layout from '../components/Layout.vue';
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { useCart } from '../stores/cart';
-import { createPayment, createPaypalOrder, createOrder } from '../lib/api';
+import { createPayment, createPaypalOrder, createOrder, getProductById, type ApiProduct } from '../lib/api';
 
+const route = useRoute();
 const router = useRouter();
 const email = ref('');
 const emailError = ref(false);
 const payment = ref<'paypal' | 'yookassa'>('yookassa');
 const placeholder = 'https://via.placeholder.com/300x300/0a1e30/00cfff?text=AeroDesign';
 const cart = useCart();
-const items = cart.items;
-const total = computed(() => items.reduce((s, i) => s + i.price, 0));
+const selectedProduct = ref<ApiProduct | null>(null);
+const loadingProduct = ref(false);
+const items = computed(() => {
+  if (selectedProduct.value) {
+    return [{ id: selectedProduct.value.id, name: selectedProduct.value.title, price: selectedProduct.value.price, currency: '₽', image: (selectedProduct.value as any).video, quantity: 1 }];
+  }
+  return cart.items;
+});
+const total = computed(() => items.value.reduce((s: number, i: any) => s + i.price, 0));
 const submitting = ref(false);
 
 function validateEmail(v: string) {
@@ -82,7 +104,7 @@ function validateEmail(v: string) {
 }
 
 async function onSubmit() {
-  if (!items.length) {
+  if (!items.value.length) {
     alert('Корзина пуста. Добавьте товары перед оплатой.');
     return;
   }
@@ -97,7 +119,7 @@ async function onSubmit() {
     style: 'store',
     colorTheme: 'store',
     details: JSON.stringify({
-      items: items.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+      items: items.value.map((i: any) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
       total: Number(total.value.toFixed(2)),
       email: email.value
     })
@@ -115,12 +137,12 @@ async function onSubmit() {
       const res = await createPayment({
         amount: Number(total.value.toFixed(2)),
         currency: 'RUB',
-        description: `Оплата заказа (${items.length} шт.)`,
+        description: `Оплата заказа (${items.value.length} шт.)`,
         returnUrl: window.location.origin + '/success/' + orderId,
         metadata: {
           email: email.value,
-          itemsCount: String(items.length),
-          ids: items.map(i => i.id).join(','),
+          itemsCount: String(items.value.length),
+          ids: items.value.map((i: any) => i.id).join(','),
           orderId
         }
       });
@@ -157,6 +179,20 @@ async function onSubmit() {
   setTimeout(() => router.push(`/success/${orderId}`), 500);
   submitting.value = false;
 }
+
+onMounted(async () => {
+  const pid = route.params.productId as string | undefined;
+  if (pid) {
+    try {
+      loadingProduct.value = true;
+      selectedProduct.value = await getProductById(pid);
+    } catch {
+      selectedProduct.value = null;
+    } finally {
+      loadingProduct.value = false;
+    }
+  }
+});
 </script>
 
 <style scoped>
@@ -197,6 +233,21 @@ async function onSubmit() {
   .card-header h2 { font-size: 1.4rem; }
   .summary { padding: 16px; }
   .product { padding: 14px; }
+}
+
+/* Skeleton */
+.skeleton-image { width: 120px; height: 120px; border-radius: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(0,207,255,0.2); }
+.skeleton-line { height: 14px; border-radius: 6px; background: rgba(255,255,255,0.06); margin: 8px 0; width: 80%; }
+.skeleton-line.title { height: 18px; width: 60%; }
+.skeleton-line.w50 { width: 50%; }
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.16) 37%, rgba(255,255,255,0.06) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
 }
 </style>
 
