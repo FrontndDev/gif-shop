@@ -50,7 +50,7 @@
             <RouterLink :to="{ name: 'product', params: { id: p.id } }" class="product-link">
               <div class="preview">
                 <img :src="p.video || p.poster" :alt="p.title" loading="lazy" decoding="async"/>
-                <span class="product-badge" :class="p.badgeClass">{{ p.badge }}</span>
+                <span v-if="p?.badge" class="product-badge" :class="p.badgeClass">{{ p.badge }}</span>
               </div>
               <div class="product-info">
                 <h3 class="product-title">{{ p.title }}</h3>
