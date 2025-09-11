@@ -3,126 +3,173 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Оплата | AeroDesign</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>AeroDesign | Оплата</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
       --primary: #00cfff;
-      --primary-dark: #00a8d9;
       --accent: #ffffff;
-      --dark-bg: #0a0a0d;
-      --card-bg: #141820;
-      --border-color: rgba(0, 207, 255, 0.2);
-      --text-secondary: #aaa;
-      --success: #4dff7d;
-      --error: #ff4d4d;
-      --warning: #ffc107;
+      --dark-bg: #000013;
+      --card-bg: linear-gradient(145deg, #0a1e30, #06121e);
+      --text-light: #e0f7ff;
+      --badge-new: #ff4d8d;
+      --badge-hit: #00cfff;
+      --badge-sale: #ff9f43;
+      --badge-exclusive: #9c4dff;
+      --success: #00d26a;
+      --warning: #ff9f43;
+      --error: #ff4d8d;
     }
     
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
     }
     
     body {
       font-family: 'Montserrat', sans-serif;
-      background-color: var(--dark-bg);
+      background-color: #000;
       color: white;
+      overflow-x: hidden;
       min-height: 100vh;
-      background: radial-gradient(ellipse at top left, #151924, #0a0a0d);
-      overscroll-behavior: none;
-      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
     }
-
-    /* Анимированный фон (частицы) */
-    #particles-js {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      z-index: -1;
-      background-color: var(--dark-bg);
+    
+    body.loaded .preloader {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
     }
-
-    /* Анимированный прелоадер */
+    
     .preloader {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: var(--dark-bg);
+      background: #000;
       z-index: 9999;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
       transition: opacity 0.5s ease;
     }
     
-    .preloader.fade-out {
-      opacity: 0;
-      pointer-events: none;
+    .preloader-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
+    
+    .preloader-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.5rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    
+    .preloader-logo .logo-icon {
+      font-size: 2rem;
+      color: var(--primary);
     }
     
     .spinner {
-      width: 50px;
-      height: 50px;
-      border: 3px solid rgba(0, 207, 255, 0.3);
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+    
+    .spinner-sector {
+      position: absolute;
+      width: 100%;
+      height: 100%;
       border-radius: 50%;
+      border: 8px solid transparent;
+      animation: rotate 1.5s ease-in-out infinite;
+    }
+    
+    .spinner-sector-blue {
       border-top-color: var(--primary);
-      animation: spin 1s ease-in-out infinite;
-      margin-bottom: 20px;
+      animation-delay: 0.1s;
     }
     
-    .preloader-text {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-      animation: pulse 2s infinite;
+    .spinner-sector-white {
+      border-top-color: var(--accent);
+      animation-delay: 0.2s;
     }
     
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    @keyframes rotate {
+      0% { transform: rotate(0); }
+      100% { transform: rotate(360deg); }
     }
     
-    @keyframes pulse {
-      0%, 100% { opacity: 0.6; }
-      50% { opacity: 1; }
+    #particles-js {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1000;
+      background-color: #000013;
+      background-image: linear-gradient(to bottom, #000013 0%, #000025 100%);
     }
     
-    /* Хедер с анимацией при скролле */
+    .glow-effect {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+      filter: blur(100px);
+      z-index: -999;
+      pointer-events: none;
+      opacity: 0.15;
+    }
+    
+    .glow-effect:nth-child(1) {
+      top: 20%;
+      left: 10%;
+    }
+    
+    .glow-effect:nth-child(2) {
+      width: 200px;
+      height: 200px;
+      bottom: 15%;
+      right: 8%;
+      background: radial-gradient(circle, var(--accent), transparent 70%);
+      filter: blur(80px);
+    }
+    
     header {
-      padding: 20px 5%;
-      display: flex;
-      justify-content: space-between;
+      display: flex; 
+      justify-content: space-between; 
       align-items: center;
-      background: rgba(10, 10, 13, 0.95);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border-color);
-      position: sticky;
+      padding: 20px 5%;
+      background: rgba(0, 10, 20, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+      position: sticky; 
       top: 0;
       z-index: 100;
-      transition: all 0.3s ease;
-    }
-    
-    header.scrolled {
-      padding: 15px 5%;
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(0, 207, 255, 0.2);
     }
     
     .logo {
       display: flex;
       align-items: center;
-      gap: 10px;
-      text-decoration: none;
+      gap: 12px;
     }
     
     .logo-icon {
       font-size: 1.8rem;
       color: var(--primary);
+      margin-right: 10px;
       transition: transform 0.5s ease;
     }
     
@@ -130,43 +177,117 @@
       transform: rotate(15deg) scale(1.1);
     }
     
-    .logo-text {
-      font-size: 1.5rem;
-      font-weight: 700;
+    header h1 {
+      font-size: 2rem;
       background: linear-gradient(90deg, #00cfff, #3399ff);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      letter-spacing: 0.5px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
     
-    .back-btn {
+    nav {
       display: flex;
       align-items: center;
-      gap: 8px;
-      color: var(--primary);
+      gap: 30px;
+    }
+    
+    nav a {
+      color: #99ccff;
       text-decoration: none;
       font-weight: 500;
       transition: all 0.3s ease;
-      padding: 8px 12px;
-      border-radius: 6px;
+      position: relative;
+      padding: 8px 0;
+      font-size: 0.95rem;
+    }
+    
+    nav a.active {
+      color: white;
+    }
+    
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+    
+    nav a:hover::after, nav a.active::after {
+      width: 100%;
+    }
+    
+    nav a:hover {
+      color: white;
+    }
+    
+    .cart-btn {
       background: rgba(0, 207, 255, 0.1);
+      border: 1px solid var(--primary);
+      border-radius: 8px;
+      padding: 8px 16px;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      font-size: 0.95rem;
     }
     
-    .back-btn:hover {
-      background: rgba(0, 207, 255, 0.2);
-      transform: translateX(-3px);
+    .cart-btn:hover {
+      background: var(--primary);
+      color: #000;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 207, 255, 0.4);
     }
     
-    .back-btn:active {
-      transform: translateX(0);
+    .cart-count {
+      background: var(--accent);
+      color: #000;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: bold;
+      transition: transform 0.3s ease;
     }
     
-    /* Основной контент с анимацией появления */
-    .container {
-      max-width: 800px;
-      margin: 40px auto;
+    .cart-btn:hover .cart-count {
+      transform: scale(1.2);
+    }
+    
+    .page-header {
+      max-width: 1200px;
+      margin: 30px auto;
       padding: 0 5%;
-      animation: fadeIn 0.8s ease-out;
+      text-align: center;
+      animation: fadeIn 0.8s ease-out 0.5s both;
+    }
+    
+    .page-header h2 {
+      font-size: 2.2rem;
+      background: linear-gradient(90deg, #00cfff, #3399ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 15px;
+      font-weight: 800;
+    }
+    
+    .page-header p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1rem;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
     }
     
     @keyframes fadeIn {
@@ -174,166 +295,186 @@
       to { opacity: 1; transform: translateY(0); }
     }
     
-    /* Карточка с эффектом неонового свечения */
-    .card {
-      background: var(--card-bg);
-      border-radius: 16px;
-      padding: 30px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      border: 1px solid var(--border-color);
-      margin-bottom: 30px;
-      position: relative;
-      overflow: hidden;
+    .payment-container {
+      max-width: 1000px;
+      margin: 0 auto 50px;
+      padding: 0 5%;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 30px;
     }
     
-    .card::before {
+    @media (max-width: 968px) {
+      .payment-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .order-summary {
+      background: rgba(0, 15, 30, 0.45);
+      padding: 25px;
+      border-radius: 16px;
+      border: 1px solid rgba(0, 207, 255, 0.2);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      animation: fadeIn 0.8s ease-out 0.4s both;
+      height: fit-content;
+      position: sticky;
+      top: 90px;
+    }
+    
+    .order-summary h3 {
+      color: var(--primary);
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      position: relative;
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .order-summary h3::after {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(0,207,255,0.1) 0%, transparent 70%);
-      z-index: -1;
-      pointer-events: none;
+      bottom: 0;
+      left: 0;
+      width: 50px;
+      height: 2px;
+      background: var(--primary);
     }
     
-    .card-header {
-      margin-bottom: 25px;
-      position: relative;
-    }
-    
-    .card-header h2 {
-      font-size: 1.8rem;
-      margin-bottom: 10px;
-      background: linear-gradient(90deg, #00cfff, #3399ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-weight: 700;
-    }
-    
-    .card-header p {
-      color: var(--text-secondary);
-      font-size: 0.95rem;
-    }
-    
-    /* Стили для товара с hover-эффектом */
-    .product {
+    .product-item {
       display: flex;
-      gap: 20px;
-      padding: 20px;
+      gap: 15px;
+      padding: 12px;
       background: rgba(0, 207, 255, 0.05);
       border-radius: 12px;
-      border: 1px solid var(--border-color);
-      margin-bottom: 30px;
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      position: relative;
-    }
-    
-    .product:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(0, 207, 255, 0.1);
-      border-color: rgba(0, 207, 255, 0.4);
-    }
-    
-    .product-badge {
-      position: absolute;
-      top: -10px;
-      right: 20px;
-      background: var(--primary);
-      color: #000;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      box-shadow: 0 4px 15px rgba(0, 207, 255, 0.3);
+      margin-bottom: 12px;
+      border: 1px solid rgba(0, 207, 255, 0.2);
     }
     
     .product-image {
-      width: 120px;
-      height: 120px;
+      width: 70px;
+      height: 70px;
       border-radius: 8px;
       object-fit: cover;
       border: 1px solid rgba(0, 207, 255, 0.3);
-      transition: transform 0.5s ease;
-    }
-    
-    .product:hover .product-image {
-      transform: scale(1.05) rotate(2deg);
     }
     
     .product-info {
       flex: 1;
     }
     
-    .product-title {
-      font-size: 1.2rem;
-      margin-bottom: 8px;
+    .product-name {
       font-weight: 600;
-    }
-    
-    .product-description {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
+      color: var(--accent);
+      font-size: 0.95rem;
     }
     
     .product-price {
-      font-size: 1.3rem;
-      font-weight: 700;
       color: var(--primary);
+      font-weight: 700;
+      font-size: 0.95rem;
     }
     
-    /* Форма с улучшенной валидацией */
-    .form-group {
+    .summary-details {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(0, 207, 255, 0.2);
+    }
+    
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.95rem;
+    }
+    
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(0, 207, 255, 0.3);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    
+    .total-amount {
+      color: var(--primary);
+      font-size: 1.3rem;
+    }
+    
+    .payment-section {
+      background: rgba(0, 15, 30, 0.45);
+      padding: 25px;
+      border-radius: 16px;
+      border: 1px solid rgba(0, 207, 255, 0.2);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      animation: fadeIn 0.8s ease-out 0.6s both;
+    }
+    
+    .payment-section h3 {
+      color: var(--primary);
+      font-size: 1.4rem;
       margin-bottom: 20px;
       position: relative;
+      padding-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .payment-section h3::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 50px;
+      height: 2px;
+      background: var(--primary);
+    }
+    
+    .form-group {
+      margin-bottom: 18px;
     }
     
     .form-label {
       display: block;
       margin-bottom: 8px;
-      font-size: 0.95rem;
-      font-weight: 500;
       color: var(--primary);
+      font-weight: 500;
+      font-size: 0.95rem;
     }
     
     .form-control {
       width: 100%;
       padding: 12px 15px;
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-color);
+      border: 1px solid rgba(0, 207, 255, 0.2);
       border-radius: 8px;
       color: white;
       font-family: 'Montserrat', sans-serif;
-      font-size: 1rem;
+      font-size: 0.95rem;
       transition: all 0.3s ease;
     }
     
     .form-control:focus {
       outline: none;
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(0, 207, 255, 0.2);
-      background: rgba(0, 207, 255, 0.03);
+      box-shadow: 0 0 0 2px rgba(0, 207, 255, 0.2);
     }
     
-    .form-control.error {
-      border-color: var(--error);
-    }
-    
-    .error-message {
-      color: var(--error);
-      font-size: 0.8rem;
-      margin-top: 5px;
-      display: none;
-    }
-    
-    /* Стили для методов оплаты */
     .payment-methods {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 15px;
-      margin: 25px 0;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin: 20px 0;
     }
     
     .payment-method {
@@ -349,583 +490,594 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 8px;
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      height: 100%;
       justify-content: center;
-    }
-    
-    .payment-method:hover label {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0, 207, 255, 0.1);
+      padding: 15px 12px;
+      background: rgba(0, 207, 255, 0.05);
+      border: 2px solid rgba(0, 207, 255, 0.2);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-align: center;
+      height: 100%;
     }
     
     .payment-method input:checked + label {
       background: rgba(0, 207, 255, 0.1);
       border-color: var(--primary);
-      box-shadow: 0 0 0 1px var(--primary);
-    }
-    
-    .payment-method input:focus + label {
-      box-shadow: 0 0 0 2px var(--primary);
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 207, 255, 0.2);
     }
     
     .payment-icon {
-      width: 60px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.3s ease;
+      font-size: 1.8rem;
+      margin-bottom: 8px;
     }
     
-    .payment-method:hover .payment-icon {
-      transform: scale(1.1);
-    }
-    
-    .paypal-icon {
-      width: 60px;
-      height: 16px;
-      object-fit: contain;
-    }
-    
-    .card-icon {
-      width: 40px;
-      height: 25px;
-      object-fit: contain;
-    }
-    
-    .yoo-logo {
-      font-family: 'YS Text', Arial, sans-serif;
-      font-weight: 500;
-      color: #21201F;
-      background: linear-gradient(90deg, #FFDB4D 0%, #FC0 50%, #FFDB4D 100%);
-      padding: 8px 12px;
-      border-radius: 4px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-      box-sizing: border-box;
-      font-size: 14px;
-      letter-spacing: 0.5px;
-    }
-    
-    .payment-method span {
-      font-size: 0.9rem;
-      font-weight: 500;
-      text-align: center;
-    }
-    
-    .payment-submethods {
-      display: flex;
-      gap: 8px;
-      margin-top: 5px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    
-    .payment-submethod {
-      width: 30px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0.7;
-      transition: opacity 0.3s ease;
-    }
-    
-    .payment-method:hover .payment-submethod {
-      opacity: 1;
-    }
-    
-    .payment-submethod img {
-      max-width: 100%;
-      max-height: 100%;
-      filter: grayscale(30%);
-      transition: filter 0.3s ease;
-    }
-    
-    .payment-method:hover .payment-submethod img {
-      filter: grayscale(0%);
-    }
-    
-    /* Кнопка с градиентом и анимацией */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      padding: 14px 24px;
-      font-family: 'Montserrat', sans-serif;
-      font-size: 1rem;
+    .payment-name {
       font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      border: none;
+      color: var(--accent);
+      font-size: 0.9rem;
+    }
+    
+    .payment-description {
+      font-size: 0.75rem;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 4px;
+    }
+    
+    .yookassa-color { color: #00cfff; }
+    .stripe-color { color: #635bff; }
+    .paypal-color { color: #0070ba; }
+    
+    .btn-pay {
+      display: block;
       width: 100%;
+      padding: 15px;
+      background: linear-gradient(90deg, #00cfff, #3399ff);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 25px;
       position: relative;
       overflow: hidden;
-      z-index: 1;
     }
     
-    .btn::before {
+    .btn-pay::before {
       content: '';
       position: absolute;
       top: 0;
-      left: 0;
+      left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, #00cfff, #3399ff);
-      z-index: -1;
-      transition: opacity 0.3s ease;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: all 0.6s ease;
     }
     
-    .btn-primary {
-      color: #000;
-    }
-    
-    .btn-primary:hover {
+    .btn-pay:hover {
       transform: translateY(-3px);
       box-shadow: 0 10px 20px rgba(0, 207, 255, 0.4);
     }
     
-    .btn-primary:active {
-      transform: translateY(0);
+    .btn-pay:hover::before {
+      left: 100%;
     }
     
-    .btn i {
-      transition: transform 0.3s ease;
+    .btn-pay:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
     
-    .btn:hover i {
-      transform: translateX(5px);
+    .btn-pay:disabled:hover::before {
+      left: -100%;
     }
     
-    /* Сумма заказа с анимацией */
-    .summary {
-      background: rgba(0, 207, 255, 0.05);
-      border-radius: 12px;
-      padding: 20px;
-      border: 1px solid var(--border-color);
-      margin-top: 30px;
-      transition: all 0.3s ease;
-    }
-    
-    .summary:hover {
-      border-color: rgba(0, 207, 255, 0.4);
-    }
-    
-    .summary-item {
+    .secure-payment {
       display: flex;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      transition: transform 0.3s ease;
-    }
-    
-    .summary:hover .summary-item {
-      transform: translateX(5px);
-    }
-    
-    .summary-total {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin-top: 15px;
-      padding-top: 15px;
-      border-top: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 18px;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.85rem;
     }
     
-    .total-price {
-      color: var(--primary);
-      font-size: 1.4rem;
-      animation: pulse 2s infinite;
-    }
-    
-    /* Футер */
-    footer {
+    .legal-note {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(0, 207, 255, 0.2);
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.6);
       text-align: center;
-      padding: 40px 5%;
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-      background: rgba(10, 10, 13, 0.95);
-      border-top: 1px solid var(--border-color);
-      backdrop-filter: blur(10px);
+      line-height: 1.5;
+    }
+    
+    .legal-note a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    
+    .legal-note a:hover {
+      text-decoration: underline;
+    }
+    
+    footer {
+      background: rgba(0, 10, 20, 0.85);
+      padding: 30px 5%;
+      margin-top: auto;
+      border-top: 1px solid rgba(0, 207, 255, 0.2);
+    }
+    
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+    }
+    
+    .footer-column h3 {
+      color: var(--primary);
+      margin-bottom: 15px;
+      font-size: 1rem;
+      font-weight: 600;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .footer-column h3::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+    
+    .footer-column:hover h3::after {
+      width: 80px;
+    }
+    
+    .footer-links {
+      list-style: none;
+    }
+    
+    .footer-links li {
+      margin-bottom: 10px;
+      transform: translateX(0);
+      transition: transform 0.3s ease;
+    }
+    
+    .footer-links li:hover {
+      transform: translateX(5px);
+    }
+    
+    .footer-links a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+    
+    .footer-links a:hover {
+      color: var(--primary);
+    }
+    
+    .footer-links a i {
+      font-size: 0.75rem;
+      transition: transform 0.3s ease;
+    }
+    
+    .footer-links a:hover i {
+      transform: rotate(15deg);
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 12px;
+      margin-top: 15px;
+    }
+    
+    .social-link {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(0, 207, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    
+    .social-link:hover {
+      background: var(--primary);
+      color: #000;
+      transform: translateY(-3px) scale(1.1);
+      box-shadow: 0 5px 15px rgba(0, 207, 255, 0.3);
+    }
+    
+    .copyright {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 0.8rem;
+    }
+    
+    /* Анимации загрузки */
+    body:not(.loaded) .payment-container,
+    body:not(.loaded) header,
+    body:not(.loaded) .page-header,
+    body:not(.loaded) footer {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+
+    body.loaded .payment-container,
+    body.loaded header,
+    body.loaded .page-header,
+    body.loaded footer {
+      opacity: 1;
+      transform: translateY(0);
     }
     
     /* Адаптивность */
     @media (max-width: 768px) {
-      .product {
+      header {
         flex-direction: column;
+        gap: 15px;
+        padding: 15px 5%;
         text-align: center;
       }
       
-      .product-image {
+      nav {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
         width: 100%;
-        height: auto;
-        max-height: 200px;
-        margin: 0 auto 15px;
+      }
+      
+      .cart-btn {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .page-header h2 {
+        font-size: 1.8rem;
       }
       
       .payment-methods {
         grid-template-columns: 1fr;
       }
-      
-      .card-header h2 {
-        font-size: 1.5rem;
-      }
     }
     
     @media (max-width: 480px) {
-      header {
-        padding: 15px 5%;
+      .page-header h2 {
+        font-size: 1.6rem;
+      }
+      
+      .page-header p {
+        font-size: 0.9rem;
+      }
+      
+      .order-summary, .payment-section {
+        padding: 18px;
+      }
+      
+      .product-item {
         flex-direction: column;
-        gap: 15px;
+        text-align: center;
       }
       
-      .logo {
-        margin-bottom: 10px;
+      .product-image {
+        align-self: center;
       }
-      
-      .container {
-        margin: 20px auto;
-      }
-      
-      .card {
-        padding: 20px;
-      }
-      
-      .product-badge {
-        right: 10px;
-        font-size: 0.7rem;
-      }
-      
-      .summary-total {
-        flex-direction: column;
-        gap: 10px;
-        align-items: flex-start;
-      }
-    }
-    
-    /* Анимация успешной загрузки */
-    @keyframes successPulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(77, 255, 125, 0.7); }
-      50% { box-shadow: 0 0 0 10px rgba(77, 255, 125, 0); }
     }
   </style>
 </head>
 <body>
-  <div id="particles-js"></div>
   <div class="preloader">
-    <div class="spinner"></div>
-    <div class="preloader-text">Загрузка безопасного платежа...</div>
-  </div>
-
-  <header>
-    <a href="shopru.html" class="logo">
-      <i class="fas fa-paintbrush logo-icon"></i>
-      <span class="logo-text">AeroDesign</span>
-    </a>
-    <a href="productru.html" class="back-btn">
-      <i class="fas fa-arrow-left"></i>
-      Назад
-    </a>
-  </header>
-
-  <div class="container">
-    <div class="card">
-      <div class="card-header">
-        <h2>Оформление заказа</h2>
-        <p>Выберите удобный способ оплаты</p>
+    <div class="preloader-content">
+      <div class="spinner">
+        <div class="spinner-sector spinner-sector-blue"></div>
+        <div class="spinner-sector spinner-sector-white"></div>
       </div>
-      
-      <div class="product">
-        <span class="product-badge">Хит продаж</span>
-        <img src="https://via.placeholder.com/300x300/0a1e30/00cfff?text=AeroDesign" alt="Power — Анимированная иллюстрация Steam" class="product-image">
-        <div class="product-info">
-          <h3 class="product-title">Power — Анимированная иллюстрация Steam</h3>
-          <p class="product-description">Анимированный стиль для вашего профиля с эффектом параллакса</p>
-          <div class="product-price">6,00 ₽</div>
-        </div>
+      <div class="preloader-logo">
+        <i class="fa-solid fa-paintbrush logo-icon"></i>
+        <span>AeroDesign</span>
       </div>
-      
-      <form id="payment-form">
-        <div class="form-group">
-          <label for="email" class="form-label">Электронная почта *</label>
-          <input type="email" id="email" class="form-control" placeholder="your@email.com" required>
-          <div class="error-message" id="email-error">Пожалуйста, введите корректный email</div>
-          <small style="color: var(--text-secondary); font-size: 0.8rem; display: block; margin-top: 5px;">
-            На эту почту будет отправлен чек и информация о заказе
-          </small>
-        </div>
-        
-        <div class="form-group">
-          <label class="form-label">Способ оплаты *</label>
-          <div class="payment-methods">
-            <div class="payment-method">
-              <input type="radio" id="paypal" name="payment" value="paypal" checked>
-              <label for="paypal">
-                <div class="payment-icon">
-                  <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" alt="PayPal" class="paypal-icon">
-                </div>
-                <span>PayPal</span>
-                <div class="payment-submethods">
-                  <div class="payment-submethod">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa">
-                  </div>
-                  <div class="payment-submethod">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard">
-                  </div>
-                </div>
-              </label>
-            </div>
-            <div class="payment-method">
-              <input type="radio" id="yookassa" name="payment" value="yookassa">
-              <label for="yookassa">
-                <div class="payment-icon">
-                  <div class="yoo-logo">ЮKassa</div>
-                </div>
-                <span>ЮKassa</span>
-                <div class="payment-submethods">
-                  <div class="payment-submethod">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/SBP_logo_rus.svg" alt="СБП">
-                  </div>
-                  <div class="payment-submethod">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Sberbank_Logo_2020.svg" alt="Сбербанк">
-                  </div>
-                  <div class="payment-submethod">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Mir-logo.SVG.svg" alt="Мир">
-                  </div>
-                </div>
-              </label>
-            </div>
-          </div>
-        </div>
-        
-        <div class="summary">
-          <div class="summary-item">
-            <span>Стоимость товара:</span>
-            <span>6,00 ₽</span>
-          </div>
-          <div class="summary-total">
-            <span>Итого к оплате:</span>
-            <span class="total-price">6,00 ₽</span>
-          </div>
-        </div>
-        
-        <button type="submit" class="btn btn-primary">
-          Перейти к оплате
-          <i class="fas fa-arrow-right"></i>
-        </button>
-        
-        <p style="text-align: center; margin-top: 20px; font-size: 0.8rem; color: var(--text-secondary);">
-          Нажимая кнопку, вы соглашаетесь с <a href="ofertaru.html" style="color: var(--primary); text-decoration: none;">договором оферты</a>
-          и <a href="politru.html" style="color: var(--primary); text-decoration: none;">политикой конфиденциальности</a>
-        </p>
-        
-        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 20px;">
-          <img src="https://www.freepnglogos.com/uploads/ssl-png/ssl-certificate-badge-vector-logo-3.png" alt="SSL Secure" style="height: 30px;">
-          <img src="https://www.freepnglogos.com/uploads/3d-secure-png-logo/3d-secure-png-logo-0.png" alt="3D Secure" style="height: 30px;">
-        </div>
-      </form>
     </div>
   </div>
 
+  <div id="particles-js"></div>
+  <div class="glow-effect"></div>
+  <div class="glow-effect"></div>
+  
+  <header>
+    <div class="logo">
+      <i class="fa-solid fa-paintbrush logo-icon"></i>
+      <h1>AeroDesign</h1>
+    </div>
+    <nav>
+      <a href="shopru.html"><i class="fas fa-store"></i> Магазин</a>
+      <a href="zakazru.html"><i class="fas fa-pencil-ruler"></i> Заказать оформление</a>
+      <a href="supportru.html"><i class="fas fa-question-circle"></i> Помощь</a>
+      <a href="korzinaru.html" class="cart-btn">
+        <i class="fas fa-shopping-cart"></i>
+        Корзина <span class="cart-count">2</span>
+      </a>
+    </nav>
+  </header>
+
+  <div class="page-header">
+    <h2>Оформление заказа</h2>
+    <p>Выберите удобный способ оплаты и завершите покупку</p>
+  </div>
+
+  <div class="payment-container">
+    <div class="order-summary">
+      <h3><i class="fas fa-receipt"></i> Ваш заказ</h3>
+      
+      <div class="product-item">
+        <img src="https://via.placeholder.com/300x300/0a1e30/00cfff?text=Steam+Profile" alt="Товар" class="product-image">
+        <div class="product-info">
+          <div class="product-name">Анимированное оформление Steam</div>
+          <div class="product-price">1 490 ₽</div>
+        </div>
+      </div>
+      
+      <div class="product-item">
+        <img src="https://via.placeholder.com/300x300/0a1e30/00cfff?text=Steam+Artwork" alt="Товар" class="product-image">
+        <div class="product-info">
+          <div class="product-name">Набор аватаров Steam</div>
+          <div class="product-price">790 ₽</div>
+        </div>
+      </div>
+      
+      <div class="summary-details">
+        <div class="summary-row">
+          <span>Подытог:</span>
+          <span>2 280 ₽</span>
+        </div>
+        <div class="summary-row">
+          <span>Скидка:</span>
+          <span style="color: var(--success);">-200 ₽</span>
+        </div>
+        <div class="summary-row">
+          <span>Налог:</span>
+          <span>0 ₽</span>
+        </div>
+        <div class="summary-total">
+          <span>Итого:</span>
+          <span class="total-amount">2 080 ₽</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="payment-section">
+      <h3><i class="fas fa-credit-card"></i> Способ оплаты</h3>
+      
+      <div class="form-group">
+        <label for="email" class="form-label">Электронная почта</label>
+        <input type="email" id="email" class="form-control" placeholder="your@email.com" required>
+      </div>
+      
+      <div class="payment-methods">
+        <div class="payment-method">
+          <input type="radio" id="yookassa" name="payment-method" value="yookassa" checked>
+          <label for="yookassa">
+            <i class="payment-icon yookassa-color fas fa-credit-card"></i>
+            <span class="payment-name">ЮKassa</span>
+            <span class="payment-description">Карты мир, Яндекс.Деньги, SberPay</span>
+          </label>
+        </div>
+        
+        
+        <div class="payment-method">
+          <input type="radio" id="paypal" name="payment-method" value="paypal">
+          <label for="paypal">
+            <i class="payment-icon paypal-color fab fa-paypal"></i>
+            <span class="payment-name">PayPal</span>
+            <span class="payment-description">Visa/Mastercard</span>
+          </label>
+        </div>
+      </div>
+      
+      <button class="btn-pay" id="pay-button">
+        <i class="fas fa-lock"></i> Оплатить 2 080 ₽
+      </button>
+      
+      <div class="secure-payment">
+        <i class="fas fa-lock"></i>
+        <span>Безопасный платеж. Ваши данные защищены.</span>
+      </div>
+      
+      <div class="legal-note">
+        Нажимая кнопку, вы соглашаетесь с <a href="#">условиями предоставления услуг</a> и <a href="#">политикой конфиденциальности</a>.
+        <br>
+        ИНН самозанятого: <strong>910509844791</strong>
+      </div>
+    </div>
+  </div>
+  
   <footer>
-    © 2025 AeroDesign — Все права защищены.
+    <div class="footer-content">
+      <div class="footer-column">
+        <h3>AeroDesign</h3>
+        <p style="color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 20px;">
+          Создаем уникальные витрины для Steam с 2021 года. Индивидуальный подход к каждому клиенту.
+        </p>
+        <div class="social-links">
+          <a href="https://t.me/OFFRLINE" class="social-link" target="_blank"><i class="fab fa-telegram"></i></a>
+          <a href="https://discord.gg/2GCebZRavP" class="social-link" target="_blank"><i class="fab fa-discord"></i></a>
+          <a href="https://www.deviantart.com/aeroidesign" class="social-link" target="_blank"><i class="fab fa-deviantart"></i></a>
+        </div>
+      </div>
+      <div class="footer-column">
+        <h3>Контакты</h3>
+        <ul class="footer-links">
+          <li><a href="https://t.me/OFFRLINE" target="_blank"><i class="fab fa-telegram"></i>Telegram</a></li>
+          <li><a href="https://discord.gg/2GCebZRavP" target="_blank"><i class="fab fa-discord"></i>Discrod</a></li>
+          <li><a href="https://www.deviantart.com/aeroidesign" target="_blank"><i class="fab fa-deviantart"></i> DeviantArt</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Информация</h3>
+        <ul class="footer-links">
+          <li><a href="shopru.html"><i class="fas fa-store"></i> Магазин</a></li>
+          <li><a href="zakazru.html"><i class="fas fa-pencil-ruler"></i> Заказать оформление</a></li>
+          <li><a href="supportru.html"><i class="fas fa-question-circle"></i> Помощь</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">
+      &copy; 2025 AeroDesign. Все права защищены.
+    </div>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Инициализация частиц для фона
-      particlesJS("particles-js", {
-        "particles": {
-          "number": {
-            "value": 80,
-            "density": {
-              "enable": true,
-              "value_area": 800
-            }
-          },
-          "color": {
-            "value": "#00cfff"
-          },
-          "shape": {
-            "type": "circle",
-            "stroke": {
-              "width": 0,
-              "color": "#000000"
-            }
-          },
-          "opacity": {
-            "value": 0.5,
-            "random": false,
-            "anim": {
-              "enable": false,
-              "speed": 1,
-              "opacity_min": 0.1,
-              "sync": false
-            }
-          },
-          "size": {
-            "value": 3,
-            "random": true,
-            "anim": {
-              "enable": false,
-              "speed": 40,
-              "size_min": 0.1,
-              "sync": false
-            }
-          },
-          "line_linked": {
+    // Preloader
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        document.body.classList.add('loaded');
+      }, 1000);
+    });
+    
+    // Particles.js
+    particlesJS("particles-js", {
+      "particles": {
+        "number": {
+          "value": 80,
+          "density": {
             "enable": true,
-            "distance": 150,
-            "color": "#00cfff",
-            "opacity": 0.2,
-            "width": 1
-          },
-          "move": {
-            "enable": true,
-            "speed": 2,
-            "direction": "none",
-            "random": false,
-            "straight": false,
-            "out_mode": "out",
-            "bounce": false,
-            "attract": {
-              "enable": false,
-              "rotateX": 600,
-              "rotateY": 1200
-            }
+            "value_area": 800
           }
         },
-        "interactivity": {
-          "detect_on": "canvas",
-          "events": {
-            "onhover": {
-              "enable": true,
-              "mode": "grab"
-            },
-            "onclick": {
-              "enable": true,
-              "mode": "push"
-            },
-            "resize": true
+        "color": {
+          "value": "#00cfff"
+        },
+        "shape": {
+          "type": "circle",
+          "stroke": {
+            "width": 0,
+            "color": "#000000"
           },
-          "modes": {
-            "grab": {
-              "distance": 140,
-              "line_linked": {
-                "opacity": 1
-              }
-            },
-            "push": {
-              "particles_nb": 4
-            }
+          "polygon": {
+            "nb_sides": 5
+          }
+        },
+        "opacity": {
+          "value": 0.5,
+          "random": false,
+          "anim": {
+            "enable": false,
+            "speed": 1,
+            "opacity_min": 0.1,
+            "sync": false
+          }
+        },
+        "size": {
+          "value": 3,
+          "random": true,
+          "anim": {
+            "enable": false,
+            "speed": 40,
+            "size_min": 0.1,
+            "sync": false
+          }
+        },
+        "line_linked": {
+          "enable": true,
+          "distance": 150,
+          "color": "#00cfff",
+          "opacity": 0.2,
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 2,
+          "direction": "none",
+          "random": false,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false,
+          "attract": {
+            "enable": false,
+            "rotateX": 600,
+            "rotateY": 1200
           }
         }
-      });
-
-      // Анимация загрузки
-      setTimeout(function() {
-        document.querySelector('.preloader').classList.add('fade-out');
-        
-        setTimeout(function() {
-          document.querySelector('.preloader').style.display = 'none';
-        }, 500);
-      }, 1000);
-      
-      // Эффект при скролле для хедера
-      window.addEventListener('scroll', function() {
-        if (window.scrollY > 10) {
-          document.querySelector('header').classList.add('scrolled');
-        } else {
-          document.querySelector('header').classList.remove('scrolled');
-        }
-      });
-      
-      const form = document.getElementById('payment-form');
-      const emailInput = document.getElementById('email');
-      const emailError = document.getElementById('email-error');
-      
-      // Валидация формы
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        let isValid = true;
-        
-        // Валидация email
-        if (!validateEmail(emailInput.value)) {
-          emailInput.classList.add('error');
-          emailError.style.display = 'block';
-          isValid = false;
-        } else {
-          emailInput.classList.remove('error');
-          emailError.style.display = 'none';
-        }
-        
-        if (isValid) {
-          // Показать анимацию загрузки
-          const submitBtn = form.querySelector('button[type="submit"]');
-          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка платежа...';
-          submitBtn.disabled = true;
-          
-          // Сохраняем данные заказа
-          localStorage.setItem('orderDetails', JSON.stringify({
-            product: 'Power — Анимированная иллюстрация Steam',
-            price: '6,00 ₽',
-            email: emailInput.value,
-            paymentMethod: document.querySelector('input[name="payment"]:checked').value,
-            date: new Date().toLocaleString()
-          }));
-          
-          // Имитация отправки (в реальном проекте будет AJAX запрос)
-          setTimeout(function() {
-            // Перенаправление на выбранный метод оплаты
-            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
-            if(paymentMethod === 'paypal') {
-              window.location.href = 'paypal-payment.html';
-            } else {
-              window.location.href = 'yookassa-payment.html';
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": true,
+            "mode": "grab"
+          },
+          "onclick": {
+            "enable": true,
+            "mode": "push"
+          },
+          "resize": true
+        },
+        "modes": {
+          "grab": {
+            "distance": 140,
+            "line_linked": {
+              "opacity": 1
             }
-          }, 1500);
+          },
+          "bubble": {
+            "distance": 400,
+            "size": 40,
+            "duration": 2,
+            "opacity": 8,
+            "speed": 3
+          },
+          "repulse": {
+            "distance": 200,
+            "duration": 0.4
+          },
+          "push": {
+            "particles_nb": 4
+          },
+          "remove": {
+            "particles_nb": 2
+          }
         }
-      });
+      },
+      "retina_detect": true
+    });
+
+    // Pay button animation
+    const payButton = document.getElementById('pay-button');
+    
+    payButton.addEventListener('click', function() {
+      this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обработка...';
+      this.disabled = true;
       
-      // Валидация email в реальном времени
-      emailInput.addEventListener('input', function() {
-        if (validateEmail(this.value)) {
-          this.classList.remove('error');
-          emailError.style.display = 'none';
-        }
-      });
-      
-      function validateEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-      }
-      
-      // Анимация при наведении на элементы
-      const paymentMethods = document.querySelectorAll('.payment-method');
-      paymentMethods.forEach(method => {
-        method.addEventListener('mouseenter', function() {
-          this.querySelector('label').style.transform = 'translateY(-5px)';
-        });
-        
-        method.addEventListener('mouseleave', function() {
-          this.querySelector('label').style.transform = '';
-        });
-      });
+      // Simulate payment processing
+      setTimeout(() => {
+        alert('Платеж успешно обработан! Перенаправление на страницу успеха...');
+        // In a real scenario, you would redirect to success page
+        // window.location.href = 'success.html';
+      }, 2000);
     });
   </script>
 </body>
