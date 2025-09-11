@@ -31,7 +31,6 @@
         </div>
 
         <div class="summary-details">
-          <div class="summary-row"><span>Подытог:</span><span>{{ total.toFixed(2) }} ₽</span></div>
           <div class="summary-total"><span>Итого:</span><span class="total-amount">{{ total.toFixed(2) }} ₽</span></div>
         </div>
       </aside>
@@ -481,7 +480,6 @@ onMounted(async () => {
 .summary-details {
   margin-top: 12px;
   padding-top: 10px;
-  border-top: 1px solid rgba(0, 207, 255, 0.2);
 }
 
 .summary-row {
