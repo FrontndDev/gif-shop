@@ -115,7 +115,7 @@ onMounted(async () => {
   if (provider === 'paypal' && token) {
     try {
       // 1) capture — идемпотентно
-      await capturePaypalOrder(token);
+      // await capturePaypalOrder(token);
 
       // 2) resolve → получить orderId
       const r = await resolvePaypalOrder(token);
