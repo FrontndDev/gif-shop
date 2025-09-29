@@ -61,7 +61,7 @@ import Layout from '../components/Layout.vue';
 import { onMounted, onUnmounted, ref } from 'vue';
 import { useCart } from '../stores/cart';
 import { useRoute, onBeforeRouteLeave } from 'vue-router';
-import { getOrderStatus } from '../lib/api';
+import { getOrderStatus, resolvePaypalOrder, capturePaypalOrder } from '../lib/api';
 
 const route = useRoute();
 const cart = useCart();
@@ -107,6 +107,44 @@ async function pollStatus(orderId: string) {
 }
 
 onMounted(async () => {
+  const params = new URLSearchParams(location.search);
+  const provider = params.get('provider');
+  const token = params.get('token');
+
+  // Новый PayPal-флоу: capture → resolve → fetch order
+  if (provider === 'paypal' && token) {
+    try {
+      // 1) capture — идемпотентно
+      await capturePaypalOrder(token);
+
+      // 2) resolve → получить orderId
+      const r = await resolvePaypalOrder(token);
+      const orderId = r?.orderId || undefined;
+      if (!orderId) {
+        status.value = 'error';
+        error.value = 'Не удалось определить номер заказа (orderId). Свяжитесь с поддержкой.';
+        return;
+      }
+
+      // 3) получить заказ; если paid — бэк вернет downloads
+      const order = await getOrderStatus(orderId);
+      orderData.value = order as any;
+      status.value = order?.status === 'paid' ? 'paid' : 'pending';
+      cart.clear();
+    } catch (e: any) {
+      status.value = 'error';
+      try {
+        const msg = typeof e?.message === 'string' ? e.message : '';
+        const parsed = msg && msg.trim().startsWith('{') ? JSON.parse(msg) : null;
+        error.value = parsed?.error || parsed?.detail || 'Ошибка подтверждения PayPal';
+      } catch {
+        error.value = 'Ошибка подтверждения PayPal';
+      }
+    }
+    return;
+  }
+
+  // Старый флоу: по orderId
   const paramOrderId = route.params.orderId as string | undefined;
   const storedOrderId = sessionStorage.getItem('orderId') || undefined;
   const effectiveOrderId = paramOrderId || storedOrderId;
@@ -114,7 +152,6 @@ onMounted(async () => {
     cart.clear();
     if (storedOrderId) sessionStorage.removeItem('orderId');
     try {
-      // Пробуем сразу получить заказ; если 404 — покажем ошибку и не запускаем поллинг
       const order = await getOrderStatus(effectiveOrderId);
       orderData.value = order as any;
       if (order?.status === 'paid') {
@@ -133,7 +170,6 @@ onMounted(async () => {
           return;
         }
       } catch (_) { /* ignore */ }
-      // прочие ошибки: остаёмся в checking и запустим поллинг
       await pollStatus(effectiveOrderId);
     }
   } else {

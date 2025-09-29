@@ -93,7 +93,7 @@ import Layout from '../components/Layout.vue';
 import {ref, computed, onMounted} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import {useCart} from '../stores/cart';
-import {createPayment, createPaypalOrder, createOrder, getProductById, type ApiProduct} from '../lib/api';
+import {createPayment, createPaypalOrderRaw, createOrder, getProductById, type ApiProduct} from '../lib/api';
 
 const route = useRoute();
 const router = useRouter();
@@ -190,11 +190,22 @@ async function onSubmit() {
     }
   }
   if (payment.value === 'paypal') {
-    const res = await createPaypalOrder({amount: Number(total.value.toFixed(2)), currency: 'USD'});
-    const approve = res?.links?.find((l: any) => l.rel === 'approve')?.href;
-    if (approve) {
-      window.location.href = approve;
-      return;
+    try {
+      const res = await createPaypalOrderRaw({
+        amount: Number(total.value.toFixed(2)).toFixed(2),
+        currency: 'USD',
+        metadata: { orderId }
+      } as any);
+      const approve = (res?.links || []).find((l: any) => l?.rel === 'approve')?.href;
+      if (approve) {
+        sessionStorage.setItem('orderId', orderId);
+        window.location.href = approve;
+        return;
+      }
+      alert('Не удалось получить ссылку approve для PayPal');
+    } catch (e: any) {
+      console.error('Ошибка создания PayPal заказа:', e);
+      alert(e?.message || 'Ошибка создания PayPal заказа');
     }
   }
   // fallback (например, в тестовом режиме)

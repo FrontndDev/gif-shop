@@ -118,6 +118,17 @@ export function capturePaypalOrder(orderId: string): Promise<Record<string, any>
   return request(`/api/paypal/orders/${orderId}/capture`, {method: 'POST'});
 }
 
+// New helpers for simplified raw creation and resolving PayPal token → orderId
+export function createPaypalOrderRaw(payload: { amount: number | string; currency?: 'USD' | 'EUR'; metadata?: Record<string, unknown> }): Promise<{
+  id: string; links?: Array<{ rel: string; href: string }>
+}> {
+  return request(`/api/paypal/orders/create`, { method: 'POST', body: JSON.stringify(payload) });
+}
+
+export function resolvePaypalOrder(token: string): Promise<{ orderId: string | null; via?: string }> {
+  return request(`/api/paypal/orders/${encodeURIComponent(token)}/resolve`);
+}
+
 // Telegram order relay
 export function sendTelegramOrder(payload: CreateOrderRequest): Promise<{ ok: boolean } & Record<string, any>> {
   return request(`/api/telegram/order`, {method: 'POST', body: JSON.stringify(payload)});
