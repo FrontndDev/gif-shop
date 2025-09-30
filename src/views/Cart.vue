@@ -82,12 +82,12 @@ import { usePaymentPrice } from '../composables/usePaymentPrice';
 const cart = useCart();
 const items = computed(() => cart.items);
 const placeholder = 'https://via.placeholder.com/80x80/0a1e30/00cfff?text=Product';
-const { t } = useI18n();
+const { t, lang } = useI18n();
 const { getCurrency } = usePrice();
 const { formatPriceByPaymentMethod, getCurrencyByPaymentMethod, getCartTotalByPaymentMethod } = usePaymentPrice();
 
 // Состояние выбранного способа оплаты
-const paymentMethod = ref<'yookassa' | 'paypal'>('yookassa');
+const paymentMethod = ref<'yookassa' | 'paypal'>(lang.value === 'en' ? 'paypal' : 'yookassa');
 
 // Общая сумма в зависимости от способа оплаты
 const total = computed(() => getCartTotalByPaymentMethod(paymentMethod.value));

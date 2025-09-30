@@ -67,7 +67,7 @@
               <i class="fas fa-spinner fa-spin"></i> Обработка…
             </template>
             <template v-else>
-              <i class="fas fa-lock"></i> {{ t('payment.button.pay') }} {{ total.toFixed(2) }} ₽
+              <i class="fas fa-lock"></i> {{ t('payment.button.pay') }} {{ total.toFixed(2) }} {{ getCurrencyByPaymentMethod(payment) }}
             </template>
           </button>
 
@@ -102,12 +102,13 @@ const route = useRoute();
 const router = useRouter();
 const email = ref('');
 const emailError = ref(false);
-const payment = ref<'paypal' | 'yookassa'>('yookassa');
+const { t, lang } = useI18n();
+const payment = ref<'paypal' | 'yookassa'>(lang.value === 'en' ? 'paypal' : 'yookassa');
 const placeholder = 'https://via.placeholder.com/300x300/0a1e30/00cfff?text=AeroDesign';
 const cart = useCart();
 const selectedProduct = ref<ApiProduct | null>(null);
 const loadingProduct = ref(false);
-const { t } = useI18n();
+// t and lang are already initialized above
 const { getCurrency } = usePrice();
 const { formatPriceByPaymentMethod, getCurrencyByPaymentMethod, getCartTotalByPaymentMethod } = usePaymentPrice();
 const orderId = computed(() => (route.params.productId as string) || (sessionStorage.getItem('orderId') || ''));
