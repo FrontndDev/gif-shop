@@ -88,7 +88,7 @@ export const support: MessageBundle = {
     'support.method2.devtoolsIntro': 'When the image opens on the page, open the developer console:',
     'support.method2.or': 'Or right-click → "Inspect" → "Console" tab',
     'support.method2.enterCode': 'Enter one of these snippets in the console:',
-    'support.method2.image': 'For an image:',
+    'support.method2.image': 'For an artwork:',
     'support.method2.screenshot': 'For a screenshot:',
     'support.method2.workshop': 'For Workshop upload:',
     'support.copy': 'Copy',
