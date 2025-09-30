@@ -133,7 +133,7 @@
                 <p>Введите один из этих кодов в консоли:</p>
 
                 <div class="code-block">
-                  <p>Для обычного изображения:</p>
+                  <p>Для иллюстраций:</p>
                   <code>$J('#image_width').val('1000');$J('#image_height').val('1');</code>
                   <button class="copy-btn" @click="copyCode(1)"><i class="far"
                                                                    :class="isCopied1 ? 'fa-check' : 'fa-copy'"></i>
@@ -142,7 +142,7 @@
                 </div>
 
                 <div class="code-block">
-                  <p>Для скриншота:</p>
+                  <p>Для скриншотов:</p>
                   <code>$J('#image_width').val('1000');$J('#image_height').val('1');$J('[name="file_type"]').val("5");</code>
                   <button class="copy-btn" @click="copyCode(2)"><i class="far"
                                                                    :class="isCopied2 ? 'fa-check' : 'fa-copy'"></i>
@@ -150,11 +150,26 @@
                   </button>
                 </div>
 
+            <div class="code-block">
+  <p>Для загрузки в мастерскую:</p>
+  <code>
+    $J('[name=consumer_app_id]').val(480);
+    $J('[name=file_type]').val(0);
+    $J('[name=visibility]').val(0);
+  </code>
+  <button class="copy-btn" @click="copyCode(3)">
+    <i class="far" :class="isCopied3 ? 'fa-check' : 'fa-copy'"></i>
+    {{ isCopied3 ? 'Скопировано!' : 'Копировать' }}
+  </button>
+</div>
+
                 <p class="warning"><i class="fas fa-exclamation-triangle"></i> Используйте только один код, не оба
                   одновременно!</p>
                 <img :src="primerGif" alt="Пример правильной вставки кода в консоль" class="step-image"/>
               </div>
             </div>
+            
+
 
             <div class="step">
               <div class="step-number">4</div>
@@ -206,23 +221,33 @@ import problemImage from '../../ProblebaRu.png';
 
 const isCopied1 = ref(false);
 const isCopied2 = ref(false);
+const isCopied3 = ref(false);
 const openFaqIndex = ref<number | null>(null);
 
-function copyCode(which: 1 | 2) {
+function copyCode(which: 1 | 2 | 3) {
   const code1 = "$J('#image_width').val('1000');$J('#image_height').val('1');";
   const code2 = "$J('#image_width').val('1000');$J('#image_height').val('1');$J('[name=\"file_type\"]').val(\"5\");";
-  const text = which === 1 ? code1 : code2;
+  const code3 = "$J('[name=consumer_app_id]').val(480);$J('[name=file_type]').val(0);$J('[name=visibility]').val(0);";
+  
+  let text = "";
+  if (which === 1) text = code1;
+  if (which === 2) text = code2;
+  if (which === 3) text = code3;
+  
   navigator.clipboard.writeText(text).then(() => {
-    if (which === 1) {
-      isCopied1.value = true;
-      setTimeout(() => (isCopied1.value = false), 2000);
-    } else {
-      isCopied2.value = true;
-      setTimeout(() => (isCopied2.value = false), 2000);
-    }
+  if (which === 1) {
+  isCopied1.value = true;
+  setTimeout(() => (isCopied1.value = false), 2000);
+  } else if (which === 2) {
+  isCopied2.value = true;
+  setTimeout(() => (isCopied2.value = false), 2000);
+  } else {
+  isCopied3.value = true;
+  setTimeout(() => (isCopied3.value = false), 2000);
+  }
   });
-}
-
+  }
+  
 function toggleFaq(index: number) {
   openFaqIndex.value = openFaqIndex.value === index ? null : index;
 }
