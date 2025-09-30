@@ -143,6 +143,16 @@
                   <button class="copy-btn" @click="copyCode(2)"><i class="far" :class="isCopied2 ? 'fa-check' : 'fa-copy'"></i> {{ isCopied2 ? t('support.copied') : t('support.copy') }}</button>
                 </div>
 
+                <div class="code-block">
+                  <p>{{ t('support.method2.workshop') }}</p>
+                  <code>
+                    $J('[name=consumer_app_id]').val(480);
+                    $J('[name=file_type]').val(0);
+                    $J('[name=visibility]').val(0);
+                  </code>
+                  <button class="copy-btn" @click="copyCode(3)"><i class="far" :class="isCopied3 ? 'fa-check' : 'fa-copy'"></i> {{ isCopied3 ? t('support.copied') : t('support.copy') }}</button>
+                </div>
+
                 <p class="warning"><i class="fas fa-exclamation-triangle"></i> {{ t('support.method2.warning') }}</p>
                 <img :src="primerGif" :alt="t('support.method2.imageAlt')" class="step-image"/>
               </div>
@@ -198,20 +208,30 @@ import { useI18n } from '../i18n';
 
 const isCopied1 = ref(false);
 const isCopied2 = ref(false);
+const isCopied3 = ref(false);
 const openFaqIndex = ref<number | null>(null);
 const { t, lang } = useI18n();
 
-function copyCode(which: 1 | 2) {
+function copyCode(which: 1 | 2 | 3) {
   const code1 = "$J('#image_width').val('1000');$J('#image_height').val('1');";
   const code2 = "$J('#image_width').val('1000');$J('#image_height').val('1');$J('[name=\"file_type\"]').val(\"5\");";
-  const text = which === 1 ? code1 : code2;
+  const code3 = "$J('[name=consumer_app_id]').val(480);$J('[name=file_type]').val(0);$J('[name=visibility]').val(0);";
+
+  let text = "";
+  if (which === 1) text = code1;
+  if (which === 2) text = code2;
+  if (which === 3) text = code3;
+
   navigator.clipboard.writeText(text).then(() => {
     if (which === 1) {
       isCopied1.value = true;
       setTimeout(() => (isCopied1.value = false), 2000);
-    } else {
+    } else if (which === 2) {
       isCopied2.value = true;
       setTimeout(() => (isCopied2.value = false), 2000);
+    } else {
+      isCopied3.value = true;
+      setTimeout(() => (isCopied3.value = false), 2000);
     }
   });
 }
