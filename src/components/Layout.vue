@@ -71,7 +71,7 @@
         </div>
       </div>
       <div class="legal-note">{{ t('layout.footer.tax') }}</div>
-      <div class="copyright">© 2025 AeroDesign. Все права защищены.</div>
+      <div class="copyright">{{ t('layout.footer.copyright') }}</div>
     </footer>
   </div>
 </template>

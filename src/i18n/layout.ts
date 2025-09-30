@@ -11,7 +11,8 @@ export const layout: MessageBundle = {
     'layout.footer.offer': 'Договор оферты',
     'layout.footer.privacy': 'Политика конфиденциальности',
     'layout.footer.tagline': 'Создаем уникальные витрины для Steam с 2021 года.',
-    'layout.footer.tax': 'ИНН самозанятого: 910509844791'
+    'layout.footer.tax': 'ИНН самозанятого: 910509844791',
+    'layout.footer.copyright': '© 2025 AeroDesign. Все права защищены.'
   },
   en: {
     'layout.nav.shop': 'Shop',
@@ -23,7 +24,8 @@ export const layout: MessageBundle = {
     'layout.footer.offer': 'Public offer',
     'layout.footer.privacy': 'Privacy policy',
     'layout.footer.tagline': 'We craft unique Steam showcases since 2021.',
-    'layout.footer.tax': 'Self‑employed Tax ID: 910509844791'
+    'layout.footer.tax': 'Self‑employed Tax ID: 910509844791',
+    'layout.footer.copyright': '© 2025 AeroDesign. All rights reserved.'
   }
 };
 

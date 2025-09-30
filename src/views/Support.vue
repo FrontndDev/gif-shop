@@ -79,8 +79,8 @@
           <!-- Локальное видео вместо YouTube -->
           <div class="local-video-container">
             <video style="width: 100%;" controls poster="../../preview.png">
-              <source :src="t('support.video.mp4')" type="video/mp4">
-              <source :src="t('support.video.webm')" type="video/webm">
+              <source v-if="lang === 'ru'" src="/mp4.mp4" type="video/mp4">
+              <source v-else src="/mp4eng.mp4" type="video/webm">
               {{ t('support.video.fallback') }}
             </video>
           </div>
