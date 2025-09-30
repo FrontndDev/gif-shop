@@ -5,6 +5,7 @@ export type ApiProduct = {
   id: string;
   title: string;
   price: number;
+  priceUSD?: number;
   video?: string;
   badge?: string;
 };

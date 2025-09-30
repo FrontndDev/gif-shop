@@ -1,69 +1,69 @@
 <template>
   <Layout>
     <div class="page-header">
-      <h2>Заказать оформление профиля</h2>
-      <p>Создаем уникальные и персонализированные оформления профиля Steam</p>
+      <h2>{{ t('order.title') }}</h2>
+      <p>{{ t('order.subtitle') }}</p>
     </div>
     <div class="order-container">
       <form class="order-form" @submit.prevent="submit">
         <div class="form-row">
           <div class="form-group">
-            <label for="name">Ваше имя</label>
-            <input id="name" v-model="form.name" type="text" class="form-control" placeholder="Как к вам обращаться?"
+            <label for="name">{{ t('order.form.name') }}</label>
+            <input id="name" v-model="form.name" type="text" class="form-control" :placeholder="t('order.form.name.placeholder')"
                    required/>
           </div>
           <div class="form-group">
-            <label>Telegram/Discord</label>
-            <input v-model="form.telegramDiscord" type="text" class="form-control" placeholder="username" required/>
+            <label>{{ t('order.form.contact') }}</label>
+            <input v-model="form.telegramDiscord" type="text" class="form-control" :placeholder="t('order.form.contact.placeholder')" required/>
           </div>
         </div>
         <div class="form-group">
-          <label for="steam">Ссылка на профиль Steam</label>
+          <label for="steam">{{ t('order.form.steam') }}</label>
           <input id="steam" v-model="form.steamProfile" type="url" class="form-control"
-                 placeholder="https://steamcommunity.com/id/yourprofile" required/>
+                 :placeholder="t('order.form.steam.placeholder')" required/>
         </div>
         <div class="form-group">
-          <label for="style">Стиль оформления</label>
+          <label for="style">{{ t('order.form.style') }}</label>
           <select id="style" v-model="form.style" class="form-control" required>
-            <option value="" disabled selected>Выберите стиль</option>
-            <option value="minimal">Минимализм</option>
-            <option value="cyberpunk">Киберпанк</option>
-            <option value="anime">Аниме</option>
-            <option value="game-themed">Игровая тематика</option>
-            <option value="custom">Индивидуальный дизайн</option>
+            <option value="" disabled selected>{{ t('order.form.style.choose') }}</option>
+            <option value="minimal">{{ t('order.form.style.minimal') }}</option>
+            <option value="cyberpunk">{{ t('order.form.style.cyberpunk') }}</option>
+            <option value="anime">{{ t('order.form.style.anime') }}</option>
+            <option value="game-themed">{{ t('order.form.style.gameThemed') }}</option>
+            <option value="custom">{{ t('order.form.style.custom') }}</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="theme">Цветовая гамма</label>
+          <label for="theme">{{ t('order.form.color') }}</label>
           <select id="theme" v-model="form.colorTheme" class="form-control" required>
-            <option value="" disabled selected>Выберите цветовую гамму</option>
-            <option value="blue">Синяя</option>
-            <option value="red">Красная</option>
-            <option value="purple">Фиолетовая</option>
-            <option value="green">Зеленая</option>
-            <option value="dark">Темная</option>
-            <option value="custom">Индивидуальная</option>
+            <option value="" disabled selected>{{ t('order.form.color.choose') }}</option>
+            <option value="blue">{{ t('order.form.color.blue') }}</option>
+            <option value="red">{{ t('order.form.color.red') }}</option>
+            <option value="purple">{{ t('order.form.color.purple') }}</option>
+            <option value="green">{{ t('order.form.color.green') }}</option>
+            <option value="dark">{{ t('order.form.color.dark') }}</option>
+            <option value="custom">{{ t('order.form.color.custom') }}</option>
           </select>
         </div>
         <div class="form-group">
-          <label for="details">Детали оформления</label>
+          <label for="details">{{ t('order.form.details') }}</label>
           <textarea id="details" v-model="form.details" class="form-control"
-                    placeholder="Пожелания, любимые игры, персонажи..." required></textarea>
+                    :placeholder="t('order.form.details.placeholder')" required></textarea>
         </div>
         <button class="form-submit" :disabled="submitting"><i class="fas fa-paper-plane"></i>
-          {{ submitting ? 'Отправка...' : 'Отправить заявку' }}
+          {{ submitting ? t('order.submitting') : t('order.submit') }}
         </button>
       </form>
       <div class="order-info">
-        <h3>Как мы работаем</h3>
-        <div class="info-item"><h4><i class="fas fa-comments"></i> Консультация</h4>
-          <p>Обсуждаем ваши пожелания.</p></div>
-        <div class="info-item"><h4><i class="fas fa-pencil-ruler"></i> Дизайн</h4>
-          <p>Создаем концепцию и правим по вашим замечаниям.</p></div>
-        <div class="info-item"><h4><i class="fas fa-check-circle"></i> Утверждение</h4>
-          <p>Подтверждаем финальную версию.</p></div>
-        <div class="info-item"><h4><i class="fas fa-rocket"></i> Реализация</h4>
-          <p>Загружаем оформление в ваш профиль.</p></div>
+        <h3>{{ t('order.howWeWork') }}</h3>
+        <div class="info-item"><h4><i class="fas fa-comments"></i> {{ t('order.workflow.consultation.title') }}</h4>
+          <p>{{ t('order.workflow.consultation.desc') }}</p></div>
+        <div class="info-item"><h4><i class="fas fa-pencil-ruler"></i> {{ t('order.workflow.design.title') }}</h4>
+          <p>{{ t('order.workflow.design.desc') }}</p></div>
+        <div class="info-item"><h4><i class="fas fa-check-circle"></i> {{ t('order.workflow.approval.title') }}</h4>
+          <p>{{ t('order.workflow.approval.desc') }}</p></div>
+        <div class="info-item"><h4><i class="fas fa-rocket"></i> {{ t('order.workflow.implementation.title') }}</h4>
+          <p>{{ t('order.workflow.implementation.desc') }}</p></div>
       </div>
     </div>
   </Layout>
@@ -74,6 +74,7 @@ import {reactive, ref} from 'vue';
 import Layout from '../components/Layout.vue';
 import type {CreateOrderRequest} from '../lib/api';
 import {sendTelegramOrder} from '../lib/api';
+import { useI18n } from '../i18n';
 
 const form = reactive<CreateOrderRequest>({
   name: '', telegramDiscord: '', steamProfile: '', style: '', colorTheme: '', details: ''
@@ -81,6 +82,7 @@ const form = reactive<CreateOrderRequest>({
 const submitting = ref(false);
 const success = ref(false);
 const error = ref<string | null>(null);
+const { t } = useI18n();
 
 async function submit() {
   submitting.value = true;
@@ -95,9 +97,9 @@ async function submit() {
     form.style = '';
     form.colorTheme = '';
     form.details = '';
-    alert('Заявка отправлена! Мы свяжемся с вами.');
+    alert(t('order.success'));
   } catch (e: any) {
-    error.value = e?.message || 'Не удалось отправить заявку';
+    error.value = e?.message || t('order.error');
     alert(error.value);
   } finally {
     submitting.value = false;

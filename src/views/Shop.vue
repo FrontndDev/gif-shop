@@ -3,13 +3,13 @@
     <div class="search-container">
       <div class="search-bar">
         <i class="fas fa-search search-icon"></i>
-        <input v-model="query" type="text" placeholder="Поиск персонажей...">
+        <input v-model="query" type="text" :placeholder="t('shop.search.placeholder')">
       </div>
     </div>
 
     <div class="filters-mobile-bar">
       <button class="filters-toggle" @click="isSidebarOpen = true">
-        <i class="fas fa-sliders"></i> Фильтры
+        <i class="fas fa-sliders"></i> {{ t('shop.filters.toggle') }}
       </button>
     </div>
 
@@ -17,29 +17,29 @@
 
     <div class="layout">
       <aside class="sidebar" :class="{ open: isSidebarOpen }">
-        <div class="sidebar-title"><h3>Фильтры</h3></div>
+        <div class="sidebar-title"><h3>{{ t('shop.filters.title') }}</h3></div>
         <div class="sidebar-section">
-          <h4><i class="fas fa-star"></i> Выбор витрины</h4>
-          <label class="filter-option" v-for="t in showcaseTypes" :key="t.id">
-            <input type="checkbox" v-model="filters.showcase" :value="t.id"/>
+          <h4><i class="fas fa-star"></i> {{ t('shop.filters.showcase') }}</h4>
+          <label class="filter-option" v-for="it in showcaseTypesL10n" :key="it.id">
+            <input type="checkbox" v-model="filters.showcase" :value="it.id"/>
             <span class="checkmark"></span>
-            {{ t.label }}
+            {{ it.label }}
           </label>
         </div>
         <div class="sidebar-section">
-          <h4><i class="fas fa-palette"></i> Цвет профиля</h4>
-          <label class="filter-option" v-for="c in colors" :key="c.id">
+          <h4><i class="fas fa-palette"></i> {{ t('shop.filters.color') }}</h4>
+          <label class="filter-option" v-for="c in colorsL10n" :key="c.id">
             <input type="checkbox" v-model="filters.colors" :value="c.id"/>
             <span class="checkmark"></span>
             <span class="color-option" :style="{ background: c.color }"></span>{{ c.label }}
           </label>
         </div>
         <div class="sidebar-section">
-          <h4><i class="fas fa-gamepad"></i> Тематика</h4>
-          <label class="filter-option" v-for="t in topics" :key="t.id">
-            <input type="checkbox" v-model="filters.topics" :value="t.id"/>
+          <h4><i class="fas fa-gamepad"></i> {{ t('shop.filters.topic') }}</h4>
+          <label class="filter-option" v-for="tp in topicsL10n" :key="tp.id">
+            <input type="checkbox" v-model="filters.topics" :value="tp.id"/>
             <span class="checkmark"></span>
-            {{ t.label }}
+            {{ tp.label }}
           </label>
         </div>
       </aside>
@@ -54,28 +54,28 @@
               </div>
               <div class="product-info">
                 <h3 class="product-title">{{ p.title }}</h3>
-                <div class="product-price">{{ p.price }} ₽</div>
+                <div class="product-price">{{ formatPrice(p.price, p.priceUSD) }}</div>
               </div>
             </RouterLink>
             <div class="product-actions">
               <RouterLink class="action-btn details-btn" :to="{ name: 'product', params: { id: p.id } }">
-                <i class="fas fa-eye"></i> Подробнее
+                <i class="fas fa-eye"></i> {{ t('common.details') }}
               </RouterLink>
               <button class="action-btn cart-add-btn" :class="{ 'in-cart': isInCart(p.id) }" @click="addToCart(p)">
-                <i class="fas fa-cart-plus"></i> {{ isInCart(p.id) ? 'В корзине' : 'В корзину' }}
+                <i class="fas fa-cart-plus"></i> {{ isInCart(p.id) ? t('common.inCart') : t('common.addToCart') }}
               </button>
             </div>
           </div>
         </div>
         <div class="pager" v-if="pages > 1">
-          <button class="pager-btn" :disabled="page<=1 || loading" @click="goPrev"><i class="fas fa-chevron-left"></i> Назад</button>
+          <button class="pager-btn" :disabled="page<=1 || loading" @click="goPrev"><i class="fas fa-chevron-left"></i> {{ t('common.prev') }}</button>
           <div class="pager-list">
             <template v-for="(it, idx) in pageItems" :key="String(it)+'_'+idx">
               <span v-if="it === '…'" class="pager-ellipsis">…</span>
               <button v-else class="pager-num" :class="{ active: it === page }" @click="setPage(it as number)" :disabled="loading">{{ it }}</button>
             </template>
           </div>
-          <button class="pager-btn" :disabled="page>=pages || loading" @click="goNext">Вперед <i class="fas fa-chevron-right"></i></button>
+          <button class="pager-btn" :disabled="page>=pages || loading" @click="goNext">{{ t('common.next') }} <i class="fas fa-chevron-right"></i></button>
         </div>
       </main>
     </div>
@@ -88,12 +88,16 @@ import {computed, onMounted, reactive, ref, watch} from 'vue';
 import {useCart} from '../stores/cart';
 import {useProducts} from '../stores/products';
 import { getProductsPaged } from '../lib/api';
+import { useI18n } from '../i18n';
+import { usePrice } from '../composables/usePrice';
 import { useRoute, useRouter } from 'vue-router';
 
 const query = ref('');
 const cart = useCart();
 const route = useRoute();
 const router = useRouter();
+const { t } = useI18n();
+const { formatPrice, getPrice, getCurrency } = usePrice();
 
 type Product = ReturnType<typeof useProducts>['items'][number] & {
   poster?: string;
@@ -218,29 +222,41 @@ function setPage(p: number) {
   refreshProducts();
 }
 
-const showcaseTypes = [
-  {id: 'featured', label: 'Витрина избранных'},
-  {id: 'artwork', label: 'Витрина иллюстраций'},
-  {id: 'workshop', label: 'Витрина мастерской'},
+const showcaseTypesBase = [
+  {id: 'featured', labelKey: 'shop.showcase.featured'},
+  {id: 'artwork', labelKey: 'shop.showcase.artwork'},
+  {id: 'workshop', labelKey: 'shop.showcase.workshop'},
 ];
-const colors = [
-  {id: 'red', label: 'Красный', color: '#ff3e3e'},
-  {id: 'blue', label: 'Синий', color: '#3e7dff'},
-  {id: 'black', label: 'Черный', color: '#000000'},
-  {id: 'black-white', label: 'Чёрно-белый', color: 'linear-gradient(90deg, #000 50%, #fff 50%)'},
-  {id: 'purple', label: 'Фиолетовый', color: '#9c4dff'},
-  {id: 'pink', label: 'Розовый', color: '#ff4d8d'},
-  {id: 'green', label: 'Зелёный', color: '#4dff7d'},
+const colorsBase = [
+  {id: 'red', labelKey: 'shop.color.red', color: '#ff3e3e'},
+  {id: 'blue', labelKey: 'shop.color.blue', color: '#3e7dff'},
+  {id: 'black', labelKey: 'shop.color.black', color: '#000000'},
+  {id: 'black-white', labelKey: 'shop.color.blackWhite', color: 'linear-gradient(90deg, #000 50%, #fff 50%)'},
+  {id: 'purple', labelKey: 'shop.color.purple', color: '#9c4dff'},
+  {id: 'pink', labelKey: 'shop.color.pink', color: '#ff4d8d'},
+  {id: 'green', labelKey: 'shop.color.green', color: '#4dff7d'},
 ];
-const topics = [
-  {id: 'anime', label: 'Аниме'},
-  {id: 'not-anime', label: 'Не аниме'},
-  {id: 'free', label: 'Бесплатные'},
+const topicsBase = [
+  {id: 'anime', labelKey: 'shop.topic.anime'},
+  {id: 'not-anime', labelKey: 'shop.topic.notAnime'},
+  {id: 'free', labelKey: 'shop.topic.free'},
 ];
+
+const showcaseTypesL10n = computed(() => showcaseTypesBase.map(i => ({ id: i.id, label: t(i.labelKey) })));
+const colorsL10n = computed(() => colorsBase.map(i => ({ id: i.id, label: t(i.labelKey), color: i.color })));
+const topicsL10n = computed(() => topicsBase.map(i => ({ id: i.id, label: t(i.labelKey) })));
 
 
 function addToCart(p: Product) {
-  cart.add({id: p.id, name: p.title, price: p.price, currency: '₽', image: (p as any).video || p.poster, quantity: 1});
+  cart.add({
+    id: p.id, 
+    name: p.title, 
+    price: p.price,
+    priceUSD: p.priceUSD,
+    currency: getCurrency(), 
+    image: (p as any).video || p.poster, 
+    quantity: 1
+  });
 }
 
 const inCartIds = computed(() => new Set(cart.items.map(i => i.id)));

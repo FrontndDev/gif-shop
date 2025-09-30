@@ -4,13 +4,13 @@
       <div class="success-card" v-if="status === 'paid'">
         <div class="success-header">
           <div class="success-icon"><i class="fas fa-check-circle"></i></div>
-          <h1>Оплата прошла успешно!</h1>
-          <p>Спасибо за покупку в AeroDesign. Ваш заказ обрабатывается, и вскоре вы получите все необходимые материалы.</p>
+          <h1>{{ t('success.paid.title') }}</h1>
+          <p>{{ t('success.paid.subtitle') }}</p>
         </div>
 
         <div class="download-section">
           <div class="download-header">
-            <h2><i class="fas fa-download"></i> Ваши файлы готовы</h2>
+            <h2><i class="fas fa-download"></i> {{ t('success.files.title') }}</h2>
             <div class="download-list" v-if="orderData?.downloads?.length">
               <a
                 v-for="(d, idx) in orderData.downloads"
@@ -20,19 +20,19 @@
                 target="_blank"
                 rel="noopener"
               >
-                <i class="fas fa-file-arrow-down"></i> Скачать файл {{ idx + 1 }}
+                <i class="fas fa-file-arrow-down"></i> {{ t('success.files.download') }} {{ idx + 1 }}
               </a>
             </div>
           </div>
-          <p class="muted">Ссылки для скачивания ваших материалов доступны ниже.</p>
+          <p class="muted">{{ t('success.files.note') }}</p>
           <div class="file-info">
-            <div class="file-info-item"><i class="fas fa-clock"></i> Ссылки активны 24 часа</div>
+            <div class="file-info-item"><i class="fas fa-clock"></i> {{ t('success.files.active24h') }}</div>
           </div>
         </div>
 
         <div class="action-buttons">
-          <RouterLink to="/support" class="action-btn btn-primary"><i class="fas fa-book"></i> Инструкция по установке</RouterLink>
-          <RouterLink to="/shop" class="action-btn btn-secondary"><i class="fas fa-store"></i> Вернуться в магазин</RouterLink>
+          <RouterLink to="/support" class="action-btn btn-primary"><i class="fas fa-book"></i> {{ t('success.buttons.installGuide') }}</RouterLink>
+          <RouterLink to="/shop" class="action-btn btn-secondary"><i class="fas fa-store"></i> {{ t('success.buttons.backToShop') }}</RouterLink>
         </div>
       </div>
 
@@ -40,12 +40,12 @@
         <div class="success-header" style="text-align: center;">
           <div class="success-icon" v-if="status !== 'error'"><i class="fas fa-spinner fa-spin"></i></div>
           <div class="success-icon" v-else><i class="fas fa-exclamation-triangle"></i></div>
-          <h1 v-if="status !== 'error'">Подтверждаем оплату…</h1>
-          <h1 v-else>Ошибка заказа</h1>
-          <p class="muted" v-if="status === 'checking'">Проверяем статус вашего платежа. Это может занять до минуты.</p>
-          <p class="muted" v-else-if="status === 'pending'">Платеж еще подтверждается банком. Обновим страницу автоматически, как только YooKassa пришлет подтверждение.</p>
-          <p class="muted" v-else-if="status === 'error'">{{ error || 'Заказ не найден. Проверьте ссылку или свяжитесь с поддержкой.' }}</p>
-          <p class="muted" v-else>Не удалось определить статус заказа. Если вы оплатили — обновите страницу позже или свяжитесь с поддержкой.</p>
+          <h1 v-if="status !== 'error'">{{ t('success.checking.title') }}</h1>
+          <h1 v-else>{{ t('success.error.title') }}</h1>
+          <p class="muted" v-if="status === 'checking'">{{ t('success.checking.title') }}</p>
+          <p class="muted" v-else-if="status === 'pending'">{{ t('success.pending.note') }}</p>
+          <p class="muted" v-else-if="status === 'error'">{{ error || t('success.error.generic') }}</p>
+          <p class="muted" v-else>{{ t('success.unknown.note') }}</p>
         </div>
         <div class="action-buttons">
           <RouterLink to="/support" class="action-btn btn-primary"><i class="fas fa-life-ring"></i> Поддержка</RouterLink>
@@ -62,9 +62,11 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { useCart } from '../stores/cart';
 import { useRoute, onBeforeRouteLeave } from 'vue-router';
 import { getOrderStatus, resolvePaypalOrder, capturePaypalOrder } from '../lib/api';
+import { useI18n } from '../i18n';
 
 const route = useRoute();
 const cart = useCart();
+const { t } = useI18n();
 
 const status = ref<'checking' | 'paid' | 'pending' | 'unknown' | 'error'>('checking');
 const error = ref<string | null>(null);

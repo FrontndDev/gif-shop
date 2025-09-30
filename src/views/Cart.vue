@@ -2,26 +2,26 @@
   <Layout>
     <div class="cart-container">
       <div class="cart-header">
-        <h2 class="cart-title">Ваша корзина</h2>
+        <h2 class="cart-title">{{ t('cart.title') }}</h2>
         <div class="cart-actions">
           <button @click="clearCart" class="continue-shopping">
-            <i class="fas fa-trash"></i> Очистить корзину
+            <i class="fas fa-trash"></i> {{ t('cart.clear') }}
           </button>
         </div>
       </div>
 
       <div v-if="items.length === 0" class="empty-cart">
         <div class="empty-cart-icon"><i class="fas fa-shopping-cart"></i></div>
-        <h3 class="empty-cart-text">Ваша корзина пуста</h3>
+        <h3 class="empty-cart-text">{{ t('cart.empty') }}</h3>
         <RouterLink to="/shop" class="continue-shopping">
-          <i class="fas fa-arrow-left"></i> Продолжить покупки
+          <i class="fas fa-arrow-left"></i> {{ t('cart.continue') }}
         </RouterLink>
       </div>
 
       <template v-else>
         <table class="cart-items">
           <thead>
-          <tr><th>Товар</th><th>Цена</th><th></th></tr>
+          <tr><th>{{ t('cart.table.product') }}</th><th>{{ t('cart.table.price') }}</th><th></th></tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in items" :key="item.id">
@@ -33,24 +33,37 @@
                   </div>
                 </div>
               </td>
-              <td class="cart-item-price">{{ item.price.toFixed(2) }} {{ item.currency }}</td>
+              <td class="cart-item-price">{{ formatPriceByPaymentMethod(item.price, item.priceUSD, paymentMethod) }}</td>
               <td><button class="remove-btn" @click="remove(index)"><i class="fas fa-times"></i></button></td>
             </tr>
           </tbody>
         </table>
 
         <div class="cart-summary">
-          <h3 class="summary-title">Итого</h3>
+          <h3 class="summary-title">{{ t('common.total') }}</h3>
+          
+          <!-- Переключатель способа оплаты -->
+          <div class="payment-method-selector">
+            <label class="payment-method-option">
+              <input type="radio" v-model="paymentMethod" value="yookassa" />
+              <span>YooKassa (₽)</span>
+            </label>
+            <label class="payment-method-option">
+              <input type="radio" v-model="paymentMethod" value="paypal" />
+              <span>PayPal ($)</span>
+            </label>
+          </div>
+
           <div class="summary-row">
-            <span>Товары ({{ items.length }})</span>
-            <span class="summary-price">{{ total.toFixed(2) }} ₽</span>
+            <span>{{ t('common.items') }} ({{ items.length }})</span>
+            <span class="summary-price">{{ total.toFixed(2) }} {{ getCurrencyByPaymentMethod(paymentMethod) }}</span>
           </div>
           <div class="summary-row">
-            <span class="summary-total">Общая сумма</span>
-            <span class="summary-price">{{ total.toFixed(2) }} ₽</span>
+            <span class="summary-total">{{ t('cart.summary.overall') }}</span>
+            <span class="summary-price">{{ total.toFixed(2) }} {{ getCurrencyByPaymentMethod(paymentMethod) }}</span>
           </div>
           <RouterLink class="checkout-btn" to="/payment">
-            <i class="fas fa-credit-card"></i> Оформить заказ
+            <i class="fas fa-credit-card"></i> {{ t('common.checkout') }}
           </RouterLink>
         </div>
       </template>
@@ -60,13 +73,24 @@
 
 <script setup lang="ts">
 import Layout from '../components/Layout.vue';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useCart } from '../stores/cart';
+import { useI18n } from '../i18n';
+import { usePrice } from '../composables/usePrice';
+import { usePaymentPrice } from '../composables/usePaymentPrice';
 
 const cart = useCart();
 const items = computed(() => cart.items);
-const total = computed(() => items.value.reduce((s, i) => s + i.price, 0));
 const placeholder = 'https://via.placeholder.com/80x80/0a1e30/00cfff?text=Product';
+const { t } = useI18n();
+const { getCurrency } = usePrice();
+const { formatPriceByPaymentMethod, getCurrencyByPaymentMethod, getCartTotalByPaymentMethod } = usePaymentPrice();
+
+// Состояние выбранного способа оплаты
+const paymentMethod = ref<'yookassa' | 'paypal'>('yookassa');
+
+// Общая сумма в зависимости от способа оплаты
+const total = computed(() => getCartTotalByPaymentMethod(paymentMethod.value));
 
 function remove(index: number) { cart.removeByIndex(index); }
 function clearCart() { cart.clear(); }
@@ -105,6 +129,11 @@ function clearCart() { cart.clear(); }
 .empty-cart-icon { font-size: 5rem; color: var(--primary); margin-bottom: 20px; opacity: 0.5; }
 .empty-cart-text { font-size: 1.5rem; color: #e0f7ff; margin-bottom: 30px; }
 .continue-shopping { display: inline-flex; align-items: center; gap: 10px; padding: 12px 25px; background: rgba(0,207,255,0.1); color: var(--primary); border-radius: 8px; text-decoration: none; border: 1px solid var(--primary); }
+
+.payment-method-selector { margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(0,207,255,0.2); }
+.payment-method-option { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; cursor: pointer; color: #e0f7ff; }
+.payment-method-option input[type="radio"] { accent-color: var(--primary); }
+.payment-method-option:hover { color: var(--primary); }
 </style>
 
 

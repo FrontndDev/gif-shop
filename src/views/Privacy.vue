@@ -2,114 +2,114 @@
   <Layout>
     <div class="container">
       <header class="page-header">
-        <h1>Политика конфиденциальности</h1>
-        <p>интернет-магазина AeroDesign</p>
+        <h1>{{ t('privacy.title') }}</h1>
+        <p>{{ t('privacy.subtitle') }}</p>
       </header>
 
       <section class="highlight">
-        <p><strong>Важно:</strong> используя сайт AeroDesign и совершая покупки, вы соглашаетесь с условиями обработки ваших персональных данных в соответствии с настоящей политикой.</p>
+        <p><strong>{{ t('privacy.important') }}</strong></p>
       </section>
 
-      <h2>1. Основные понятия</h2>
-      <p>Настоящая политика применяется ко всем пользователям сайта AeroDesign независимо от их гражданства или места нахождения.</p>
-      <p><strong>Персональные данные</strong> — любая информация, относящаяся к прямо или косвенно определённому физическому лицу.</p>
-      <p><strong>Обработка данных</strong> — любое действие с персональными данными, включая сбор, хранение, использование, передачу.</p>
-      <p><strong>Субъект данных</strong> — посетитель сайта или покупатель, чьи данные обрабатываются.</p>
-      <p><strong>Оператор</strong> — самозанятого Макаренко Максима Александровича, ИНН 910509844791, самостоятельно определяющего цели и способы обработки персональных данных.</p>
+      <h2>{{ t('privacy.concepts.title') }}</h2>
+      <p>{{ t('privacy.concepts.intro') }}</p>
+      <p><strong>{{ t('privacy.concepts.personalData') }}</strong></p>
+      <p><strong>{{ t('privacy.concepts.processing') }}</strong></p>
+      <p><strong>{{ t('privacy.concepts.subject') }}</strong></p>
+      <p><strong>{{ t('privacy.concepts.operator') }}</strong></p>
 
-      <h2>2. Какие данные мы собираем</h2>
-      <p>2.1. При оформлении заказа:</p>
+      <h2>{{ t('privacy.collection.title') }}</h2>
+      <p>{{ t('privacy.collection.order.title') }}</p>
       <ul>
-        <li>Адрес электронной почты</li>
-        <li>Имя (никнейм) для связи</li>
-        <li>Данные о платежах (через платёжные системы)</li>
+        <li>{{ t('privacy.collection.order.email') }}</li>
+        <li>{{ t('privacy.collection.order.name') }}</li>
+        <li>{{ t('privacy.collection.order.payment') }}</li>
       </ul>
-      <p>2.2. Автоматически собираемые технические данные:</p>
+      <p>{{ t('privacy.collection.technical.title') }}</p>
       <ul>
-        <li>IP-адрес</li>
-        <li>Тип браузера и ОС</li>
-        <li>Данные cookies</li>
-        <li>Реферер (источник перехода)</li>
-      </ul>
-
-      <h2>3. Цели обработки данных</h2>
-      <p>3.1. Обработка персональных данных осуществляется в следующих целях:</p>
-      <ul>
-        <li>Оформление и выполнение заказов</li>
-        <li>Обеспечение работоспособности сайта</li>
-        <li>Коммуникация с покупателями</li>
-        <li>Предотвращение мошеннических действий</li>
-        <li>Выполнение требований законодательства</li>
+        <li>{{ t('privacy.collection.technical.ip') }}</li>
+        <li>{{ t('privacy.collection.technical.browser') }}</li>
+        <li>{{ t('privacy.collection.technical.cookies') }}</li>
+        <li>{{ t('privacy.collection.technical.referrer') }}</li>
       </ul>
 
-      <h2>4. Правовые основания обработки</h2>
-      <p>4.1. Обработка осуществляется на следующих основаниях:</p>
+      <h2>{{ t('privacy.purposes.title') }}</h2>
+      <p>{{ t('privacy.purposes.intro') }}</p>
       <ul>
-        <li>Согласие субъекта данных (ст. 6 ФЗ-152)</li>
-        <li>Исполнение договора (оферты)</li>
-        <li>Выполнение юридических обязательств</li>
+        <li>{{ t('privacy.purposes.order') }}</li>
+        <li>{{ t('privacy.purposes.site') }}</li>
+        <li>{{ t('privacy.purposes.communication') }}</li>
+        <li>{{ t('privacy.purposes.fraud') }}</li>
+        <li>{{ t('privacy.purposes.legal') }}</li>
       </ul>
 
-      <h2>5. Сроки хранения данных</h2>
-      <p>5.1. Персональные данные хранятся:</p>
+      <h2>{{ t('privacy.legal.title') }}</h2>
+      <p>{{ t('privacy.legal.intro') }}</p>
       <ul>
-        <li>Данные аккаунта — до момента отзыва согласия</li>
-        <li>Платежные данные — в соответствии с требованиями платёжных систем</li>
-        <li>Данные о заказах — 5 лет (срок исковой давности)</li>
+        <li>{{ t('privacy.legal.consent') }}</li>
+        <li>{{ t('privacy.legal.contract') }}</li>
+        <li>{{ t('privacy.legal.obligations') }}</li>
       </ul>
 
-      <h2>6. Защита данных</h2>
-      <p>6.1. Применяются следующие меры защиты:</p>
+      <h2>{{ t('privacy.storage.title') }}</h2>
+      <p>{{ t('privacy.storage.intro') }}</p>
       <ul>
-        <li>SSL-шифрование соединения</li>
-        <li>Ограниченный доступ к данным</li>
-        <li>Регулярное обновление ПО</li>
+        <li>{{ t('privacy.storage.account') }}</li>
+        <li>{{ t('privacy.storage.payment') }}</li>
+        <li>{{ t('privacy.storage.orders') }}</li>
       </ul>
-      <p>6.2. Данные платежей обрабатываются платёжными системами (ЮKassa, PayPal) и не хранятся на нашем сервере.</p>
 
-      <h2>7. Передача данных третьим лицам</h2>
-      <p>7.1. Данные могут передаваться:</p>
+      <h2>{{ t('privacy.protection.title') }}</h2>
+      <p>{{ t('privacy.protection.intro') }}</p>
       <ul>
-        <li>Платёжным системам для обработки платежей</li>
-        <li>Хостинг-провайдерам для технического обеспечения</li>
-        <li>Государственным органам по законным требованиям</li>
+        <li>{{ t('privacy.protection.ssl') }}</li>
+        <li>{{ t('privacy.protection.access') }}</li>
+        <li>{{ t('privacy.protection.updates') }}</li>
       </ul>
-      <p>7.2. Мы не продаём и не передаём данные для маркетинговых целей.</p>
+      <p>{{ t('privacy.protection.payment') }}</p>
 
-      <h2>8. Cookies и аналитика</h2>
-      <p>8.1. Сайт использует cookies для:</p>
+      <h2>{{ t('privacy.transfer.title') }}</h2>
+      <p>{{ t('privacy.transfer.intro') }}</p>
       <ul>
-        <li>Работы корзины покупок</li>
-        <li>Анализа посещаемости (Google Analytics)</li>
-        <li>Запоминания предпочтений пользователей</li>
+        <li>{{ t('privacy.transfer.payment') }}</li>
+        <li>{{ t('privacy.transfer.hosting') }}</li>
+        <li>{{ t('privacy.transfer.government') }}</li>
       </ul>
-      <p>8.2. Вы можете отключить cookies в настройках браузера.</p>
+      <p>{{ t('privacy.transfer.noMarketing') }}</p>
 
-      <h2>9. Права субъектов данных</h2>
-      <p>9.1. В соответствии с федеральным законом № 152-ФЗ вы имеете право:</p>
+      <h2>{{ t('privacy.cookies.title') }}</h2>
+      <p>{{ t('privacy.cookies.intro') }}</p>
       <ul>
-        <li>На доступ к своим данным</li>
-        <li>На исправление неточных данных</li>
-        <li>На удаление данных (право на забвение)</li>
-        <li>На отзыв согласия на обработку</li>
+        <li>{{ t('privacy.cookies.cart') }}</li>
+        <li>{{ t('privacy.cookies.analytics') }}</li>
+        <li>{{ t('privacy.cookies.preferences') }}</li>
       </ul>
-      <p>9.2. Для реализации прав направьте запрос на support@aerodesign.store.</p>
+      <p>{{ t('privacy.cookies.disable') }}</p>
 
-      <h2>10. Изменение политики</h2>
-      <p>10.1. Мы оставляем за собой право вносить изменения в настоящую политику. Актуальная версия всегда доступна на сайте.</p>
-      <p>10.2. Настоящая политика составлена в соответствии с законодательством Российской Федерации.</p>
+      <h2>{{ t('privacy.rights.title') }}</h2>
+      <p>{{ t('privacy.rights.intro') }}</p>
+      <ul>
+        <li>{{ t('privacy.rights.access') }}</li>
+        <li>{{ t('privacy.rights.correction') }}</li>
+        <li>{{ t('privacy.rights.deletion') }}</li>
+        <li>{{ t('privacy.rights.withdraw') }}</li>
+      </ul>
+      <p>{{ t('privacy.rights.contact') }}</p>
+
+      <h2>{{ t('privacy.changes.title') }}</h2>
+      <p>{{ t('privacy.changes.right') }}</p>
+      <p>{{ t('privacy.changes.law') }}</p>
 
       <section class="highlight">
-        <p><strong>Контактная информация:</strong></p>
-        <p>Самозанятый: Макаренко Максим Александрович</p>
-        <p>ИНН: 910509844791</p>
-        <p>Email для запросов: contact@aerodesign.store</p>
-        <p>Дата вступления в силу: 31 июля 2025</p>
+        <p><strong>{{ t('privacy.contact.title') }}</strong></p>
+        <p>{{ t('privacy.contact.name') }}</p>
+        <p>{{ t('privacy.contact.tin') }}</p>
+        <p>{{ t('privacy.contact.email') }}</p>
+        <p>{{ t('privacy.contact.date') }}</p>
       </section>
 
       <div class="footer">
-        <p>© 2025 AeroDesign. Все права защищены.</p>
-        <p>Последнее обновление: 31 июля 2025</p>
+        <p>{{ t('privacy.footer.copyright') }}</p>
+        <p>{{ t('privacy.footer.lastUpdate') }}</p>
       </div>
     </div>
   </Layout>
@@ -117,6 +117,9 @@
 
 <script setup lang="ts">
 import Layout from '../components/Layout.vue';
+import { useI18n } from '../i18n';
+
+const { t } = useI18n();
 </script>
 
 <style scoped>

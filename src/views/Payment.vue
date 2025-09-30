@@ -1,14 +1,14 @@
 <template>
   <Layout>
     <div class="page-header">
-      <h2>Оформление заказа</h2>
-      <p>Выберите удобный способ оплаты и завершите покупку</p>
-      <p v-if="orderId" class="order-id">Номер заказа: <strong>{{ orderId }}</strong></p>
+      <h2>{{ t('payment.header.title') }}</h2>
+      <p>{{ t('payment.header.subtitle') }}</p>
+      <p v-if="orderId" class="order-id">{{ t('payment.order.number') }}: <strong>{{ orderId }}</strong></p>
     </div>
 
     <div class="payment-container">
       <aside class="order-summary">
-        <h3><i class="fas fa-receipt"></i> Ваш заказ</h3>
+        <h3><i class="fas fa-receipt"></i> {{ t('payment.order.summary') }}</h3>
 
         <div v-if="loadingProduct" class="order-list">
           <div class="product-item">
@@ -25,23 +25,23 @@
             <img :src="it.image || placeholder" :alt="it.name" class="product-image">
             <div class="product-info">
               <div class="product-name">{{ it.name }}</div>
-              <div class="product-price">{{ Number(it.price).toFixed(2) }} ₽</div>
+              <div class="product-price">{{ formatPriceByPaymentMethod(it.price, it.priceUSD, payment) }}</div>
             </div>
           </div>
         </div>
 
         <div class="summary-details">
-          <div class="summary-total"><span>Итого:</span><span class="total-amount">{{ total.toFixed(2) }} ₽</span></div>
+          <div class="summary-total"><span>{{ t('payment.order.total') }}:</span><span class="total-amount">{{ total.toFixed(2) }} {{ getCurrencyByPaymentMethod(payment) }}</span></div>
         </div>
       </aside>
 
       <main class="payment-section">
-        <h3><i class="fas fa-credit-card"></i> Способ оплаты</h3>
+        <h3><i class="fas fa-credit-card"></i> {{ t('payment.method.title') }}</h3>
         <form @submit.prevent="onSubmit" id="payment-form">
           <div class="form-group">
-            <label for="email" class="form-label">Электронная почта *</label>
+            <label for="email" class="form-label">{{ t('payment.form.email') }}</label>
             <input type="email" id="email" v-model="email" class="form-control" placeholder="your@email.com" required>
-            <div class="error-message" v-show="emailError">Пожалуйста, введите корректный email</div>
+            <div class="error-message" v-show="emailError">{{ t('payment.form.emailInvalid') }}</div>
           </div>
 
           <div class="form-group">
@@ -50,14 +50,14 @@
               <label class="payment-method-tile">
                 <input type="radio" value="yookassa" v-model="payment"/>
                 <i class="payment-icon yookassa-color fas fa-credit-card"></i>
-                <span class="payment-name">ЮKassa</span>
-                <span class="payment-description">Карты Мир, SberPay</span>
+                <span class="payment-name">{{ t('payment.method.yookassa') }}</span>
+                <span class="payment-description">{{ t('payment.method.yookassa.desc') }}</span>
               </label>
               <label class="payment-method-tile">
                 <input type="radio" value="paypal" v-model="payment"/>
                 <i class="payment-icon paypal-color fab fa-paypal"></i>
-                <span class="payment-name">PayPal</span>
-                <span class="payment-description">Visa / Mastercard</span>
+                <span class="payment-name">{{ t('payment.method.paypal') }}</span>
+                <span class="payment-description">{{ t('payment.method.paypal.desc') }}</span>
               </label>
             </div>
           </div>
@@ -67,17 +67,17 @@
               <i class="fas fa-spinner fa-spin"></i> Обработка…
             </template>
             <template v-else>
-              <i class="fas fa-lock"></i> Оплатить {{ total.toFixed(2) }} ₽
+              <i class="fas fa-lock"></i> {{ t('payment.button.pay') }} {{ total.toFixed(2) }} ₽
             </template>
           </button>
 
-          <div class="secure-payment"><i class="fas fa-lock"></i> Безопасный платеж. Ваши данные защищены.</div>
+          <div class="secure-payment"><i class="fas fa-lock"></i> {{ t('payment.secure') }}</div>
 
           <p class="notes">
-            Нажимая кнопку, вы соглашаетесь с
-            <RouterLink to="/offer">договором оферты</RouterLink>
-            и
-            <RouterLink to="/privacy">политикой конфиденциальности</RouterLink>
+            {{ t('payment.agree.prefix') }}
+            <RouterLink to="/offer">{{ t('payment.agree.offer') }}</RouterLink>
+            {{ t('payment.agree.and') }}
+            <RouterLink to="/privacy">{{ t('payment.agree.privacy') }}</RouterLink>
             .
             <br/>
             ИНН самозанятого: <strong>910509844791</strong>
@@ -94,6 +94,9 @@ import {ref, computed, onMounted} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import {useCart} from '../stores/cart';
 import {createPayment, createPaypalOrderRaw, createOrder, getProductById, type ApiProduct} from '../lib/api';
+import { useI18n } from '../i18n';
+import { usePrice } from '../composables/usePrice';
+import { usePaymentPrice } from '../composables/usePaymentPrice';
 
 const route = useRoute();
 const router = useRouter();
@@ -104,6 +107,9 @@ const placeholder = 'https://via.placeholder.com/300x300/0a1e30/00cfff?text=Aero
 const cart = useCart();
 const selectedProduct = ref<ApiProduct | null>(null);
 const loadingProduct = ref(false);
+const { t } = useI18n();
+const { getCurrency } = usePrice();
+const { formatPriceByPaymentMethod, getCurrencyByPaymentMethod, getCartTotalByPaymentMethod } = usePaymentPrice();
 const orderId = computed(() => (route.params.productId as string) || (sessionStorage.getItem('orderId') || ''));
 const items = computed(() => {
   if (selectedProduct.value) {
@@ -111,6 +117,7 @@ const items = computed(() => {
       id: selectedProduct.value.id,
       name: selectedProduct.value.title,
       price: selectedProduct.value.price,
+      priceUSD: selectedProduct.value.priceUSD,
       currency: '₽',
       image: (selectedProduct.value as any).video,
       quantity: 1
@@ -118,7 +125,7 @@ const items = computed(() => {
   }
   return cart.items;
 });
-const total = computed(() => items.value.reduce((s: number, i: any) => s + i.price, 0));
+const total = computed(() => getCartTotalByPaymentMethod(payment.value));
 const submitting = ref(false);
 
 function validateEmail(v: string) {

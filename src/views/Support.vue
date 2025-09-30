@@ -1,115 +1,114 @@
 <template>
   <Layout>
     <div class="page-header">
-      <h2>Центр помощи AeroDesign</h2>
-      <p>Подробные инструкции по загрузке и ответы на все частые вопросы</p>
+      <h2>{{ t('support.title') }}</h2>
+      <p>{{ t('support.subtitle') }}</p>
     </div>
 
     <div class="help-container">
       <!-- Частые вопросы -->
       <div class="help-section">
-        <h3><i class="fas fa-question-circle"></i> Частые вопросы</h3>
+        <h3><i class="fas fa-question-circle"></i> {{ t('support.section.faq') }}</h3>
 
         <div class="faq-item">
           <div class="faq-question" :class="{ active: openFaqIndex === 0 }" @click="toggleFaq(0)">
             <i class="fas fa-chevron-right"></i>
-            <span>Можно ли изменить никнейм, фон или другие элементы оформления?</span>
+            <span>{{ t('support.faq.q1') }}</span>
           </div>
           <div class="faq-answer" :class="{ show: openFaqIndex === 0 }">
-            <p>Да, это возможно. После покупки вы можете связаться с нами через контакты, указанные внизу страницы, и уточнить, что именно нужно поменять (ник, фон или другие детали). Мы поможем сделать кастомизацию под вас.</p>
+            <p>{{ t('support.faq.a1') }}</p>
           </div>
         </div>
 
         <div class="faq-item">
           <div class="faq-question" :class="{ active: openFaqIndex === 1 }" @click="toggleFaq(1)">
             <i class="fas fa-chevron-right"></i>
-            <span>Какие способы оплаты доступны?</span>
+            <span>{{ t('support.faq.q2') }}</span>
           </div>
           <div class="faq-answer" :class="{ show: openFaqIndex === 1 }">
-            <p>Мы принимаем:<br>- Банковские карты (Visa, Mastercard, Мир)<br>- Криптовалюту (BTC, ETH, USDT)<br>- Другие способы по согласованию</p>
+            <p>{{ t('support.faq.a2') }}</p>
           </div>
         </div>
 
         <div class="faq-item">
           <div class="faq-question" :class="{ active: openFaqIndex === 2 }" @click="toggleFaq(2)">
             <i class="fas fa-chevron-right"></i>
-            <span>Изображение некорректно отображается в витрине?</span>
+            <span>{{ t('support.faq.q3') }}</span>
           </div>
           <div class="faq-answer" :class="{ show: openFaqIndex === 2 }">
-            <p>Мы подготовили инструкцию с решениями основных проблем ниже на странице. Если после этого изображение всё ещё ставится неправильно — свяжитесь с нами, контакты указаны внизу сайта.</p>
+            <p>{{ t('support.faq.a3') }}</p>
           </div>
         </div>
       </div>
 
       <!-- Установка оформления -->
       <div class="help-section">
-        <h3><i class="fas fa-download"></i> Установка оформления</h3>
+        <h3><i class="fas fa-download"></i> {{ t('support.section.install') }}</h3>
 
         <div class="install-method recommended">
-          <div class="recommended-badge">Рекомендуем</div>
-          <h4>Способ 1: Автоматическая установка через расширение</h4>
-          <p>Для удобства мы разработали специальное расширение, которое автоматизирует весь процесс:</p>
+          <div class="recommended-badge">{{ t('support.install.recommended') }}</div>
+          <h4>{{ t('support.method1.title') }}</h4>
+          <p>{{ t('support.method1.desc') }}</p>
           <a href="https://chromewebstore.google.com/detail/steam-gif-uploader/jeoaabmjgoolmbhimhimihpkcmdhhlaj"
              target="_blank" class="extension-card">
             <div class="extension-icon"><i class="fab fa-chrome"></i></div>
             <div class="extension-info">
-              <h5>Steam GIF Uploader</h5>
-              <p>Расширение для Chrome</p>
+              <h5>{{ t('support.extension.name') }}</h5>
+              <p>{{ t('support.extension.chrome') }}</p>
             </div>
           </a>
           <div class="steps">
             <div class="step">
               <div class="step-number">1</div>
-              <div class="step-content"><p>Установите расширение из Chrome Web Store</p></div>
+              <div class="step-content"><p>{{ t('support.method1.step1') }}</p></div>
             </div>
             <div class="step">
               <div class="step-number">2</div>
-              <div class="step-content"><p>Выберите тип витрины</p></div>
+              <div class="step-content"><p>{{ t('support.method1.step2') }}</p></div>
             </div>
             <div class="step">
               <div class="step-number">3</div>
-              <div class="step-content"><p>Выберите GIF или изображение и нажмите "Загрузить"</p></div>
+              <div class="step-content"><p>{{ t('support.method1.step3') }}</p></div>
             </div>
             <div class="step">
               <div class="step-number">4</div>
-              <div class="step-content"><p>Расширение автоматически откроет вкладку, вставит нужные параметры и
-                сохранит</p></div>
+              <div class="step-content"><p>{{ t('support.method1.step4') }}</p></div>
             </div>
           </div>
 
           <!-- Локальное видео вместо YouTube -->
           <div class="local-video-container">
             <video style="width: 100%;" controls poster="../../preview.png">
-              <source src="../../mp4.mp4" type="video/mp4">
-              <source src="../../webm.webm" type="video/webm">
-              Ваш браузер не поддерживает HTML5 видео.
+              <source :src="t('support.video.mp4')" type="video/mp4">
+              <source :src="t('support.video.webm')" type="video/webm">
+              {{ t('support.video.fallback') }}
             </video>
           </div>
 
           <div class="pro-tip compact">
-            <h5><i class="fas fa-lightbulb"></i> Решение распространенной проблемы</h5>
+            <h5><i class="fas fa-lightbulb"></i> {{ t('support.protip.title') }}</h5>
             <div class="problem-image-container">
-              <img :src="problemImage" alt="Пример проблемы с выбором витрины" class="problem-image" />
-              <div class="image-caption">Неправильно выбрана витрина</div>
+              <img :src="lang === 'en' ? problemEngImage : problemImage" alt="Пример проблемы с выбором витрины" class="problem-image" />
+              <div class="image-caption">{{ t('support.protip.caption') }}</div>
             </div>
             <div class="solution-steps">
-              <h5><i class="fas fa-check-circle"></i> Как исправить:</h5>
+              <h5><i class="fas fa-check-circle"></i> {{ t('support.protip.howto') }}</h5>
               <ol>
-                <li>Убедитесь, что выбрана <strong>"Витрина избранных иллюстраций"</strong></li>
-                <li>Проверьте размеры изображения после загрузки (1000x1)</li>
-                <li>Используйте расширение для автоматической загрузки</li>
+                <li>{{ t('support.protip.step1') }}</li>
+                <li>{{ t('support.protip.step2') }}</li>
+                <li>{{ t('support.protip.step3') }}</li>
               </ol>
             </div>
           </div>
         </div>
 
         <div class="install-method">
-          <h4>Способ 2: Ручная установка через консоль браузера</h4>
+          <h4>{{ t('support.method2.title') }}</h4>
           <div class="steps">
             <div class="step">
               <div class="step-number">1</div>
               <div class="step-content">
-                <p>Откройте эту ссылку и выберите изображение:</p>
+                <p>{{ t('support.method2.openLink') }}</p>
                 <a href="http://steamcommunity.com/sharedfiles/edititem/767/3/" target="_blank" class="steam-link"><i
                     class="fab fa-steam"></i> http://steamcommunity.com/sharedfiles/edititem/767/3/</a>
               </div>
@@ -118,38 +117,41 @@
             <div class="step">
               <div class="step-number">2</div>
               <div class="step-content">
-                <p>Когда изображение откроется на странице, откройте консоль разработчика:</p>
+                <p>{{ t('support.method2.devtoolsIntro') }}</p>
                 <ul class="browser-commands">
-                  <li><strong>Chrome:</strong> Ctrl+Shift+J</li>
-                  <li><strong>Firefox:</strong> Ctrl+Shift+K</li>
+                  <li><strong>{{ t('support.method2.browserCommands.chrome') }}</strong> Ctrl+Shift+J</li>
+                  <li><strong>{{ t('support.method2.browserCommands.firefox') }}</strong> Ctrl+Shift+K</li>
                 </ul>
-                <p>Или щелкните правой кнопкой → "Исследовать элемент" → вкладка "Console"</p>
+                <p>{{ t('support.method2.or') }}</p>
               </div>
             </div>
 
             <div class="step">
               <div class="step-number">3</div>
               <div class="step-content">
-                <p>Введите один из этих кодов в консоли:</p>
+                <p>{{ t('support.method2.enterCode') }}</p>
 
                 <div class="code-block">
+<<<<<<< HEAD
                   <p>Для иллюстраций:</p>
+=======
+                  <p>{{ t('support.method2.image') }}</p>
+>>>>>>> 2309bc2f95fb7b521372a68406f5d258127d241c
                   <code>$J('#image_width').val('1000');$J('#image_height').val('1');</code>
-                  <button class="copy-btn" @click="copyCode(1)"><i class="far"
-                                                                   :class="isCopied1 ? 'fa-check' : 'fa-copy'"></i>
-                    {{ isCopied1 ? 'Скопировано!' : 'Копировать' }}
-                  </button>
+                  <button class="copy-btn" @click="copyCode(1)"><i class="far" :class="isCopied1 ? 'fa-check' : 'fa-copy'"></i> {{ isCopied1 ? t('support.copied') : t('support.copy') }}</button>
                 </div>
 
                 <div class="code-block">
+<<<<<<< HEAD
                   <p>Для скриншотов:</p>
+=======
+                  <p>{{ t('support.method2.screenshot') }}</p>
+>>>>>>> 2309bc2f95fb7b521372a68406f5d258127d241c
                   <code>$J('#image_width').val('1000');$J('#image_height').val('1');$J('[name="file_type"]').val("5");</code>
-                  <button class="copy-btn" @click="copyCode(2)"><i class="far"
-                                                                   :class="isCopied2 ? 'fa-check' : 'fa-copy'"></i>
-                    {{ isCopied2 ? 'Скопировано!' : 'Копировать' }}
-                  </button>
+                  <button class="copy-btn" @click="copyCode(2)"><i class="far" :class="isCopied2 ? 'fa-check' : 'fa-copy'"></i> {{ isCopied2 ? t('support.copied') : t('support.copy') }}</button>
                 </div>
 
+<<<<<<< HEAD
             <div class="code-block">
   <p>Для загрузки в мастерскую:</p>
   <code>
@@ -166,6 +168,20 @@
                 <p class="warning"><i class="fas fa-exclamation-triangle"></i> Используйте только один код, не оба
                   одновременно!</p>
                 <img :src="primerGif" alt="Пример правильной вставки кода в консоль" class="step-image"/>
+=======
+                <div class="code-block">
+                  <p>{{ t('support.method2.workshop') }}</p>
+                  <code>
+                    $J('[name=consumer_app_id]').val(480);
+                    $J('[name=file_type]').val(0);
+                    $J('[name=visibility]').val(0);
+                  </code>
+                  <button class="copy-btn" @click="copyCode(3)"><i class="far" :class="isCopied3 ? 'fa-check' : 'fa-copy'"></i> {{ isCopied3 ? t('support.copied') : t('support.copy') }}</button>
+                </div>
+
+                <p class="warning"><i class="fas fa-exclamation-triangle"></i> {{ t('support.method2.warning') }}</p>
+                <img :src="primerGif" :alt="t('support.method2.imageAlt')" class="step-image"/>
+>>>>>>> 2309bc2f95fb7b521372a68406f5d258127d241c
               </div>
             </div>
             
@@ -174,8 +190,7 @@
             <div class="step">
               <div class="step-number">4</div>
               <div class="step-content">
-                <p>Дайте название, описание, поставьте галочку "Я подтверждаю, что являюсь автором этой иллюстрации",
-                  затем нажмите "сохранить и продолжить".</p>
+                <p>{{ t('support.method2.step4') }}</p>
               </div>
             </div>
           </div>
@@ -184,28 +199,27 @@
 
       <!-- Контакты -->
       <div class="help-section">
-        <h3><i class="fas fa-headset"></i> Техническая поддержка</h3>
-        <p>Если у вас остались вопросы или возникли проблемы с установкой, свяжитесь с нами:</p>
+        <h3><i class="fas fa-headset"></i> {{ t('support.section.support') }}</h3>
+        <p>{{ t('support.contacts.description') }}</p>
         <div class="contact-methods">
           <div class="contact-card">
-            <h4><i class="fab fa-telegram"></i> Telegram</h4>
-            <p>Самый быстрый способ получить помощь. Отвечаем в течение 1-2 часов в рабочее время.</p>
+            <h4><i class="fab fa-telegram"></i> {{ t('support.contacts.telegramTitle') }}</h4>
+            <p>{{ t('support.contacts.telegramDesc') }}</p>
             <a href="https://t.me/OFFRLINE" target="_blank" class="contact-link"><i class="fas fa-paper-plane"></i>
-              Написать в Telegram</a>
+              {{ t('support.contacts.telegram') }}</a>
           </div>
 
           <div class="contact-card">
-            <h4><i class="fab fa-discord"></i> Discord Сервер</h4>
-            <p>Присоединяйтесь к нашему Discord-сообществу для общения, помощи и обновлений.</p>
+            <h4><i class="fab fa-discord"></i> {{ t('support.contacts.discordTitle') }}</h4>
+            <p>{{ t('support.contacts.discordDesc') }}</p>
             <a href="https://discord.gg/2GCebZRavP" target="_blank" class="contact-link"><i class="fas fa-users"></i>
-              Присоединиться</a>
+              {{ t('support.contacts.join') }}</a>
           </div>
 
           <div class="contact-card">
-            <h4><i class="fas fa-envelope"></i> Электронная почта</h4>
-            <p>Для сложных вопросов и коммерческих предложений. Отвечаем в течение 24 часов.</p>
-            <a href="mailto:contact@aerodesign.store" class="contact-link"><i class="fas fa-envelope"></i> Написать
-              письмо</a>
+            <h4><i class="fas fa-envelope"></i> {{ t('support.contacts.emailTitle') }}</h4>
+            <p>{{ t('support.contacts.emailDesc') }}</p>
+            <a href="mailto:contact@aerodesign.store" class="contact-link"><i class="fas fa-envelope"></i> {{ t('support.contacts.emailCta') }}</a>
           </div>
         </div>
       </div>
@@ -217,22 +231,30 @@
 import {ref} from 'vue';
 import Layout from '../components/Layout.vue';
 import primerGif from '../../primerru.gif';
-import problemImage from '../../ProblebaRu.png';
+import problemImage from '../../problemaru.png';
+import problemEngImage from '../../problemaeng.png';
+import { useI18n } from '../i18n';
 
 const isCopied1 = ref(false);
 const isCopied2 = ref(false);
 const isCopied3 = ref(false);
 const openFaqIndex = ref<number | null>(null);
+const { t, lang } = useI18n();
 
 function copyCode(which: 1 | 2 | 3) {
   const code1 = "$J('#image_width').val('1000');$J('#image_height').val('1');";
   const code2 = "$J('#image_width').val('1000');$J('#image_height').val('1');$J('[name=\"file_type\"]').val(\"5\");";
   const code3 = "$J('[name=consumer_app_id]').val(480);$J('[name=file_type]').val(0);$J('[name=visibility]').val(0);";
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> 2309bc2f95fb7b521372a68406f5d258127d241c
   let text = "";
   if (which === 1) text = code1;
   if (which === 2) text = code2;
   if (which === 3) text = code3;
+<<<<<<< HEAD
   
   navigator.clipboard.writeText(text).then(() => {
   if (which === 1) {
@@ -245,6 +267,20 @@ function copyCode(which: 1 | 2 | 3) {
   isCopied3.value = true;
   setTimeout(() => (isCopied3.value = false), 2000);
   }
+=======
+
+  navigator.clipboard.writeText(text).then(() => {
+    if (which === 1) {
+      isCopied1.value = true;
+      setTimeout(() => (isCopied1.value = false), 2000);
+    } else if (which === 2) {
+      isCopied2.value = true;
+      setTimeout(() => (isCopied2.value = false), 2000);
+    } else {
+      isCopied3.value = true;
+      setTimeout(() => (isCopied3.value = false), 2000);
+    }
+>>>>>>> 2309bc2f95fb7b521372a68406f5d258127d241c
   });
   }
   
