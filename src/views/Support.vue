@@ -132,43 +132,17 @@
                 <p>{{ t('support.method2.enterCode') }}</p>
 
                 <div class="code-block">
-<<<<<<< HEAD
-                  <p>Для иллюстраций:</p>
-=======
                   <p>{{ t('support.method2.image') }}</p>
->>>>>>> 2309bc2f95fb7b521372a68406f5d258127d241c
                   <code>$J('#image_width').val('1000');$J('#image_height').val('1');</code>
                   <button class="copy-btn" @click="copyCode(1)"><i class="far" :class="isCopied1 ? 'fa-check' : 'fa-copy'"></i> {{ isCopied1 ? t('support.copied') : t('support.copy') }}</button>
                 </div>
 
                 <div class="code-block">
-<<<<<<< HEAD
-                  <p>Для скриншотов:</p>
-=======
                   <p>{{ t('support.method2.screenshot') }}</p>
->>>>>>> 2309bc2f95fb7b521372a68406f5d258127d241c
                   <code>$J('#image_width').val('1000');$J('#image_height').val('1');$J('[name="file_type"]').val("5");</code>
                   <button class="copy-btn" @click="copyCode(2)"><i class="far" :class="isCopied2 ? 'fa-check' : 'fa-copy'"></i> {{ isCopied2 ? t('support.copied') : t('support.copy') }}</button>
                 </div>
 
-<<<<<<< HEAD
-            <div class="code-block">
-  <p>Для загрузки в мастерскую:</p>
-  <code>
-    $J('[name=consumer_app_id]').val(480);
-    $J('[name=file_type]').val(0);
-    $J('[name=visibility]').val(0);
-  </code>
-  <button class="copy-btn" @click="copyCode(3)">
-    <i class="far" :class="isCopied3 ? 'fa-check' : 'fa-copy'"></i>
-    {{ isCopied3 ? 'Скопировано!' : 'Копировать' }}
-  </button>
-</div>
-
-                <p class="warning"><i class="fas fa-exclamation-triangle"></i> Используйте только один код, не оба
-                  одновременно!</p>
-                <img :src="primerGif" alt="Пример правильной вставки кода в консоль" class="step-image"/>
-=======
                 <div class="code-block">
                   <p>{{ t('support.method2.workshop') }}</p>
                   <code>
@@ -181,11 +155,8 @@
 
                 <p class="warning"><i class="fas fa-exclamation-triangle"></i> {{ t('support.method2.warning') }}</p>
                 <img :src="primerGif" :alt="t('support.method2.imageAlt')" class="step-image"/>
->>>>>>> 2309bc2f95fb7b521372a68406f5d258127d241c
               </div>
             </div>
-            
-
 
             <div class="step">
               <div class="step-number">4</div>
@@ -245,29 +216,11 @@ function copyCode(which: 1 | 2 | 3) {
   const code1 = "$J('#image_width').val('1000');$J('#image_height').val('1');";
   const code2 = "$J('#image_width').val('1000');$J('#image_height').val('1');$J('[name=\"file_type\"]').val(\"5\");";
   const code3 = "$J('[name=consumer_app_id]').val(480);$J('[name=file_type]').val(0);$J('[name=visibility]').val(0);";
-<<<<<<< HEAD
-  
-=======
 
->>>>>>> 2309bc2f95fb7b521372a68406f5d258127d241c
   let text = "";
   if (which === 1) text = code1;
   if (which === 2) text = code2;
   if (which === 3) text = code3;
-<<<<<<< HEAD
-  
-  navigator.clipboard.writeText(text).then(() => {
-  if (which === 1) {
-  isCopied1.value = true;
-  setTimeout(() => (isCopied1.value = false), 2000);
-  } else if (which === 2) {
-  isCopied2.value = true;
-  setTimeout(() => (isCopied2.value = false), 2000);
-  } else {
-  isCopied3.value = true;
-  setTimeout(() => (isCopied3.value = false), 2000);
-  }
-=======
 
   navigator.clipboard.writeText(text).then(() => {
     if (which === 1) {
@@ -280,10 +233,9 @@ function copyCode(which: 1 | 2 | 3) {
       isCopied3.value = true;
       setTimeout(() => (isCopied3.value = false), 2000);
     }
->>>>>>> 2309bc2f95fb7b521372a68406f5d258127d241c
   });
-  }
-  
+}
+
 function toggleFaq(index: number) {
   openFaqIndex.value = openFaqIndex.value === index ? null : index;
 }
