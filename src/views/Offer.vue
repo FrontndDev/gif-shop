@@ -2,82 +2,82 @@
   <Layout>
     <div class="container">
       <header class="page-header">
-        <h1>Публичная оферта</h1>
-        <p>о заключении договора купли-продажи цифровых товаров</p>
+        <h1>{{ t('offer.title') }}</h1>
+        <p>{{ t('offer.subtitle') }}</p>
       </header>
 
       <section class="highlight">
-        <p><strong>Внимание:</strong> совершая покупку в интернет-магазине AeroDesign, вы подтверждаете своё согласие с условиями данной оферты.</p>
+        <p><strong>{{ t('offer.attention') }}</strong></p>
       </section>
 
-      <h2>1. Общие положения</h2>
-      <p>1.1. Настоящая публичная оферта является официальным предложением самозанятого лица Макаренко Максима Александровича, ИНН 910509844791, работающего без образования юридического лица и зарегистрированного в соответствии с федеральным законом № 422-ФЗ, далее — «продавец», заключить договор купли-продажи цифровых товаров на изложенных ниже условиях.</p>
-      <p>1.2. В соответствии с пунктом 2 статьи 437 гражданского кодекса РФ, акцепт условий настоящей оферты является заключением договора купли-продажи.</p>
+      <h2>{{ t('offer.sections.general.title') }}</h2>
+      <p>{{ t('offer.sections.general.p1') }}</p>
+      <p>{{ t('offer.sections.general.p2') }}</p>
 
-      <h2>2. Термины и определения</h2>
-      <p><strong>Оферта</strong> — настоящий документ, размещённый по адресу: <a href="https://aerodesign.store" target="_blank" rel="noopener">https://aerodesign.store</a>.</p>
-      <p><strong>Продавец</strong> — самозанятое лицо, размещающее цифровые товары на сайте.</p>
-      <p><strong>Сайт</strong> — интернет-магазин AeroDesign, расположенный по адресу <a href="https://aerodesign.store" target="_blank" rel="noopener">https://aerodesign.store</a>.</p>
-      <p><strong>Покупатель</strong> — физическое или юридическое лицо, осуществившее акцепт настоящей оферты.</p>
-      <p><strong>Акцепт</strong> — полное и безоговорочное принятие условий настоящей оферты путём оплаты цифрового товара.</p>
-      <p><strong>Цифровой товар</strong> — анимированные иллюстрации для оформления профиля Steam (витрины, аватары, фоны и т.п.), не имеющие физического носителя.</p>
-      <p><strong>Заказ</strong> — оформленный покупателем запрос на приобретение цифрового товара с указанием контактных данных, включая адрес электронной почты.</p>
+      <h2>{{ t('offer.sections.terms.title') }}</h2>
+      <p><strong>{{ t('offer.sections.terms.offer') }}</strong> <a href="https://aerodesign.store" target="_blank" rel="noopener">https://aerodesign.store</a>.</p>
+      <p><strong>{{ t('offer.sections.terms.seller') }}</strong></p>
+      <p><strong>{{ t('offer.sections.terms.site') }}</strong> <a href="https://aerodesign.store" target="_blank" rel="noopener">https://aerodesign.store</a>.</p>
+      <p><strong>{{ t('offer.sections.terms.buyer') }}</strong></p>
+      <p><strong>{{ t('offer.sections.terms.acceptance') }}</strong></p>
+      <p><strong>{{ t('offer.sections.terms.digitalGood') }}</strong></p>
+      <p><strong>{{ t('offer.sections.terms.order') }}</strong></p>
 
-      <h2>3. Предмет оферты</h2>
-      <p>3.1. Продавец обязуется предоставить покупателю цифровой товар, а покупатель обязуется оплатить его на условиях настоящей оферты.</p>
-      <p>3.2. Подробные сведения о товаре (описание, характеристики, стоимость) публикуются на страницах сайта.</p>
+      <h2>{{ t('offer.sections.subject.title') }}</h2>
+      <p>{{ t('offer.sections.subject.p1') }}</p>
+      <p>{{ t('offer.sections.subject.p2') }}</p>
 
-      <h2>4. Порядок оформления заказа</h2>
-      <p>4.1. Покупатель самостоятельно оформляет заказ через интерфейс сайта.</p>
-      <p>4.2. После подтверждения оплаты продавец направляет ссылку на скачивание или файл на указанный покупателем email.</p>
-      <p>4.3. Продавец вправе отказать в выполнении заказа при наличии некорректных данных или технической невозможности исполнения.</p>
-      <p>4.4. Покупатель несёт ответственность за корректность указанных контактных данных.</p>
+      <h2>{{ t('offer.sections.order.title') }}</h2>
+      <p>{{ t('offer.sections.order.p1') }}</p>
+      <p>{{ t('offer.sections.order.p2') }}</p>
+      <p>{{ t('offer.sections.order.p3') }}</p>
+      <p>{{ t('offer.sections.order.p4') }}</p>
 
-      <h2>5. Стоимость и порядок оплаты</h2>
-      <p>5.1. Цены на сайте могут быть указаны в рублях (₽) или евро (₽), в зависимости от выбранного способа оплаты и региона покупателя.</p>
-      <p>5.2. Оплата осуществляется одним из следующих способов:</p>
+      <h2>{{ t('offer.sections.payment.title') }}</h2>
+      <p>{{ t('offer.sections.payment.p1') }}</p>
+      <p>{{ t('offer.sections.payment.p2') }}</p>
       <ul>
-        <li>через платёжную систему ЮKassa — в рублях (₽);</li>
-        <li>через платёжную систему PayPal — в евро (₽) или в другой валюте по курсу PayPal.</li>
+        <li>{{ t('offer.sections.payment.method1') }}</li>
+        <li>{{ t('offer.sections.payment.method2') }}</li>
       </ul>
-      <p>5.3. Договор считается заключённым с момента поступления денежных средств на счёт продавца.</p>
+      <p>{{ t('offer.sections.payment.p3') }}</p>
 
-      <h2>6. Доставка цифрового товара</h2>
-      <p>6.1. Доставка осуществляется исключительно в электронном виде:</p>
+      <h2>{{ t('offer.sections.delivery.title') }}</h2>
+      <p>{{ t('offer.sections.delivery.p1') }}</p>
       <ul>
-        <li>на email, указанный покупателем;</li>
-        <li>через ссылку на скачивание (Google Drive, Dropbox и др.).</li>
+        <li>{{ t('offer.sections.delivery.method1') }}</li>
+        <li>{{ t('offer.sections.delivery.method2') }}</li>
       </ul>
-      <p>6.2. Срок доставки — до 24 часов с момента подтверждения оплаты. В отдельных случаях срок может быть увеличен по техническим причинам, о чём покупатель уведомляется.</p>
+      <p>{{ t('offer.sections.delivery.p2') }}</p>
 
-      <h2>7. Возврат и гарантии</h2>
-      <p>7.1. В соответствии с постановлением правительства РФ № 2463 от 31.12.2020, цифровые товары надлежащего качества не подлежат возврату или обмену.</p>
-      <p>7.2. В случае несоответствия товара описанию покупатель имеет право на замену или возврат денежных средств в течение 7 рабочих дней с момента обращения.</p>
+      <h2>{{ t('offer.sections.returns.title') }}</h2>
+      <p>{{ t('offer.sections.returns.p1') }}</p>
+      <p>{{ t('offer.sections.returns.p2') }}</p>
 
-      <h2>8. Ответственность сторон</h2>
-      <p>8.1. Продавец не несёт ответственности за невозможность использования товара по причинам, не зависящим от него (в том числе блокировки хостинга, ограничений провайдеров и пр.).</p>
-      <p>8.2. Покупатель несёт полную ответственность за достоверность указанных при оформлении данных.</p>
+      <h2>{{ t('offer.sections.responsibility.title') }}</h2>
+      <p>{{ t('offer.sections.responsibility.p1') }}</p>
+      <p>{{ t('offer.sections.responsibility.p2') }}</p>
 
-      <h2>9. Конфиденциальность</h2>
-      <p>9.1. Персональные данные обрабатываются в соответствии с <RouterLink to="/privacy">политикой конфиденциальности</RouterLink>.</p>
+      <h2>{{ t('offer.sections.privacy.title') }}</h2>
+      <p>{{ t('offer.sections.privacy.p1') }} <RouterLink to="/privacy">{{ t('privacy.title') }}</RouterLink>.</p>
 
-      <h2>10. Заключительные положения</h2>
-      <p>10.1. Оферта вступает в силу с момента её размещения на сайте и действует бессрочно до момента её отзыва продавцом.</p>
-      <p>10.2. Продавец вправе изменить условия оферты в любое время без предварительного уведомления.</p>
-      <p>10.3. Все споры, возникающие в рамках исполнения настоящей оферты, решаются путём переговоров, а в случае недостижения соглашения — в судебном порядке по месту регистрации продавца.</p>
-      <p>10.4. Применяется законодательство Российской Федерации.</p>
-      <p>10.5. Признание какого-либо положения настоящей оферты недействительным не влечёт за собой недействительность остальных положений.</p>
+      <h2>{{ t('offer.sections.final.title') }}</h2>
+      <p>{{ t('offer.sections.final.p1') }}</p>
+      <p>{{ t('offer.sections.final.p2') }}</p>
+      <p>{{ t('offer.sections.final.p3') }}</p>
+      <p>{{ t('offer.sections.final.p4') }}</p>
+      <p>{{ t('offer.sections.final.p5') }}</p>
 
       <section class="highlight">
-        <p><strong>Реквизиты продавца:</strong></p>
-        <p>Самозанятый: Макаренко Максим Александрович</p>
-        <p>ИНН: 910509844791</p>
-        <p>Email: contact@aerodesign.store</p>
+        <p><strong>{{ t('offer.sellerDetails.title') }}</strong></p>
+        <p>{{ t('offer.sellerDetails.name') }}</p>
+        <p>{{ t('offer.sellerDetails.tin') }}</p>
+        <p>{{ t('offer.sellerDetails.email') }}</p>
       </section>
 
       <div class="footer">
-        <p>© 2025 AeroDesign. Все права защищены.</p>
-        <p>Дата публикации оферты: 31 июля 2025</p>
+        <p>{{ t('offer.footer.copyright') }}</p>
+        <p>{{ t('offer.footer.date') }}</p>
       </div>
     </div>
   </Layout>
@@ -86,6 +86,9 @@
 <script setup lang="ts">
 import Layout from '../components/Layout.vue';
 import { RouterLink } from 'vue-router';
+import { useI18n } from '../i18n';
+
+const { t } = useI18n();
 </script>
 
 <style scoped>

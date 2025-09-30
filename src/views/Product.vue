@@ -9,23 +9,23 @@
       </div>
       <div class="info">
         <h2>{{ product.title }}</h2>
-        <div class="price">{{ product.price.toFixed(2) }} ₽</div>
+        <div class="price">{{ formatPrice(product.price, product.priceUSD) }}</div>
         <div class="actions">
           <button class="btn btn-cart" :class="{ 'in-cart': isInCart }" @click="addToCart">
-            <i class="fas fa-cart-plus"></i> {{ isInCart ? 'В корзине' : 'В корзину' }}
+            <i class="fas fa-cart-plus"></i> {{ isInCart ? t('common.inCart') : t('common.addToCart') }}
           </button>
           <RouterLink class="btn btn-buy" :to="{ name: 'payment', params: { productId: product.id } }">
-            <i class="fas fa-credit-card"></i> Купить
+            <i class="fas fa-credit-card"></i> {{ t('product.buy') }}
           </RouterLink>
         </div>
         <div class="desc">
-          <p>Эффектная анимированная иллюстрация премиум-класса для оформления вашего профиля Steam.</p>
+          <p>{{ t('product.desc') }}</p>
           <ul class="features">
-            <li>Универсальный дизайн</li>
-            <li>Оптимизированный файл</li>
-            <li>Бесплатная кастомизация</li>
-            <li>Высокое разрешение</li>
-            <li>Быстрая доставка</li>
+            <li>{{ t('product.features.universal') }}</li>
+            <li>{{ t('product.features.optimized') }}</li>
+            <li>{{ t('product.features.custom') }}</li>
+            <li>{{ t('product.features.hires') }}</li>
+            <li>{{ t('product.features.fast') }}</li>
           </ul>
         </div>
       </div>
@@ -49,7 +49,7 @@
         </div>
       </div>
       <div class="status error" v-else-if="error">{{ error }}</div>
-      <div class="status" v-else>Товар не найден</div>
+      <div class="status" v-else>{{ t('product.notFound') }}</div>
     </div>
   </Layout>
 </template>
@@ -60,9 +60,13 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useCart } from '../stores/cart';
 import { useProducts } from '../stores/products';
+import { useI18n } from '../i18n';
+import { usePrice } from '../composables/usePrice';
 
 const route = useRoute();
 const cart = useCart();
+const { t } = useI18n();
+const { formatPrice, getPrice, getCurrency } = usePrice();
 
 const product = ref<ReturnType<typeof useProducts>['items'][number] | null>(null);
 const productsStore = useProducts();
@@ -88,7 +92,15 @@ watch(() => route.params.id as string, (id) => fetchProduct(id));
 
 function addToCart() {
   if (!product.value) return;
-  cart.add({ id: product.value.id, name: product.value.title, price: product.value.price, currency: '₽', image: (product.value as any).video, quantity: 1 });
+  cart.add({ 
+    id: product.value.id, 
+    name: product.value.title, 
+    price: product.value.price,
+    priceUSD: product.value.priceUSD,
+    currency: getCurrency(), 
+    image: (product.value as any).video, 
+    quantity: 1 
+  });
 }
 
 const isInCart = computed(() => !!cart.items.find(i => i.id === (product.value?.id || '')));
