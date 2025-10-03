@@ -16,6 +16,7 @@
         </RouterLink>
         <RouterLink to="/order" @click="closeMenu"><i class="fas fa-pencil-ruler"></i> {{ t('layout.nav.order') }}</RouterLink>
         <RouterLink to="/support" @click="closeMenu"><i class="fas fa-question-circle"></i> {{ t('layout.nav.support') }}</RouterLink>
+        <RouterLink to="/about" @click="closeMenu"><i class="fas fa-user"></i> {{ t('layout.nav.about') }}</RouterLink>
         <RouterLink to="/cart" class="cart-btn" @click="closeMenu">
           <i class="fas fa-shopping-cart"></i>
           {{ t('layout.nav.cart') }} <span class="cart-count">{{ cartCount }}</span>
@@ -55,6 +56,9 @@
             </li>
             <li>
               <RouterLink to="/support"><i class="fas fa-chevron-right"></i> {{ t('layout.nav.support') }}</RouterLink>
+            </li>
+            <li>
+              <RouterLink to="/about"><i class="fas fa-chevron-right"></i> {{ t('layout.nav.about') }}</RouterLink>
             </li>
           </ul>
         </div>

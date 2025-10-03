@@ -9,6 +9,7 @@ const Support = () => import('../views/Support.vue');
 const Order = () => import('../views/Order.vue');
 const Privacy = () => import('../views/Privacy.vue');
 const Offer = () => import('../views/Offer.vue');
+const About = () => import('../views/About.vue');
 
 const router = createRouter({
   history: createWebHistory(),
@@ -22,7 +23,8 @@ const router = createRouter({
     { path: '/support', name: 'support', component: Support },
     { path: '/order', name: 'order', component: Order },
     { path: '/privacy', name: 'privacy', component: Privacy },
-    { path: '/offer', name: 'offer', component: Offer }
+    { path: '/offer', name: 'offer', component: Offer },
+    { path: '/about', name: 'about', component: About }
   ],
   scrollBehavior() { return { top: 0 }; }
 });

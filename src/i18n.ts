@@ -11,6 +11,7 @@ import { support } from './i18n/support';
 import { order } from './i18n/order';
 import { offer } from './i18n/offer';
 import { privacy } from './i18n/privacy';
+import { about } from './i18n/about';
 
 const supportedLanguages: SupportedLang[] = ['ru', 'en'];
 const stored = (typeof localStorage !== 'undefined' ? localStorage.getItem('lang') : null) as SupportedLang | null;
@@ -50,7 +51,8 @@ const messages = mergeBundles(
   support,
   order,
   offer,
-  privacy
+  privacy,
+  about
 );
 
 export function useI18n() {
