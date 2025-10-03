@@ -34,17 +34,17 @@
         <p class="bio-text">{{ t('about.bio.text1') }}</p>
         <p class="bio-text">{{ t('about.bio.text2') }}</p>
         
-        <div class="stats-grid">
+        <div class="stats-grid" data-animate-id="stats-section" :class="{ 'animate-visible': isElementVisible('stats-section') }">
           <div class="stat-item">
-            <span class="stat-number">350+</span>
+            <span class="stat-number">{{ animatedCounters.projects }}+</span>
             <span class="stat-label">{{ t('about.stats.works') }}</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">4</span>
+            <span class="stat-number">{{ animatedCounters.experience }}</span>
             <span class="stat-label">{{ t('about.stats.experience') }}</span>
           </div>
           <div class="stat-item">
-            <span class="stat-number">99%</span>
+            <span class="stat-number">{{ animatedCounters.clients }}%</span>
             <span class="stat-label">{{ t('about.stats.satisfaction') }}</span>
           </div>
         </div>
@@ -159,8 +159,8 @@ const portfolioItems = ref([
   { image: '/images/8.gif', title: 'Space Theme' }
 ]);
 
-// Testimonials data
-const testimonials = ref([
+// Testimonials data - reactive to language changes
+const testimonials = computed(() => [
   {
     id: 1,
     text: t('about.testimonials.testimonial1.text'),
@@ -192,6 +192,19 @@ let touchEndX = 0;
 
 // Animation state
 const visibleElements = ref(new Set<string>());
+
+// Counter animation state
+const animatedCounters = ref({
+  projects: 0,
+  experience: 0,
+  clients: 0
+});
+
+const targetCounters = ref({
+  projects: 350,
+  experience: 4,
+  clients: 99
+});
 
 const totalItems = computed(() => portfolioItems.value.length);
 
@@ -294,6 +307,11 @@ function setupScrollAnimations() {
         const elementId = entry.target.getAttribute('data-animate-id');
         if (elementId) {
           visibleElements.value.add(elementId);
+          
+          // Start counter animation when stats section becomes visible
+          if (elementId === 'stats-section') {
+            animateCounters();
+          }
         }
       }
     });
@@ -302,6 +320,28 @@ function setupScrollAnimations() {
   // Observe elements that should animate
   const elementsToAnimate = document.querySelectorAll('[data-animate-id]');
   elementsToAnimate.forEach(el => observer.observe(el));
+}
+
+function animateCounters() {
+  const duration = 2000; // 2 seconds
+  const steps = 60; // 60 steps for smooth animation
+  const stepDuration = duration / steps;
+
+  Object.keys(targetCounters.value).forEach((key) => {
+    const target = targetCounters.value[key as keyof typeof targetCounters.value];
+    const increment = target / steps;
+    
+    let current = 0;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        animatedCounters.value[key as keyof typeof animatedCounters.value] = target;
+        clearInterval(timer);
+      } else {
+        animatedCounters.value[key as keyof typeof animatedCounters.value] = Math.floor(current);
+      }
+    }, stepDuration);
+  });
 }
 
 onMounted(() => {
@@ -507,6 +547,14 @@ body {
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-top: 30px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.stats-grid.animate-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .stat-item {
