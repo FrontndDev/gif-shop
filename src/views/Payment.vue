@@ -54,6 +54,12 @@
                 <span class="payment-description">{{ t('payment.method.yookassa.desc') }}</span>
               </label>
               <label class="payment-method-tile">
+                <input type="radio" value="stripe" v-model="payment"/>
+                <i class="payment-icon stripe-color fab fa-stripe"></i>
+                <span class="payment-name">{{ t('payment.method.stripe') }}</span>
+                <span class="payment-description">{{ t('payment.method.stripe.desc') }}</span>
+              </label>
+              <label class="payment-method-tile">
                 <input type="radio" value="paypal" v-model="payment"/>
                 <i class="payment-icon paypal-color fab fa-paypal"></i>
                 <span class="payment-name">{{ t('payment.method.paypal') }}</span>
@@ -103,7 +109,7 @@ const router = useRouter();
 const email = ref('');
 const emailError = ref(false);
 const { t, lang } = useI18n();
-const payment = ref<'paypal' | 'yookassa'>(lang.value === 'en' ? 'paypal' : 'yookassa');
+const payment = ref<'paypal' | 'yookassa' | 'stripe'>(lang.value === 'en' ? 'paypal' : 'yookassa');
 const placeholder = 'https://via.placeholder.com/300x300/0a1e30/00cfff?text=AeroDesign';
 const cart = useCart();
 const selectedProduct = ref<ApiProduct | null>(null);
@@ -195,6 +201,53 @@ async function onSubmit() {
     } catch (e: any) {
       console.error('Ошибка создания платежа:', e);
       alert(e?.message || 'Ошибка создания платежа');
+    }
+  }
+  if (payment.value === 'stripe') {
+    try {
+      // Для Stripe используем специальный endpoint
+      const response = await fetch('/api/stripe/payments/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: Number(total.value.toFixed(2)),
+          currency: 'USD',
+          description: `Order payment (${items.value.length} items)`,
+          returnUrl: window.location.origin + '/success/' + orderId,
+          metadata: {
+            email: email.value,
+            itemsCount: String(items.value.length),
+            ids: items.value.map((i: any) => i.id).join(','),
+            orderId
+          }
+        })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Ошибка создания Stripe платежа');
+      }
+      
+      const res = await response.json();
+      const url = res?.confirmation?.checkout_url || res?.checkout_url;
+      
+      if (url) {
+        window.location.replace(url);
+        return;
+      }
+      
+      if (res?.status === 'succeeded' || res?.paid === true) {
+        await router.push(`/success/${orderId}`);
+        return;
+      }
+      
+      console.error('Не удалось получить ссылку на оплату Stripe. Ответ:', res);
+      alert('Не удалось получить ссылку на оплату Stripe. Попробуйте позже.');
+    } catch (e: any) {
+      console.error('Ошибка создания Stripe платежа:', e);
+      alert(e?.message || 'Ошибка создания Stripe платежа');
     }
   }
   if (payment.value === 'paypal') {
@@ -476,6 +529,10 @@ onMounted(async () => {
 
 .paypal-color {
   color: #0070ba;
+}
+
+.stripe-color {
+  color: #635bff;
 }
 
 .btn {

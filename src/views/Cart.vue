@@ -49,6 +49,10 @@
               <span>YooKassa (₽)</span>
             </label>
             <label class="payment-method-option">
+              <input type="radio" v-model="paymentMethod" value="stripe" />
+              <span>Stripe ($)</span>
+            </label>
+            <label class="payment-method-option">
               <input type="radio" v-model="paymentMethod" value="paypal" />
               <span>PayPal ($)</span>
             </label>
@@ -87,7 +91,7 @@ const { getCurrency } = usePrice();
 const { formatPriceByPaymentMethod, getCurrencyByPaymentMethod, getCartTotalByPaymentMethod } = usePaymentPrice();
 
 // Состояние выбранного способа оплаты
-const paymentMethod = ref<'yookassa' | 'paypal'>(lang.value === 'en' ? 'paypal' : 'yookassa');
+const paymentMethod = ref<'yookassa' | 'paypal' | 'stripe'>(lang.value === 'en' ? 'paypal' : 'yookassa');
 
 // Общая сумма в зависимости от способа оплаты
 const total = computed(() => getCartTotalByPaymentMethod(paymentMethod.value));
