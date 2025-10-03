@@ -3,6 +3,7 @@ import { reactive } from 'vue';
 export type CartItem = {
   id: string;
   name: string;
+  titleEn?: string;
   price: number;
   priceUSD?: number;
   currency: string;

@@ -7,7 +7,7 @@ export const payment: MessageBundle = {
     'payment.order.number': 'Номер заказа',
     'payment.order.summary': 'Ваш заказ',
     'payment.order.total': 'Итого',
-    'payment.method.title': 'Способ оплаты',
+    'payment.method.title': 'Способы оплаты',
     'payment.form.email': 'Электронная почта *',
     'payment.form.emailInvalid': 'Пожалуйста, введите корректный email',
     'payment.method.yookassa': 'ЮKassa',
@@ -21,7 +21,8 @@ export const payment: MessageBundle = {
     'payment.agree.prefix': 'Нажимая кнопку, вы соглашаетесь с',
     'payment.agree.offer': 'договором оферты',
     'payment.agree.and': 'и',
-    'payment.agree.privacy': 'политикой конфиденциальности'
+    'payment.agree.privacy': 'политикой конфиденциальности',
+    'payment.tax.id': 'ИНН самозанятого'
   },
   en: {
     'payment.header.title': 'Checkout',
@@ -29,7 +30,7 @@ export const payment: MessageBundle = {
     'payment.order.number': 'Order number',
     'payment.order.summary': 'Your order',
     'payment.order.total': 'Total',
-    'payment.method.title': 'Payment method',
+    'payment.method.title': 'Payment methods',
     'payment.form.email': 'Email *',
     'payment.form.emailInvalid': 'Please enter a valid email',
     'payment.method.yookassa': 'YooKassa',
@@ -43,7 +44,8 @@ export const payment: MessageBundle = {
     'payment.agree.prefix': 'By clicking the button, you agree to the',
     'payment.agree.offer': 'public offer',
     'payment.agree.and': 'and',
-    'payment.agree.privacy': 'privacy policy'
+    'payment.agree.privacy': 'privacy policy',
+    'payment.tax.id': 'Self-employed Tax ID'
   }
 };
 

@@ -4,6 +4,8 @@
 export type ApiProduct = {
   id: string;
   title: string;
+  titleEn?: string;
+  slug: string;
   price: number;
   priceUSD?: number;
   video?: string;
@@ -82,6 +84,10 @@ export function getProductsPaged(params: {
 
 export function getProductById(id: string): Promise<ApiProduct> {
   return request<ApiProduct>(`/api/products/${id}`);
+}
+
+export function getProductBySlug(slug: string): Promise<ApiProduct> {
+  return request<ApiProduct>(`/api/products/slug/${slug}`);
 }
 
 export function createOrder(payload: CreateOrderRequest): Promise<{ id: string } & Record<string, unknown>> {

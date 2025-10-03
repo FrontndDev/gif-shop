@@ -8,13 +8,13 @@
         </div>
       </div>
       <div class="info">
-        <h2>{{ product.title }}</h2>
+        <h2>{{ lang === 'en' && product.titleEn ? product.titleEn : product.title }}</h2>
         <div class="price">{{ formatPrice(product.price, product.priceUSD) }}</div>
         <div class="actions">
           <button class="btn btn-cart" :class="{ 'in-cart': isInCart }" @click="addToCart">
             <i class="fas fa-cart-plus"></i> {{ isInCart ? t('common.inCart') : t('common.addToCart') }}
           </button>
-          <RouterLink class="btn btn-buy" :to="{ name: 'payment', params: { productId: product.id } }">
+          <RouterLink class="btn btn-buy" :to="{ name: 'payment', params: { productId: product.slug || product.id } }">
             <i class="fas fa-credit-card"></i> {{ t('product.buy') }}
           </RouterLink>
         </div>
@@ -62,10 +62,11 @@ import { useCart } from '../stores/cart';
 import { useProducts } from '../stores/products';
 import { useI18n } from '../i18n';
 import { usePrice } from '../composables/usePrice';
+import { getProductBySlug } from '../lib/api';
 
 const route = useRoute();
 const cart = useCart();
-const { t } = useI18n();
+const { t, lang } = useI18n();
 const { formatPrice, getPrice, getCurrency } = usePrice();
 
 const product = ref<ReturnType<typeof useProducts>['items'][number] | null>(null);
@@ -73,12 +74,17 @@ const productsStore = useProducts();
 const loading = computed(() => productsStore.loading);
 const error = computed(() => productsStore.error);
 
-async function fetchProduct(id?: string) {
-  if (!id) return;
+async function fetchProduct(identifier?: string) {
+  if (!identifier) return;
   loading.value = true;
   error.value = null;
   try {
-    product.value = await productsStore.fetchById(id);
+    // Сначала пытаемся получить по slug, если не получается - по ID
+    try {
+      product.value = await getProductBySlug(identifier);
+    } catch {
+      product.value = await getProductById(identifier);
+    }
   } catch (e: any) {
     error.value = e?.message || 'Не удалось загрузить продукт';
     product.value = null;
@@ -87,14 +93,15 @@ async function fetchProduct(id?: string) {
   }
 }
 
-onMounted(() => fetchProduct(route.params.id as string));
-watch(() => route.params.id as string, (id) => fetchProduct(id));
+onMounted(() => fetchProduct(route.params.slug as string));
+watch(() => route.params.slug as string, (slug) => fetchProduct(slug));
 
 function addToCart() {
   if (!product.value) return;
   cart.add({ 
     id: product.value.id, 
-    name: product.value.title, 
+    name: product.value.title,
+    titleEn: product.value.titleEn,
     price: product.value.price,
     priceUSD: product.value.priceUSD,
     currency: getCurrency(), 

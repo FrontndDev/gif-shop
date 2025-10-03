@@ -29,7 +29,7 @@
                 <div class="cart-item">
                   <img :src="item.image || placeholder" :alt="item.name" class="cart-item-img" />
                   <div class="cart-item-info">
-                    <div class="cart-item-title">{{ item.name }}</div>
+                    <div class="cart-item-title">{{ lang === 'en' && item.titleEn ? item.titleEn : item.name }}</div>
                   </div>
                 </div>
               </td>

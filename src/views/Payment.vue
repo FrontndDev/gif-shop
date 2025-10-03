@@ -24,7 +24,7 @@
           <div class="product-item" v-for="(it, idx) in items" :key="String(it.id)+'_'+idx">
             <img :src="it.image || placeholder" :alt="it.name" class="product-image">
             <div class="product-info">
-              <div class="product-name">{{ it.name }}</div>
+              <div class="product-name">{{ lang === 'en' && it.titleEn ? it.titleEn : it.name }}</div>
               <div class="product-price">{{ formatPriceByPaymentMethod(it.price, it.priceUSD, payment) }}</div>
             </div>
           </div>
@@ -45,25 +45,17 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Способ оплаты *</label>
+            <label class="form-label">{{ t('payment.method.title') }} *</label>
             <div class="payment-methods">
-              <label class="payment-method-tile">
-                <input type="radio" value="yookassa" v-model="payment"/>
-                <i class="payment-icon yookassa-color fas fa-credit-card"></i>
-                <span class="payment-name">{{ t('payment.method.yookassa') }}</span>
-                <span class="payment-description">{{ t('payment.method.yookassa.desc') }}</span>
-              </label>
-              <label class="payment-method-tile">
-                <input type="radio" value="stripe" v-model="payment"/>
-                <i class="payment-icon stripe-color fab fa-stripe"></i>
-                <span class="payment-name">{{ t('payment.method.stripe') }}</span>
-                <span class="payment-description">{{ t('payment.method.stripe.desc') }}</span>
-              </label>
-              <label class="payment-method-tile">
-                <input type="radio" value="paypal" v-model="payment"/>
-                <i class="payment-icon paypal-color fab fa-paypal"></i>
-                <span class="payment-name">{{ t('payment.method.paypal') }}</span>
-                <span class="payment-description">{{ t('payment.method.paypal.desc') }}</span>
+              <label 
+                class="payment-method-tile" 
+                v-for="method in sortedPaymentMethods" 
+                :key="method.id"
+              >
+                <input type="radio" :value="method.id" v-model="payment"/>
+                <i class="payment-icon" :class="[method.iconClass, method.icon]"></i>
+                <span class="payment-name">{{ t(method.nameKey) }}</span>
+                <span class="payment-description">{{ t(method.descKey) }}</span>
               </label>
             </div>
           </div>
@@ -86,7 +78,7 @@
             <RouterLink to="/privacy">{{ t('payment.agree.privacy') }}</RouterLink>
             .
             <br/>
-            ИНН самозанятого: <strong>910509844791</strong>
+            {{ t('payment.tax.id') }}: <strong>910509844791</strong>
           </p>
         </form>
       </main>
@@ -96,10 +88,10 @@
 
 <script setup lang="ts">
 import Layout from '../components/Layout.vue';
-import {ref, computed, onMounted} from 'vue';
+import {ref, computed, onMounted, watch} from 'vue';
 import {useRoute, useRouter} from 'vue-router';
 import {useCart} from '../stores/cart';
-import {createPayment, createPaypalOrderRaw, createOrder, getProductById, type ApiProduct} from '../lib/api';
+import {createPayment, createPaypalOrderRaw, createOrder, getProductById, getProductBySlug, type ApiProduct} from '../lib/api';
 import { useI18n } from '../i18n';
 import { usePrice } from '../composables/usePrice';
 import { usePaymentPrice } from '../composables/usePaymentPrice';
@@ -109,7 +101,48 @@ const router = useRouter();
 const email = ref('');
 const emailError = ref(false);
 const { t, lang } = useI18n();
-const payment = ref<'paypal' | 'yookassa' | 'stripe'>(lang.value === 'en' ? 'paypal' : 'yookassa');
+// Определяем начальное значение платежного метода
+const getInitialPaymentMethod = () => {
+  return lang.value === 'en' ? 'paypal' : 'yookassa';
+};
+const payment = ref<'paypal' | 'yookassa' | 'stripe'>(getInitialPaymentMethod());
+
+// Определяем платежные методы с их метаданными
+const paymentMethods = [
+  {
+    id: 'yookassa',
+    icon: 'fas fa-credit-card',
+    iconClass: 'yookassa-color',
+    nameKey: 'payment.method.yookassa',
+    descKey: 'payment.method.yookassa.desc',
+    ruOrder: 1, // Первый для русского языка
+    enOrder: 3  // Третий для английского языка
+  },
+  {
+    id: 'paypal',
+    icon: 'fab fa-paypal',
+    iconClass: 'paypal-color',
+    nameKey: 'payment.method.paypal',
+    descKey: 'payment.method.paypal.desc',
+    ruOrder: 2, // Второй для русского языка
+    enOrder: 1  // Первый для английского языка
+  },
+  {
+    id: 'stripe',
+    icon: 'fab fa-stripe',
+    iconClass: 'stripe-color',
+    nameKey: 'payment.method.stripe',
+    descKey: 'payment.method.stripe.desc',
+    ruOrder: 3, // Третий для русского языка
+    enOrder: 2  // Второй для английского языка
+  }
+];
+
+// Сортируем платежные методы в зависимости от языка
+const sortedPaymentMethods = computed(() => {
+  const orderKey = lang.value === 'ru' ? 'ruOrder' : 'enOrder';
+  return [...paymentMethods].sort((a, b) => a[orderKey] - b[orderKey]);
+});
 const placeholder = 'https://via.placeholder.com/300x300/0a1e30/00cfff?text=AeroDesign';
 const cart = useCart();
 const selectedProduct = ref<ApiProduct | null>(null);
@@ -134,6 +167,11 @@ const items = computed(() => {
 });
 const total = computed(() => getCartTotalByPaymentMethod(payment.value));
 const submitting = ref(false);
+
+// Отслеживаем изменения языка и обновляем выбранный платежный метод
+watch(lang, (newLang) => {
+  payment.value = newLang === 'en' ? 'paypal' : 'yookassa';
+});
 
 function validateEmail(v: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -275,11 +313,16 @@ async function onSubmit() {
 }
 
 onMounted(async () => {
-  const pid = route.params.productId as string | undefined;
-  if (pid) {
+  const identifier = route.params.productId as string | undefined;
+  if (identifier) {
     try {
       loadingProduct.value = true;
-      selectedProduct.value = await getProductById(pid);
+      // Пытаемся получить продукт по slug, если не получается - по ID
+      try {
+        selectedProduct.value = await getProductBySlug(identifier);
+      } catch {
+        selectedProduct.value = await getProductById(identifier);
+      }
     } catch {
       selectedProduct.value = null;
     } finally {

@@ -47,18 +47,18 @@
       <main class="content">
         <div class="gallery">
           <div v-for="p in products" :key="p.id" class="product">
-            <RouterLink :to="{ name: 'product', params: { id: p.id } }" class="product-link">
+            <RouterLink :to="{ name: 'product', params: { slug: p.slug || p.id } }" class="product-link">
               <div class="preview">
                 <img :src="p.video || p.poster" :alt="p.title" loading="lazy" decoding="async"/>
                 <span v-if="p?.badge" class="product-badge" :class="p.badgeClass">{{ p.badge }}</span>
               </div>
               <div class="product-info">
-                <h3 class="product-title">{{ p.title }}</h3>
+                <h3 class="product-title">{{ lang === 'en' && p.titleEn ? p.titleEn : p.title }}</h3>
                 <div class="product-price">{{ formatPrice(p.price, p.priceUSD) }}</div>
               </div>
             </RouterLink>
             <div class="product-actions">
-              <RouterLink class="action-btn details-btn" :to="{ name: 'product', params: { id: p.id } }">
+              <RouterLink class="action-btn details-btn" :to="{ name: 'product', params: { slug: p.slug || p.id } }">
                 <i class="fas fa-eye"></i> {{ t('common.details') }}
               </RouterLink>
               <button class="action-btn cart-add-btn" :class="{ 'in-cart': isInCart(p.id) }" @click="addToCart(p)">
@@ -96,7 +96,7 @@ const query = ref('');
 const cart = useCart();
 const route = useRoute();
 const router = useRouter();
-const { t } = useI18n();
+const { t, lang } = useI18n();
 const { formatPrice, getPrice, getCurrency } = usePrice();
 
 type Product = ReturnType<typeof useProducts>['items'][number] & {
@@ -250,7 +250,8 @@ const topicsL10n = computed(() => topicsBase.map(i => ({ id: i.id, label: t(i.la
 function addToCart(p: Product) {
   cart.add({
     id: p.id, 
-    name: p.title, 
+    name: p.title,
+    titleEn: p.titleEn,
     price: p.price,
     priceUSD: p.priceUSD,
     currency: getCurrency(), 
@@ -404,7 +405,7 @@ function isInCart(id: string) {
   border-radius: 50%;
   margin-right: 6px;
   vertical-align: middle;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  /* border: 1px solid rgba(255, 255, 255, 0.3); */
 }
 
 .content {
