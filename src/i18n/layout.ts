@@ -19,7 +19,7 @@ export const layout: MessageBundle = {
     'layout.nav.shop': 'Shop',
     'layout.nav.order': 'Order a design',
     'layout.nav.support': 'Support',
-    'layout.nav.about': 'About',
+    'layout.nav.about': 'About me',
     'layout.nav.cart': 'Cart',
     'layout.footer.menu': 'Menu',
     'layout.footer.legal': 'Legal',
