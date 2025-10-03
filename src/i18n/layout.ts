@@ -5,7 +5,7 @@ export const layout: MessageBundle = {
     'layout.nav.shop': 'Магазин',
     'layout.nav.order': 'Заказать оформление',
     'layout.nav.support': 'Помощь',
-    'layout.nav.about': 'О себе',
+    'layout.nav.about': 'Обо мне',
     'layout.nav.cart': 'Корзина',
     'layout.footer.menu': 'Меню',
     'layout.footer.legal': 'Правовые',
