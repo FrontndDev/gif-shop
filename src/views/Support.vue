@@ -78,7 +78,7 @@
 
           <!-- Локальное видео вместо YouTube -->
           <div class="local-video-container">
-            <video style="width: 100%;" controls :poster="lang === 'ru' ? `../../preview.png` : '../../previewEng.png'">
+            <video style="width: 100%;" controls :poster="lang === 'ru' ? previewImage : previewEngImage">
               <source v-if="lang === 'ru'" src="/mp4.mp4" type="video/mp4">
               <source v-else src="/mp4eng.mp4" type="video/webm">
               {{ t('support.video.fallback') }}
@@ -204,6 +204,8 @@ import Layout from '../components/Layout.vue';
 import primerGif from '../../primerru.gif';
 import problemImage from '../../problemaru.png';
 import problemEngImage from '../../problemaeng.png';
+import previewImage from '../../public/images/preview.png';
+import previewEngImage from '../../public/images/previewEng.png';
 import { useI18n } from '../i18n';
 
 const isCopied1 = ref(false);
