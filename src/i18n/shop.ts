@@ -3,6 +3,8 @@ import type { MessageBundle } from './types';
 export const shop: MessageBundle = {
   ru: {
     'shop.search.placeholder': 'Поиск персонажей...',
+    'shop.search.noResults': 'Ничего не найдено',
+    'shop.search.tryDifferent': 'Попробуйте изменить поисковый запрос',
     'shop.filters.toggle': 'Фильтры',
     'shop.filters.title': 'Фильтры',
     'shop.filters.showcase': 'Выбор витрины',
@@ -24,6 +26,8 @@ export const shop: MessageBundle = {
   },
   en: {
     'shop.search.placeholder': 'Search characters...',
+    'shop.search.noResults': 'No results found',
+    'shop.search.tryDifferent': 'Try changing your search query',
     'shop.filters.toggle': 'Filters',
     'shop.filters.title': 'Filters',
     'shop.filters.showcase': 'Showcase type',

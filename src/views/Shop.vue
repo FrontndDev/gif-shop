@@ -46,7 +46,7 @@
 
       <main class="content">
         <div class="gallery">
-          <div v-for="p in products" :key="p.id" class="product">
+          <div v-for="p in filteredProducts" :key="p.id" class="product">
             <RouterLink :to="{ name: 'product', params: { slug: p.slug || p.id } }" class="product-link">
               <div class="preview">
                 <img :src="p.video || p.poster" :alt="p.title" loading="lazy" decoding="async"/>
@@ -67,7 +67,13 @@
             </div>
           </div>
         </div>
-        <div class="pager" v-if="pages > 1">
+        <div v-if="filteredProducts.length === 0 && query.trim()" class="no-results">
+          <div class="no-results-icon"><i class="fas fa-search"></i></div>
+          <h3 class="no-results-text">{{ t('shop.search.noResults') }}</h3>
+          <p class="no-results-subtitle">{{ t('shop.search.tryDifferent') }}</p>
+        </div>
+        
+        <div class="pager" v-if="pages > 1 && !query.trim()">
           <button class="pager-btn" :disabled="page<=1 || loading" @click="goPrev"><i class="fas fa-chevron-left"></i> {{ t('common.prev') }}</button>
           <div class="pager-list">
             <template v-for="(it, idx) in pageItems" :key="String(it)+'_'+idx">
@@ -114,6 +120,21 @@ const pages = ref(1);
 const productsStore = useProducts();
 const loading = computed(() => productsStore.loading);
 const error = computed(() => productsStore.error);
+
+// Фильтрация продуктов по поисковому запросу
+const filteredProducts = computed(() => {
+  if (!query.value.trim()) {
+    return products.value;
+  }
+  
+  const searchTerm = query.value.toLowerCase().trim();
+  return products.value.filter(product => {
+    const title = product.title.toLowerCase();
+    const titleEn = product.titleEn?.toLowerCase() || '';
+    
+    return title.includes(searchTerm) || titleEn.includes(searchTerm);
+  });
+});
 
 const filters = reactive({showcase: [] as string[], colors: [] as string[], topics: [] as string[]});
 const isSidebarOpen = ref(false);
@@ -551,6 +572,29 @@ function isInCart(id: string) {
   .search-container {
     margin: 20px auto;
   }
+}
+
+.no-results {
+  text-align: center;
+  padding: 60px 20px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.no-results-icon {
+  font-size: 3rem;
+  color: var(--primary);
+  margin-bottom: 20px;
+}
+
+.no-results-text {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: var(--accent);
+}
+
+.no-results-subtitle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.6);
 }
 </style>
 
