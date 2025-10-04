@@ -6,6 +6,24 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Montserrat', sans-serif; background: #000; color: #fff; overflow-x: hidden; min-height: 100vh; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+/* Оптимизация видео для 30 FPS */
+video {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Мобильные устройства - отключаем некоторые оптимизации */
+@media (max-width: 768px) {
+  video {
+    will-change: auto;
+    transform: none;
+  }
+}
 a { color: inherit; text-decoration: none; }
 a:hover, a:focus { text-decoration: none; }
 
