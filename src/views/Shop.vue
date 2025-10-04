@@ -121,6 +121,13 @@ const { formatPrice, getPrice, getCurrency } = usePrice();
 const { register } = useVideoManager();
 const videoUnregisterFunctions = new Map<string, () => void>();
 
+// Определение мобильного устройства
+const isMobile = ref(false);
+const checkMobile = () => {
+  isMobile.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   window.innerWidth <= 768;
+};
+
 // Регистрация видео в глобальном менеджере
 function registerVideo(el: HTMLVideoElement | null, productId: string) {
   if (!el) return;
@@ -145,6 +152,29 @@ function registerVideo(el: HTMLVideoElement | null, productId: string) {
 
   const unregister = register(el, getPriority, getVisible);
   videoUnregisterFunctions.set(productId, unregister);
+  
+  // Для мобильных устройств добавляем Intersection Observer для перезапуска видео
+  if (isMobile.value) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Перезапускаем видео при попадании в обзор
+          el.currentTime = 0;
+          el.play().catch(() => {
+            // Игнорируем ошибки воспроизведения
+          });
+        }
+      });
+    }, {
+      threshold: 0.5, // 50% видео должно быть видно
+      rootMargin: '50px'
+    });
+    
+    observer.observe(el);
+    
+    // Сохраняем observer для очистки
+    (el as any).__mobileObserver = observer;
+  }
 }
 
 // Очистка при размонтировании
@@ -153,8 +183,10 @@ onUnmounted(() => {
   videoUnregisterFunctions.clear();
 });
 
-// Обработка наведения мыши на видео
+// Обработка наведения мыши на видео (только для десктопа)
 function restartVideo(event: Event) {
+  if (isMobile.value) return; // Не обрабатываем на мобильных
+  
   const video = event.target as HTMLVideoElement;
   if (video && video.tagName === 'VIDEO') {
     // Перезапускаем видео с начала
@@ -166,6 +198,8 @@ function restartVideo(event: Event) {
 }
 
 function continueVideo(event: Event) {
+  if (isMobile.value) return; // Не обрабатываем на мобильных
+  
   const video = event.target as HTMLVideoElement;
   if (video && video.tagName === 'VIDEO') {
     // Продолжаем воспроизведение (если видео было приостановлено)
@@ -266,7 +300,10 @@ async function refreshProducts() {
 // Мгновенно отображаем уже загруженные продукты из стора,
 // а затем в фоне подтягиваем актуальные
 products.value = mapProducts(productsStore.items);
-onMounted(refreshProducts);
+onMounted(() => {
+  checkMobile(); // Проверяем мобильное устройство при загрузке
+  refreshProducts();
+});
 
 watch(() => ({
   showcase: filters.showcase.join(','),
@@ -561,9 +598,12 @@ function isInCart(id: string) {
   cursor: pointer;
 }
 
-.preview:hover video {
-  transform: translateZ(0) scale(1.05);
-  filter: brightness(1.1);
+/* Hover эффекты только для десктопа */
+@media (hover: hover) and (pointer: fine) {
+  .preview:hover video {
+    transform: translateZ(0) scale(1.05);
+    filter: brightness(1.1);
+  }
 }
 
 .product-badge {

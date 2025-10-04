@@ -63,11 +63,22 @@ import { useProducts } from '../stores/products';
 import { useI18n } from '../i18n';
 import { usePrice } from '../composables/usePrice';
 import { getProductBySlug } from '../lib/api';
+import { useVideoManager } from '../composables/useVideoManager';
 
 const route = useRoute();
 const cart = useCart();
 const { t, lang } = useI18n();
 const { formatPrice, getPrice, getCurrency } = usePrice();
+
+// Глобальный менеджер видео для приоритетного воспроизведения
+const { register } = useVideoManager();
+
+// Определение мобильного устройства
+const isMobile = ref(false);
+const checkMobile = () => {
+  isMobile.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   window.innerWidth <= 768;
+};
 
 const product = ref<ReturnType<typeof useProducts>['items'][number] | null>(null);
 const productsStore = useProducts();
@@ -93,11 +104,49 @@ async function fetchProduct(identifier?: string) {
   }
 }
 
-onMounted(() => fetchProduct(route.params.slug as string));
+onMounted(() => {
+  checkMobile(); // Проверяем мобильное устройство
+  fetchProduct(route.params.slug as string);
+  
+  // Регистрируем видео с высоким приоритетом для страницы продукта
+  const video = document.querySelector('.protected-video') as HTMLVideoElement;
+  if (video) {
+    const getPriority = () => 0; // Максимальный приоритет (0 = центр экрана)
+    const getVisible = () => true; // Всегда видимо на странице продукта
+    
+    register(video, getPriority, getVisible);
+    
+    // Для мобильных устройств добавляем Intersection Observer для перезапуска видео
+    if (isMobile.value) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            // Перезапускаем видео при попадании в обзор
+            video.currentTime = 0;
+            video.play().catch(() => {
+              // Игнорируем ошибки воспроизведения
+            });
+          }
+        });
+      }, {
+        threshold: 0.5, // 50% видео должно быть видно
+        rootMargin: '50px'
+      });
+      
+      observer.observe(video);
+      
+      // Сохраняем observer для очистки
+      (video as any).__mobileObserver = observer;
+    }
+  }
+});
+
 watch(() => route.params.slug as string, (slug) => fetchProduct(slug));
 
-// Обработка наведения мыши на видео
+// Обработка наведения мыши на видео (только для десктопа)
 function restartVideo(event: Event) {
+  if (isMobile.value) return; // Не обрабатываем на мобильных
+  
   const video = event.target as HTMLVideoElement;
   if (video && video.tagName === 'VIDEO') {
     // Перезапускаем видео с начала
@@ -109,6 +158,8 @@ function restartVideo(event: Event) {
 }
 
 function continueVideo(event: Event) {
+  if (isMobile.value) return; // Не обрабатываем на мобильных
+  
   const video = event.target as HTMLVideoElement;
   if (video && video.tagName === 'VIDEO') {
     // Продолжаем воспроизведение (если видео было приостановлено)
@@ -149,9 +200,12 @@ const isInCart = computed(() => !!cart.items.find(i => i.id === (product.value?.
   cursor: pointer;
 }
 
-.preview-container:hover .protected-video {
-  transform: scale(1.05);
-  filter: brightness(1.1);
+/* Hover эффекты только для десктопа */
+@media (hover: hover) and (pointer: fine) {
+  .preview-container:hover .protected-video {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+  }
 }
 .badge { position: absolute; top: 15px; right: 15px; padding: 6px 12px; border-radius: 20px; font-size: .75rem; font-weight: 700; background: var(--primary); color: #000; }
 .info { flex: 1 1 40%; min-width: 300px; display: flex; flex-direction: column; gap: 20px; background: rgba(0, 15, 30, 0.45); padding: 30px; border-radius: 16px; border: 1px solid rgba(0,207,255,0.2); }
