@@ -49,7 +49,7 @@
           <div v-for="p in filteredProducts" :key="p.id" class="product">
             <RouterLink :to="{ name: 'product', params: { slug: p.slug || p.id } }" class="product-link">
               <div class="preview">
-                <video :src="p.video || p.poster" :alt="p.title" autoplay muted loop playsinline loading="lazy" />
+                <video :src="p.video || p.poster" :alt="p.title" autoplay muted playsinline loading="lazy" v-smooth-loop />
                 <span v-if="p?.badge" class="product-badge" :class="p.badgeClass">{{ p.badge }}</span>
               </div>
               <div class="product-info">
@@ -268,7 +268,14 @@ const colorsL10n = computed(() => colorsBase.map(i => ({ id: i.id, label: t(i.la
 const topicsL10n = computed(() => topicsBase.map(i => ({ id: i.id, label: t(i.labelKey) })));
 
 
-function addToCart(p: Product) {
+async function addToCart(p: Product) {
+  // Синхронизируем цены перед добавлением товара в корзину
+  try {
+    await cart.syncPrices();
+  } catch (error) {
+    console.warn('Ошибка при синхронизации цен:', error);
+  }
+
   cart.add({
     id: p.id, 
     name: p.title,

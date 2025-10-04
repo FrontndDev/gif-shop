@@ -8,7 +8,8 @@ export const cart: MessageBundle = {
     'cart.continue': 'Продолжить покупки',
     'cart.table.product': 'Товар',
     'cart.table.price': 'Цена',
-    'cart.summary.overall': 'Общая сумма'
+    'cart.summary.overall': 'Общая сумма',
+    'cart.priceUpdated': 'Цены обновлены!'
   },
   en: {
     'cart.title': 'Your cart',
@@ -17,7 +18,8 @@ export const cart: MessageBundle = {
     'cart.continue': 'Continue shopping',
     'cart.table.product': 'Product',
     'cart.table.price': 'Price',
-    'cart.summary.overall': 'Grand total'
+    'cart.summary.overall': 'Grand total',
+    'cart.priceUpdated': 'Prices updated!'
   }
 };
 

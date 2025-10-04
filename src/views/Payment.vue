@@ -22,7 +22,7 @@
 
         <div v-else-if="items.length" class="order-list">
           <div class="product-item" v-for="(it, idx) in items" :key="String(it.id)+'_'+idx">
-            <video :src="it.image || placeholder" :alt="it.name" class="product-video" autoplay muted loop playsinline />
+            <video :src="it.image || placeholder" :alt="it.name" class="product-video" autoplay muted playsinline v-smooth-loop />
             <div class="product-info">
               <div class="product-name">{{ lang === 'en' && (it as any).titleEn ? (it as any).titleEn : it.name }}</div>
               <div class="product-price">{{ formatPriceByPaymentMethod(it.price, it.priceUSD, payment) }}</div>
@@ -313,6 +313,15 @@ async function onSubmit() {
 }
 
 onMounted(async () => {
+  // Синхронизируем цены в корзине перед оплатой
+  if (items.value.length > 0) {
+    try {
+      await cart.syncPrices();
+    } catch (error) {
+      console.warn('Ошибка при синхронизации цен перед оплатой:', error);
+    }
+  }
+
   const identifier = route.params.productId as string | undefined;
   if (identifier) {
     try {

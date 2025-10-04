@@ -64,7 +64,7 @@
             @click="openFullscreen(work.image)"
           >
             <div class="work-preview">
-              <video :src="work.image" :alt="work.title" autoplay muted loop playsinline />
+              <video :src="work.image" :alt="work.title" autoplay muted playsinline v-smooth-loop />
             </div>
           </div>
         </div>
@@ -96,7 +96,7 @@
         <button class="close-fullscreen" @click="closeFullscreen">
           <i class="fas fa-times"></i>
         </button>
-        <video class="fullscreen-video" :src="fullscreenImage" :alt="''" autoplay muted loop playsinline controls />
+        <video class="fullscreen-video" :src="fullscreenImage" :alt="''" autoplay muted playsinline controls v-smooth-loop />
       </div>
     </div>
 
