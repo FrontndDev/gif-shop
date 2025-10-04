@@ -322,15 +322,6 @@ async function onSubmit() {
 onMounted(async () => {
   checkMobile(); // Проверяем мобильное устройство при загрузке
   
-  // Синхронизируем цены в корзине перед оплатой
-  if (items.value.length > 0) {
-    try {
-      await cart.syncPrices();
-    } catch (error) {
-      console.warn('Ошибка при синхронизации цен перед оплатой:', error);
-    }
-  }
-
   const identifier = route.params.productId as string | undefined;
   if (identifier) {
     try {
@@ -341,10 +332,33 @@ onMounted(async () => {
       } catch {
         selectedProduct.value = await getProductById(identifier);
       }
+      
+      // Если корзина пуста, автоматически добавляем товар в корзину
+      if (selectedProduct.value && cart.items.length === 0) {
+        cart.add({
+          id: selectedProduct.value.id,
+          name: selectedProduct.value.title,
+          titleEn: selectedProduct.value.titleEn,
+          price: selectedProduct.value.price,
+          priceUSD: selectedProduct.value.priceUSD,
+          currency: getCurrency(),
+          image: (selectedProduct.value as any).video,
+          quantity: 1
+        });
+      }
     } catch {
       selectedProduct.value = null;
     } finally {
       loadingProduct.value = false;
+    }
+  }
+  
+  // Синхронизируем цены в корзине перед оплатой
+  if (items.value.length > 0) {
+    try {
+      await cart.syncPrices();
+    } catch (error) {
+      console.warn('Ошибка при синхронизации цен перед оплатой:', error);
     }
   }
 });
