@@ -64,7 +64,7 @@
             @click="openFullscreen(work.image)"
           >
             <div class="work-preview">
-              <img :src="work.image" :alt="work.title">
+              <video :src="work.image" :alt="work.title" autoplay muted loop playsinline />
             </div>
           </div>
         </div>
@@ -96,7 +96,7 @@
         <button class="close-fullscreen" @click="closeFullscreen">
           <i class="fas fa-times"></i>
         </button>
-        <img class="fullscreen-image" :src="fullscreenImage" :alt="''">
+        <video class="fullscreen-video" :src="fullscreenImage" :alt="''" autoplay muted loop playsinline controls />
       </div>
     </div>
 
@@ -149,14 +149,14 @@ const { t } = useI18n();
 
 // Portfolio data
 const portfolioItems = ref([
-  { image: '/images/1.gif', title: 'Cyberpunk Showcase' },
-  { image: '/images/2.gif', title: 'Anime Art Series' },
-  { image: '/images/3.gif', title: 'Minimal Design' },
-  { image: '/images/4.gif', title: 'Premium Exclusive' },
-  { image: '/images/5.gif', title: 'Gaming Themes' },
-  { image: '/images/6.gif', title: 'Custom Designs' },
-  { image: '/images/7.gif', title: 'Retro Collection' },
-  { image: '/images/8.gif', title: 'Space Theme' }
+  { image: '/videos/1.mp4', title: 'Cyberpunk Showcase' },
+  { image: '/videos/2.mp4', title: 'Anime Art Series' },
+  { image: '/videos/3.mp4', title: 'Minimal Design' },
+  { image: '/videos/4.mp4', title: 'Premium Exclusive' },
+  { image: '/videos/5.mp4', title: 'Gaming Themes' },
+  { image: '/videos/6.mp4', title: 'Custom Designs' },
+  { image: '/videos/7.mp4', title: 'Retro Collection' },
+  { image: '/videos/8.mp4', title: 'Space Theme' }
 ]);
 
 // Testimonials data - reactive to language changes
@@ -703,14 +703,14 @@ body {
   overflow: hidden;
 }
 
-.work-preview img {
+.work-preview video {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
 }
 
-.carousel-item:hover .work-preview img {
+.carousel-item:hover .work-preview video {
   transform: scale(1.05);
 }
 
@@ -810,7 +810,7 @@ body {
   max-height: 90%;
 }
 
-.fullscreen-image {
+.fullscreen-video {
   width: 100%;
   height: auto;
   border-radius: 15px;
