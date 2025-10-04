@@ -22,9 +22,9 @@
 
         <div v-else-if="items.length" class="order-list">
           <div class="product-item" v-for="(it, idx) in items" :key="String(it.id)+'_'+idx">
-            <img :src="it.image || placeholder" :alt="it.name" class="product-image">
+            <video :src="it.image || placeholder" :alt="it.name" class="product-video" autoplay muted loop playsinline />
             <div class="product-info">
-              <div class="product-name">{{ lang === 'en' && it.titleEn ? it.titleEn : it.name }}</div>
+              <div class="product-name">{{ lang === 'en' && (it as any).titleEn ? (it as any).titleEn : it.name }}</div>
               <div class="product-price">{{ formatPriceByPaymentMethod(it.price, it.priceUSD, payment) }}</div>
             </div>
           </div>
@@ -433,7 +433,7 @@ onMounted(async () => {
   border-radius: 12px;
 }
 
-.product-image {
+.product-video {
   width: 70px;
   height: 70px;
   border-radius: 8px;

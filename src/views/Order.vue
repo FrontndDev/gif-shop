@@ -166,6 +166,12 @@ async function submit() {
   color: #fff;
 }
 
+.form-control option {
+  background: rgba(0, 15, 30, 0.95);
+  color: #fff;
+  padding: 8px;
+}
+
 textarea.form-control {
   min-height: 120px;
 }

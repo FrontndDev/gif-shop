@@ -27,7 +27,7 @@
             <tr v-for="(item, index) in items" :key="item.id">
               <td>
                 <div class="cart-item">
-                  <img :src="item.image || placeholder" :alt="item.name" class="cart-item-img" />
+                  <video :src="item.image || placeholder" :alt="item.name" class="cart-item-video" autoplay muted loop playsinline />
                   <div class="cart-item-info">
                     <div class="cart-item-title">{{ lang === 'en' && item.titleEn ? item.titleEn : item.name }}</div>
                   </div>
@@ -109,7 +109,7 @@ function clearCart() { cart.clear(); }
 .cart-items th { text-align: left; padding: 15px 10px; color: var(--primary); font-weight: 600; border-bottom: 1px solid rgba(0,207,255,0.2); }
 .cart-items td { padding: 20px 10px; border-bottom: 1px solid rgba(0,207,255,0.2); vertical-align: middle; }
 .cart-item { display: flex; align-items: center; gap: 20px; }
-.cart-item-img { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(0,207,255,0.2); }
+.cart-item-video { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(0,207,255,0.2); }
 .cart-item-title { font-weight: 600; margin-bottom: 5px; color: #e0f7ff; }
 .cart-item-price { color: var(--primary); font-weight: 600; }
 .remove-btn { color: #ff4d4d; background: transparent; border: none; cursor: pointer; font-size: 1.2rem; }
@@ -126,7 +126,7 @@ function clearCart() { cart.clear(); }
   .cart-items tr { border: 1px solid rgba(0,207,255,0.2); border-radius: 12px; margin-bottom: 15px; padding: 12px; }
   .cart-items td { padding: 10px 0; border: none; }
   .cart-item { gap: 12px; }
-  .cart-item-img { width: 64px; height: 64px; }
+  .cart-item-video { width: 64px; height: 64px; }
   .cart-summary { max-width: none; margin-left: 0; }
 }
 .empty-cart { text-align: center; padding: 60px 0; }

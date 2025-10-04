@@ -14,9 +14,9 @@
             <div class="download-list" v-if="orderData?.downloads?.length">
               <a
                 v-for="(d, idx) in orderData.downloads"
-                :key="d.url || idx"
+                :key="d.downloadUrl || idx"
                 class="download-btn"
-                :href="d.url"
+                :href="d.downloadUrl"
                 target="_blank"
                 rel="noopener"
               >

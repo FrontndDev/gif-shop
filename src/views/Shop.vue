@@ -49,7 +49,7 @@
           <div v-for="p in filteredProducts" :key="p.id" class="product">
             <RouterLink :to="{ name: 'product', params: { slug: p.slug || p.id } }" class="product-link">
               <div class="preview">
-                <img :src="p.video || p.poster" :alt="p.title" loading="lazy" decoding="async"/>
+                <video :src="p.video || p.poster" :alt="p.title" autoplay muted loop playsinline loading="lazy" />
                 <span v-if="p?.badge" class="product-badge" :class="p.badgeClass">{{ p.badge }}</span>
               </div>
               <div class="product-info">
@@ -465,7 +465,7 @@ function isInCart(id: string) {
   overflow: hidden;
 }
 
-.preview img {
+.preview video {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -518,6 +518,7 @@ function isInCart(id: string) {
 
 .product-price {
   background: linear-gradient(90deg, #00cfff, #3399ff);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   font-weight: 800;
@@ -567,6 +568,7 @@ function isInCart(id: string) {
 
 @media (max-width: 640px) {
   .preview {
+    height: 280px;
   }
 
   .search-container {
