@@ -47,10 +47,10 @@
           <div class="form-group">
             <label class="form-label">{{ t('payment.method.title') }} *</label>
             <div class="payment-methods">
-              <label 
-                class="payment-method-tile" 
-                v-for="method in sortedPaymentMethods" 
-                :key="method.id"
+              <label
+                  class="payment-method-tile"
+                  v-for="method in sortedPaymentMethods"
+                  :key="method.id"
               >
                 <input type="radio" :value="method.id" v-model="payment"/>
                 <i class="payment-icon" :class="[method.iconClass, method.icon]"></i>
@@ -105,8 +105,8 @@ const { t, lang } = useI18n();
 // Определение мобильного устройства
 const isMobile = ref(false);
 const checkMobile = () => {
-  isMobile.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-                   window.innerWidth <= 768;
+  isMobile.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+      window.innerWidth <= 768;
 };
 // Определяем начальное значение платежного метода
 const getInitialPaymentMethod = () => {
@@ -159,12 +159,6 @@ const { getCurrency } = usePrice();
 const { formatPriceByPaymentMethod, getCurrencyByPaymentMethod, getCartTotalByPaymentMethod } = usePaymentPrice();
 const orderId = computed(() => (route.params.productId as string) || (sessionStorage.getItem('orderId') || ''));
 const items = computed(() => {
-  // Если есть товары в корзине, показываем их (включая автоматически добавленный товар)
-  if (cart.items.length > 0) {
-    return cart.items;
-  }
-  
-  // Если корзина пуста, но есть selectedProduct, показываем его
   if (selectedProduct.value) {
     return [{
       id: selectedProduct.value.id,
@@ -176,10 +170,17 @@ const items = computed(() => {
       quantity: 1
     }];
   }
-  
-  return [];
+  return cart.items;
 });
-const total = computed(() => getCartTotalByPaymentMethod(payment.value));
+const total = computed(() => {
+  return items.value.reduce((total, item) => {
+    // Если это paypal/stripe и есть priceUSD в метаданных товара, используем его
+    if ((payment.value === 'paypal' || payment.value === 'stripe') && item.priceUSD) {
+      return total + item.priceUSD;
+    }
+    return total + item.price;
+  }, 0);
+});
 const submitting = ref(false);
 
 // Отслеживаем изменения языка и обновляем выбранный платежный метод
@@ -276,25 +277,25 @@ async function onSubmit() {
           }
         })
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Ошибка создания Stripe платежа');
       }
-      
+
       const res = await response.json();
       const url = res?.confirmation?.checkout_url || res?.checkout_url;
-      
+
       if (url) {
         window.location.replace(url);
         return;
       }
-      
+
       if (res?.status === 'succeeded' || res?.paid === true) {
         await router.push(`/success/${orderId}`);
         return;
       }
-      
+
       console.error('Не удалось получить ссылку на оплату Stripe. Ответ:', res);
       alert('Не удалось получить ссылку на оплату Stripe. Попробуйте позже.');
     } catch (e: any) {
@@ -328,7 +329,7 @@ async function onSubmit() {
 
 onMounted(async () => {
   checkMobile(); // Проверяем мобильное устройство при загрузке
-  
+
   const identifier = route.params.productId as string | undefined;
   if (identifier) {
     try {
@@ -339,27 +340,15 @@ onMounted(async () => {
       } catch {
         selectedProduct.value = await getProductById(identifier);
       }
-      
-      // Если корзина пуста, автоматически добавляем товар в корзину
-      if (selectedProduct.value && cart.items.length === 0) {
-        cart.add({
-          id: selectedProduct.value.id,
-          name: selectedProduct.value.title,
-          titleEn: selectedProduct.value.titleEn,
-          price: selectedProduct.value.price,
-          priceUSD: selectedProduct.value.priceUSD,
-          currency: getCurrency(),
-          image: (selectedProduct.value as any).video,
-          quantity: 1
-        });
-      }
+
+      // Товар по slug имеет приоритет над корзиной - не добавляем его в корзину автоматически
     } catch {
       selectedProduct.value = null;
     } finally {
       loadingProduct.value = false;
     }
   }
-  
+
   // Синхронизируем цены в корзине перед оплатой
   if (items.value.length > 0) {
     try {
@@ -373,7 +362,7 @@ onMounted(async () => {
 // Обработка наведения мыши на видео (только для десктопа)
 function restartVideo(event: Event) {
   if (isMobile.value) return; // Не обрабатываем на мобильных
-  
+
   const video = event.target as HTMLVideoElement;
   if (video && video.tagName === 'VIDEO') {
     // Перезапускаем видео с начала
@@ -386,7 +375,7 @@ function restartVideo(event: Event) {
 
 function continueVideo(event: Event) {
   if (isMobile.value) return; // Не обрабатываем на мобильных
-  
+
   const video = event.target as HTMLVideoElement;
   if (video && video.tagName === 'VIDEO') {
     // Продолжаем воспроизведение (если видео было приостановлено)
@@ -795,5 +784,4 @@ function continueVideo(event: Event) {
   animation: shimmer 1.4s ease-in-out infinite;
 }
 </style>
-
 
