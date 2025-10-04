@@ -49,7 +49,7 @@
           <div v-for="p in filteredProducts" :key="p.id" class="product">
             <RouterLink :to="{ name: 'product', params: { slug: p.slug || p.id } }" class="product-link">
               <div class="preview">
-                <video :src="p.video || p.poster" :alt="p.title" autoplay muted playsinline loading="lazy" v-smooth-loop />
+                <video :src="p.video || p.poster" :alt="p.title" autoplay muted playsinline v-smooth-loop />
                 <span v-if="p?.badge" class="product-badge" :class="p.badgeClass">{{ p.badge }}</span>
               </div>
               <div class="product-info">
