@@ -61,10 +61,9 @@
             :key="index"
             class="carousel-item" 
             :class="getCarouselItemClass(index)"
-            @click="openFullscreen(work.image)"
           >
             <div class="work-preview">
-              <video :src="work.image" :alt="work.title" autoplay muted playsinline v-smooth-loop />
+              <video :src="work.image" :alt="work.title" :autoplay="isMobile" muted playsinline v-smooth-loop @mouseenter="restartVideo" @mouseleave="continueVideo" />
             </div>
           </div>
         </div>
@@ -90,15 +89,6 @@
       </div>
       </section>
 
-      <!-- Fullscreen Modal -->
-    <div class="fullscreen-modal" :class="{ show: showFullscreen }" @click="closeFullscreen">
-      <div class="fullscreen-content" @click.stop>
-        <button class="close-fullscreen" @click="closeFullscreen">
-          <i class="fas fa-times"></i>
-        </button>
-        <video class="fullscreen-video" :src="fullscreenImage" :alt="''" autoplay muted playsinline controls v-smooth-loop />
-      </div>
-    </div>
 
       <!-- CTA Section -->
       <section class="cta-section" data-animate-id="cta-section" :class="{ 'animate-visible': isElementVisible('cta-section') }">
@@ -147,6 +137,13 @@ import { useI18n } from '../i18n';
 
 const { t } = useI18n();
 
+// Мобильное устройство
+const isMobile = ref(false);
+const checkMobile = () => {
+  isMobile.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   window.innerWidth <= 768;
+};
+
 // Portfolio data
 const portfolioItems = ref([
   { image: '/videos/1.mp4', title: 'Cyberpunk Showcase' },
@@ -183,8 +180,6 @@ const testimonials = computed(() => [
 
 // Carousel state
 const currentIndex = ref(0);
-const showFullscreen = ref(false);
-const fullscreenImage = ref('');
 const carouselTrack = ref<HTMLElement>();
 let autoplayInterval: number | null = null;
 let touchStartX = 0;
@@ -236,14 +231,6 @@ function prevSlide() {
   currentIndex.value = (currentIndex.value - 1 + totalItems.value) % totalItems.value;
 }
 
-function openFullscreen(image: string) {
-  fullscreenImage.value = image;
-  showFullscreen.value = true;
-}
-
-function closeFullscreen() {
-  showFullscreen.value = false;
-}
 
 function startAutoplay() {
   autoplayInterval = setInterval(nextSlide, 4000);
@@ -261,8 +248,6 @@ function handleKeydown(e: KeyboardEvent) {
     prevSlide();
   } else if (e.key === 'ArrowRight') {
     nextSlide();
-  } else if (e.key === 'Escape') {
-    closeFullscreen();
   }
 }
 
@@ -344,7 +329,34 @@ function animateCounters() {
   });
 }
 
+// Обработка наведения мыши на видео (только для десктопа)
+function restartVideo(event: Event) {
+  if (isMobile.value) return; // Не обрабатываем на мобильных
+
+  const video = event.target as HTMLVideoElement;
+  if (video && video.tagName === 'VIDEO') {
+    // Перезапускаем видео с начала
+    video.currentTime = 0;
+    video.play().catch(() => {
+      // Игнорируем ошибки воспроизведения
+    });
+  }
+}
+
+function continueVideo(event: Event) {
+  if (isMobile.value) return; // Не обрабатываем на мобильных
+
+  const video = event.target as HTMLVideoElement;
+  if (video && video.tagName === 'VIDEO') {
+    // Продолжаем воспроизведение (если видео было приостановлено)
+    video.play().catch(() => {
+      // Игнорируем ошибки воспроизведения
+    });
+  }
+}
+
 onMounted(() => {
+  checkMobile(); // Проверяем мобильное устройство при загрузке
   document.addEventListener('keydown', handleKeydown);
   startAutoplay();
   setupScrollAnimations();
@@ -707,11 +719,16 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  cursor: pointer;
 }
 
-.carousel-item:hover .work-preview video {
-  transform: scale(1.05);
+/* Hover эффекты только для десктопа */
+@media (hover: hover) and (pointer: fine) {
+  .carousel-item:hover .work-preview video {
+    transform: scale(1.05);
+    filter: brightness(1.1);
+  }
 }
 
 .carousel-controls {
@@ -781,62 +798,6 @@ body {
   box-shadow: 0 0 15px rgba(0, 207, 255, 0.5);
 }
 
-/* Fullscreen Modal */
-.fullscreen-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.95);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  backdrop-filter: blur(15px);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.fullscreen-modal.show {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.fullscreen-content {
-  position: relative;
-  max-width: 90%;
-  max-height: 90%;
-}
-
-.fullscreen-video {
-  width: 100%;
-  height: auto;
-  border-radius: 15px;
-  box-shadow: 0 30px 80px rgba(0, 207, 255, 0.4);
-}
-
-.close-fullscreen {
-  position: absolute;
-  top: -60px;
-  right: 0;
-  width: 50px;
-  height: 50px;
-  background: #00cfff;
-  border: none;
-  border-radius: 50%;
-  color: #000;
-  font-size: 1.8rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 20px rgba(0, 207, 255, 0.5);
-}
-
-.close-fullscreen:hover {
-  transform: scale(1.15);
-  box-shadow: 0 8px 25px rgba(0, 207, 255, 0.7);
-}
 
 /* CTA Section */
 .cta-section {
