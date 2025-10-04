@@ -22,7 +22,7 @@
 
         <div v-else-if="items.length" class="order-list">
           <div class="product-item" v-for="(it, idx) in items" :key="String(it.id)+'_'+idx">
-            <video :src="it.image || placeholder" :alt="it.name" class="product-video" autoplay muted playsinline v-smooth-loop />
+            <video :src="it.image || placeholder" :alt="it.name" class="product-video" autoplay muted playsinline v-smooth-loop @mouseenter="restartVideo" @mouseleave="continueVideo" />
             <div class="product-info">
               <div class="product-name">{{ lang === 'en' && (it as any).titleEn ? (it as any).titleEn : it.name }}</div>
               <div class="product-price">{{ formatPriceByPaymentMethod(it.price, it.priceUSD, payment) }}</div>
@@ -339,6 +339,28 @@ onMounted(async () => {
     }
   }
 });
+
+// Обработка наведения мыши на видео
+function restartVideo(event: Event) {
+  const video = event.target as HTMLVideoElement;
+  if (video && video.tagName === 'VIDEO') {
+    // Перезапускаем видео с начала
+    video.currentTime = 0;
+    video.play().catch(() => {
+      // Игнорируем ошибки воспроизведения
+    });
+  }
+}
+
+function continueVideo(event: Event) {
+  const video = event.target as HTMLVideoElement;
+  if (video && video.tagName === 'VIDEO') {
+    // Продолжаем воспроизведение (если видео было приостановлено)
+    video.play().catch(() => {
+      // Игнорируем ошибки воспроизведения
+    });
+  }
+}
 </script>
 
 <style scoped>
@@ -448,6 +470,13 @@ onMounted(async () => {
   border-radius: 8px;
   object-fit: cover;
   border: 1px solid rgba(0, 207, 255, 0.3);
+  transition: transform 0.3s ease, filter 0.3s ease;
+  cursor: pointer;
+}
+
+.product-item:hover .product-video {
+  transform: scale(1.1);
+  filter: brightness(1.2);
 }
 
 .product-name {

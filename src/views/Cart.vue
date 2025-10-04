@@ -43,7 +43,7 @@
             <tr v-for="(item, index) in items" :key="item.id">
               <td>
                 <div class="cart-item">
-                  <video :src="item.image || placeholder" :alt="item.name" class="cart-item-video" autoplay muted playsinline v-smooth-loop />
+                  <video :src="item.image || placeholder" :alt="item.name" class="cart-item-video" autoplay muted playsinline v-smooth-loop @mouseenter="restartVideo" @mouseleave="continueVideo" />
                   <div class="cart-item-info">
                     <div class="cart-item-title">{{ lang === 'en' && item.titleEn ? item.titleEn : item.name }}</div>
                   </div>
@@ -138,6 +138,28 @@ onMounted(async () => {
     }
   }
 });
+
+// Обработка наведения мыши на видео
+function restartVideo(event: Event) {
+  const video = event.target as HTMLVideoElement;
+  if (video && video.tagName === 'VIDEO') {
+    // Перезапускаем видео с начала
+    video.currentTime = 0;
+    video.play().catch(() => {
+      // Игнорируем ошибки воспроизведения
+    });
+  }
+}
+
+function continueVideo(event: Event) {
+  const video = event.target as HTMLVideoElement;
+  if (video && video.tagName === 'VIDEO') {
+    // Продолжаем воспроизведение (если видео было приостановлено)
+    video.play().catch(() => {
+      // Игнорируем ошибки воспроизведения
+    });
+  }
+}
 </script>
 
 <style scoped>
@@ -149,7 +171,20 @@ onMounted(async () => {
 .cart-items th { text-align: left; padding: 15px 10px; color: var(--primary); font-weight: 600; border-bottom: 1px solid rgba(0,207,255,0.2); }
 .cart-items td { padding: 20px 10px; border-bottom: 1px solid rgba(0,207,255,0.2); vertical-align: middle; }
 .cart-item { display: flex; align-items: center; gap: 20px; }
-.cart-item-video { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; border: 1px solid rgba(0,207,255,0.2); }
+.cart-item-video { 
+  width: 80px; 
+  height: 80px; 
+  border-radius: 8px; 
+  object-fit: cover; 
+  border: 1px solid rgba(0,207,255,0.2); 
+  transition: transform 0.3s ease, filter 0.3s ease;
+  cursor: pointer;
+}
+
+.cart-item:hover .cart-item-video {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
 .cart-item-title { font-weight: 600; margin-bottom: 5px; color: #e0f7ff; }
 .cart-item-price { color: var(--primary); font-weight: 600; }
 .remove-btn { color: #ff4d4d; background: transparent; border: none; cursor: pointer; font-size: 1.2rem; }

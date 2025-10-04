@@ -58,6 +58,8 @@
                   preload="metadata"
                   v-smooth-loop 
                   :ref="(el) => registerVideo(el as HTMLVideoElement, p.id)"
+                  @mouseenter="restartVideo"
+                  @mouseleave="continueVideo"
                 />
                 <span v-if="p?.badge" class="product-badge" :class="p.badgeClass">{{ p.badge }}</span>
               </div>
@@ -150,6 +152,28 @@ onUnmounted(() => {
   videoUnregisterFunctions.forEach(unregister => unregister());
   videoUnregisterFunctions.clear();
 });
+
+// Обработка наведения мыши на видео
+function restartVideo(event: Event) {
+  const video = event.target as HTMLVideoElement;
+  if (video && video.tagName === 'VIDEO') {
+    // Перезапускаем видео с начала
+    video.currentTime = 0;
+    video.play().catch(() => {
+      // Игнорируем ошибки воспроизведения
+    });
+  }
+}
+
+function continueVideo(event: Event) {
+  const video = event.target as HTMLVideoElement;
+  if (video && video.tagName === 'VIDEO') {
+    // Продолжаем воспроизведение (если видео было приостановлено)
+    video.play().catch(() => {
+      // Игнорируем ошибки воспроизведения
+    });
+  }
+}
 
 type Product = ReturnType<typeof useProducts>['items'][number] & {
   poster?: string;
@@ -532,6 +556,14 @@ function isInCart(id: string) {
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
+  /* Плавный переход при наведении */
+  transition: transform 0.3s ease, filter 0.3s ease;
+  cursor: pointer;
+}
+
+.preview:hover video {
+  transform: translateZ(0) scale(1.05);
+  filter: brightness(1.1);
 }
 
 .product-badge {

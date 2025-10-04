@@ -4,7 +4,7 @@
       <div class="preview-wrapper">
         <div class="preview-container">
           <span v-if="product.badge" class="badge">{{ product.badge }}</span>
-          <video class="protected-video" :src="product.video" :alt="product.title" muted playsinline v-smooth-loop />
+          <video class="protected-video" :src="product.video" :alt="product.title" muted playsinline v-smooth-loop @mouseenter="restartVideo" @mouseleave="continueVideo" />
         </div>
       </div>
       <div class="info">
@@ -96,6 +96,28 @@ async function fetchProduct(identifier?: string) {
 onMounted(() => fetchProduct(route.params.slug as string));
 watch(() => route.params.slug as string, (slug) => fetchProduct(slug));
 
+// Обработка наведения мыши на видео
+function restartVideo(event: Event) {
+  const video = event.target as HTMLVideoElement;
+  if (video && video.tagName === 'VIDEO') {
+    // Перезапускаем видео с начала
+    video.currentTime = 0;
+    video.play().catch(() => {
+      // Игнорируем ошибки воспроизведения
+    });
+  }
+}
+
+function continueVideo(event: Event) {
+  const video = event.target as HTMLVideoElement;
+  if (video && video.tagName === 'VIDEO') {
+    // Продолжаем воспроизведение (если видео было приостановлено)
+    video.play().catch(() => {
+      // Игнорируем ошибки воспроизведения
+    });
+  }
+}
+
 function addToCart() {
   if (!product.value) return;
   cart.add({ 
@@ -117,7 +139,20 @@ const isInCart = computed(() => !!cart.items.find(i => i.id === (product.value?.
 .main { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 40px; max-width: 1200px; margin: 40px auto; padding: 0 5%; }
 .preview-wrapper { flex: 1 1 55%; min-width: 300px; max-width: 630px; position: relative; }
 .preview-container { border-radius: 16px; overflow: hidden; background: linear-gradient(145deg,#0a1e30,#06121e); border: 1px solid rgba(0,207,255,0.2); position: relative; padding-top: 150%; }
-.protected-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.protected-video { 
+  position: absolute; 
+  inset: 0; 
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
+  transition: transform 0.3s ease, filter 0.3s ease;
+  cursor: pointer;
+}
+
+.preview-container:hover .protected-video {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
 .badge { position: absolute; top: 15px; right: 15px; padding: 6px 12px; border-radius: 20px; font-size: .75rem; font-weight: 700; background: var(--primary); color: #000; }
 .info { flex: 1 1 40%; min-width: 300px; display: flex; flex-direction: column; gap: 20px; background: rgba(0, 15, 30, 0.45); padding: 30px; border-radius: 16px; border: 1px solid rgba(0,207,255,0.2); }
 .info h2 { font-size: 1.8rem; font-weight: 700; background: linear-gradient(90deg,#00cfff,#3399ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
