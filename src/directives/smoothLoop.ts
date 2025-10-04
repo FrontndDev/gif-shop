@@ -14,15 +14,9 @@ export const smoothLoop: Directive = {
       animationFrameId = requestAnimationFrame(checkLoop);
     }
 
-    // Проверяем, есть ли атрибут loop
-    const hasLoop = el.hasAttribute('loop');
-    
-    // Если есть loop атрибут, используем его, иначе используем плавное зацикливание
-    if (hasLoop) {
-      // Оставляем стандартный loop атрибут
-      return;
-    }
-    
+    // Убираем стандартный loop атрибут
+    el.removeAttribute('loop');
+
     // Запускаем плавное зацикливание
     function startLoop() {
       if (!animationFrameId) {
@@ -51,7 +45,7 @@ export const smoothLoop: Directive = {
 
   unmounted(el: HTMLVideoElement) {
     if (el.tagName !== 'VIDEO') return;
-    
+
     // Останавливаем анимацию при размонтировании
     if ((el as any).__stopSmoothLoop) {
       (el as any).__stopSmoothLoop();
