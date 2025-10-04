@@ -52,6 +52,7 @@
                 <video 
                   :src="p.video || p.poster" 
                   :alt="p.title" 
+                  :autoplay="isMobile"
                   muted 
                   playsinline 
                   loading="lazy" 

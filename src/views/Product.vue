@@ -4,7 +4,13 @@
       <div class="preview-wrapper">
         <div class="preview-container">
           <span v-if="product.badge" class="badge">{{ product.badge }}</span>
-          <video class="protected-video" :src="product.video" :alt="product.title" muted playsinline v-smooth-loop @mouseenter="restartVideo" @mouseleave="continueVideo" />
+          <video class="protected-video" :src="product.video" :alt="product.title" :autoplay="isMobile" muted playsinline loop v-smooth-loop @mouseenter="restartVideo" @mouseleave="continueVideo" @click="openVideoInNewWindow" />
+          <div class="video-overlay" @click="openVideoInNewWindow">
+            <div class="play-button">
+              <i class="fas fa-play"></i>
+            </div>
+            <div class="video-hint">Кликните для просмотра в полноэкранном режиме</div>
+          </div>
         </div>
       </div>
       <div class="info">
@@ -62,7 +68,7 @@ import { useCart } from '../stores/cart';
 import { useProducts } from '../stores/products';
 import { useI18n } from '../i18n';
 import { usePrice } from '../composables/usePrice';
-import { getProductBySlug } from '../lib/api';
+import { getProductBySlug, getProductById } from '../lib/api';
 import { useVideoManager } from '../composables/useVideoManager';
 
 const route = useRoute();
@@ -76,7 +82,7 @@ const { register } = useVideoManager();
 // Определение мобильного устройства
 const isMobile = ref(false);
 const checkMobile = () => {
-  isMobile.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+  isMobile.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
                    window.innerWidth <= 768;
 };
 
@@ -101,21 +107,61 @@ async function fetchProduct(identifier?: string) {
     product.value = null;
   } finally {
     loading.value = false;
+    
+    // После загрузки продукта запускаем видео
+    setTimeout(() => {
+      const video = document.querySelector('.protected-video') as HTMLVideoElement;
+      if (video) {
+        video.play().catch(() => {
+          console.log('Автоматическое воспроизведение заблокировано браузером');
+        });
+      }
+    }, 200);
   }
 }
 
 onMounted(() => {
   checkMobile(); // Проверяем мобильное устройство
   fetchProduct(route.params.slug as string);
-  
+
   // Регистрируем видео с высоким приоритетом для страницы продукта
   const video = document.querySelector('.protected-video') as HTMLVideoElement;
   if (video) {
     const getPriority = () => 0; // Максимальный приоритет (0 = центр экрана)
     const getVisible = () => true; // Всегда видимо на странице продукта
-    
+
     register(video, getPriority, getVisible);
-    
+
+    // Принудительно запускаем видео после небольшой задержки
+    setTimeout(() => {
+      if (video) {
+        video.play().catch(() => {
+          console.log('Автоматическое воспроизведение заблокировано браузером');
+        });
+      }
+    }, 1000);
+
+    // Также запускаем видео при загрузке данных
+    video.addEventListener('loadeddata', () => {
+      video.play().catch(() => {
+        console.log('Автоматическое воспроизведение заблокировано браузером');
+      });
+    });
+
+    // Дополнительно запускаем видео при готовности к воспроизведению
+    video.addEventListener('canplay', () => {
+      video.play().catch(() => {
+        console.log('Автоматическое воспроизведение заблокировано браузером');
+      });
+    });
+
+    // И при полной загрузке
+    video.addEventListener('loadedmetadata', () => {
+      video.play().catch(() => {
+        console.log('Автоматическое воспроизведение заблокировано браузером');
+      });
+    });
+
     // Для мобильных устройств добавляем Intersection Observer для перезапуска видео
     if (isMobile.value) {
       const observer = new IntersectionObserver((entries) => {
@@ -132,9 +178,9 @@ onMounted(() => {
         threshold: 0.5, // 50% видео должно быть видно
         rootMargin: '50px'
       });
-      
+
       observer.observe(video);
-      
+
       // Сохраняем observer для очистки
       (video as any).__mobileObserver = observer;
     }
@@ -143,10 +189,24 @@ onMounted(() => {
 
 watch(() => route.params.slug as string, (slug) => fetchProduct(slug));
 
+// Следим за изменением продукта и запускаем видео
+watch(() => product.value, (newProduct) => {
+  if (newProduct) {
+    setTimeout(() => {
+      const video = document.querySelector('.protected-video') as HTMLVideoElement;
+      if (video) {
+        video.play().catch(() => {
+          console.log('Автоматическое воспроизведение заблокировано браузером');
+        });
+      }
+    }, 300);
+  }
+});
+
 // Обработка наведения мыши на видео (только для десктопа)
 function restartVideo(event: Event) {
   if (isMobile.value) return; // Не обрабатываем на мобильных
-  
+
   const video = event.target as HTMLVideoElement;
   if (video && video.tagName === 'VIDEO') {
     // Перезапускаем видео с начала
@@ -159,7 +219,7 @@ function restartVideo(event: Event) {
 
 function continueVideo(event: Event) {
   if (isMobile.value) return; // Не обрабатываем на мобильных
-  
+
   const video = event.target as HTMLVideoElement;
   if (video && video.tagName === 'VIDEO') {
     // Продолжаем воспроизведение (если видео было приостановлено)
@@ -171,16 +231,97 @@ function continueVideo(event: Event) {
 
 function addToCart() {
   if (!product.value) return;
-  cart.add({ 
-    id: product.value.id, 
+  cart.add({
+    id: product.value.id,
     name: product.value.title,
     titleEn: product.value.titleEn,
     price: product.value.price,
     priceUSD: product.value.priceUSD,
-    currency: getCurrency(), 
-    image: (product.value as any).video, 
-    quantity: 1 
+    currency: getCurrency(),
+    image: (product.value as any).video,
+    quantity: 1
   });
+}
+
+// Простая функция для открытия видео в новом окне
+const openVideoInNewWindow = () => {
+  if (!product.value?.video) return;
+  
+  // Простое открытие видео в новом окне с циклическим воспроизведением
+  const videoUrl = product.value.video;
+  const windowFeatures = 'width=800,height=600,scrollbars=yes,resizable=yes,toolbar=no,menubar=no,location=no,status=no';
+  
+  const newWindow = window.open('', '_blank', windowFeatures);
+  
+  if (newWindow) {
+    // Создаем простую HTML страницу
+    newWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>${product.value.title} - Video</title>
+        <style>
+          body { 
+            margin: 0; 
+            padding: 0; 
+            background: #000; 
+            color: white; 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            flex-direction: column;
+          }
+          .video-container { 
+            position: relative; 
+            max-width: 100%; 
+            max-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            flex-direction: column;
+          }
+          video { 
+            width: 100%; 
+            max-width: 800px; 
+            height: auto; 
+            max-height: 80vh;
+          }
+          .title { 
+            font-size: 18px; 
+            margin-bottom: 20px; 
+            text-align: center;
+          }
+          .close-btn { 
+            position: fixed; 
+            top: 20px; 
+            right: 20px; 
+            background: red; 
+            color: white; 
+            border: none; 
+            padding: 10px; 
+            cursor: pointer; 
+            z-index: 10;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="video-container">
+          <div class="title">${product.value.title}</div>
+          <video controls autoplay muted loop>
+            <source src="${videoUrl}" type="video/mp4">
+            <source src="${videoUrl.replace('.mp4', '.webm')}" type="video/webm">
+            Ваш браузер не поддерживает видео.
+          </video>
+        </div>
+        <button class="close-btn" onclick="window.close()">Закрыть</button>
+      </body>
+      </html>
+    `);
+    
+    newWindow.document.close();
+  }
 }
 
 const isInCart = computed(() => !!cart.items.find(i => i.id === (product.value?.id || '')));
@@ -190,14 +331,76 @@ const isInCart = computed(() => !!cart.items.find(i => i.id === (product.value?.
 .main { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 40px; max-width: 1200px; margin: 40px auto; padding: 0 5%; }
 .preview-wrapper { flex: 1 1 55%; min-width: 300px; max-width: 630px; position: relative; }
 .preview-container { border-radius: 16px; overflow: hidden; background: linear-gradient(145deg,#0a1e30,#06121e); border: 1px solid rgba(0,207,255,0.2); position: relative; padding-top: 150%; }
-.protected-video { 
-  position: absolute; 
-  inset: 0; 
-  width: 100%; 
-  height: 100%; 
-  object-fit: cover; 
+.protected-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   transition: transform 0.3s ease, filter 0.3s ease;
   cursor: pointer;
+}
+
+.protected-video:hover {
+  transform: scale(1.02);
+  filter: brightness(1.1);
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.preview-container:hover .video-overlay {
+  opacity: 1;
+}
+
+/* На мобильных устройствах overlay всегда видим */
+@media (max-width: 768px) {
+  .video-overlay {
+    opacity: 0.8;
+  }
+}
+
+.play-button {
+  width: 80px;
+  height: 80px;
+  background: rgba(0, 207, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  color: #000;
+  margin-bottom: 15px;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.play-button:hover {
+  transform: scale(1.1);
+  background: rgba(0, 207, 255, 1);
+}
+
+.video-hint {
+  color: white;
+  font-size: 14px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 8px 12px;
+  border-radius: 4px;
+  max-width: 200px;
 }
 
 /* Hover эффекты только для десктопа */

@@ -43,7 +43,7 @@
             <tr v-for="(item, index) in items" :key="item.id">
               <td>
                 <div class="cart-item">
-                  <video :src="item.image || placeholder" :alt="item.name" class="cart-item-video" autoplay muted playsinline v-smooth-loop @mouseenter="restartVideo" @mouseleave="continueVideo" />
+                  <video :src="item.image || placeholder" :alt="item.name" class="cart-item-video" :autoplay="isMobile" muted playsinline v-smooth-loop @mouseenter="restartVideo" @mouseleave="continueVideo" />
                   <div class="cart-item-info">
                     <div class="cart-item-title">{{ lang === 'en' && item.titleEn ? item.titleEn : item.name }}</div>
                   </div>
@@ -106,6 +106,13 @@ const { t, lang } = useI18n();
 const { getCurrency } = usePrice();
 const { formatPriceByPaymentMethod, getCurrencyByPaymentMethod, getCartTotalByPaymentMethod } = usePaymentPrice();
 
+// Определение мобильного устройства
+const isMobile = ref(false);
+const checkMobile = () => {
+  isMobile.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   window.innerWidth <= 768;
+};
+
 // Состояние выбранного способа оплаты
 const paymentMethod = ref<'yookassa' | 'paypal' | 'stripe'>(lang.value === 'en' ? 'paypal' : 'yookassa');
 
@@ -121,6 +128,8 @@ function clearCart() { cart.clear(); }
 
 // Синхронизация цен при загрузке корзины
 onMounted(async () => {
+  checkMobile(); // Проверяем мобильное устройство при загрузке
+  
   if (items.value.length > 0) {
     try {
       const result = await cart.syncPrices();
@@ -139,8 +148,10 @@ onMounted(async () => {
   }
 });
 
-// Обработка наведения мыши на видео
+// Обработка наведения мыши на видео (только для десктопа)
 function restartVideo(event: Event) {
+  if (isMobile.value) return; // Не обрабатываем на мобильных
+  
   const video = event.target as HTMLVideoElement;
   if (video && video.tagName === 'VIDEO') {
     // Перезапускаем видео с начала
@@ -152,6 +163,8 @@ function restartVideo(event: Event) {
 }
 
 function continueVideo(event: Event) {
+  if (isMobile.value) return; // Не обрабатываем на мобильных
+  
   const video = event.target as HTMLVideoElement;
   if (video && video.tagName === 'VIDEO') {
     // Продолжаем воспроизведение (если видео было приостановлено)
@@ -181,9 +194,12 @@ function continueVideo(event: Event) {
   cursor: pointer;
 }
 
-.cart-item:hover .cart-item-video {
-  transform: scale(1.1);
-  filter: brightness(1.2);
+/* Hover эффекты только для десктопа */
+@media (hover: hover) and (pointer: fine) {
+  .cart-item:hover .cart-item-video {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+  }
 }
 .cart-item-title { font-weight: 600; margin-bottom: 5px; color: #e0f7ff; }
 .cart-item-price { color: var(--primary); font-weight: 600; }

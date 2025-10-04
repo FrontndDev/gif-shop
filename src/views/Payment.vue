@@ -22,7 +22,7 @@
 
         <div v-else-if="items.length" class="order-list">
           <div class="product-item" v-for="(it, idx) in items" :key="String(it.id)+'_'+idx">
-            <video :src="it.image || placeholder" :alt="it.name" class="product-video" autoplay muted playsinline v-smooth-loop @mouseenter="restartVideo" @mouseleave="continueVideo" />
+            <video :src="it.image || placeholder" :alt="it.name" class="product-video" :autoplay="isMobile" muted playsinline v-smooth-loop @mouseenter="restartVideo" @mouseleave="continueVideo" />
             <div class="product-info">
               <div class="product-name">{{ lang === 'en' && (it as any).titleEn ? (it as any).titleEn : it.name }}</div>
               <div class="product-price">{{ formatPriceByPaymentMethod(it.price, it.priceUSD, payment) }}</div>
@@ -101,6 +101,13 @@ const router = useRouter();
 const email = ref('');
 const emailError = ref(false);
 const { t, lang } = useI18n();
+
+// Определение мобильного устройства
+const isMobile = ref(false);
+const checkMobile = () => {
+  isMobile.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                   window.innerWidth <= 768;
+};
 // Определяем начальное значение платежного метода
 const getInitialPaymentMethod = () => {
   return lang.value === 'en' ? 'paypal' : 'yookassa';
@@ -313,6 +320,8 @@ async function onSubmit() {
 }
 
 onMounted(async () => {
+  checkMobile(); // Проверяем мобильное устройство при загрузке
+  
   // Синхронизируем цены в корзине перед оплатой
   if (items.value.length > 0) {
     try {
@@ -340,8 +349,10 @@ onMounted(async () => {
   }
 });
 
-// Обработка наведения мыши на видео
+// Обработка наведения мыши на видео (только для десктопа)
 function restartVideo(event: Event) {
+  if (isMobile.value) return; // Не обрабатываем на мобильных
+  
   const video = event.target as HTMLVideoElement;
   if (video && video.tagName === 'VIDEO') {
     // Перезапускаем видео с начала
@@ -353,6 +364,8 @@ function restartVideo(event: Event) {
 }
 
 function continueVideo(event: Event) {
+  if (isMobile.value) return; // Не обрабатываем на мобильных
+  
   const video = event.target as HTMLVideoElement;
   if (video && video.tagName === 'VIDEO') {
     // Продолжаем воспроизведение (если видео было приостановлено)
@@ -474,9 +487,12 @@ function continueVideo(event: Event) {
   cursor: pointer;
 }
 
-.product-item:hover .product-video {
-  transform: scale(1.1);
-  filter: brightness(1.2);
+/* Hover эффекты только для десктопа */
+@media (hover: hover) and (pointer: fine) {
+  .product-item:hover .product-video {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+  }
 }
 
 .product-name {

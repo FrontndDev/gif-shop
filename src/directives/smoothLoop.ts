@@ -14,8 +14,14 @@ export const smoothLoop: Directive = {
       animationFrameId = requestAnimationFrame(checkLoop);
     }
 
-    // Убираем стандартный loop атрибут
-    el.removeAttribute('loop');
+    // Проверяем, есть ли атрибут loop
+    const hasLoop = el.hasAttribute('loop');
+    
+    // Если есть loop атрибут, используем его, иначе используем плавное зацикливание
+    if (hasLoop) {
+      // Оставляем стандартный loop атрибут
+      return;
+    }
     
     // Запускаем плавное зацикливание
     function startLoop() {
