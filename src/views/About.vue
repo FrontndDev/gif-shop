@@ -63,7 +63,7 @@
             :class="getCarouselItemClass(index)"
           >
             <div class="work-preview">
-              <video :src="work.image" :alt="work.title" autoplay muted playsinline v-smooth-loop @mouseenter="restartVideo" @mouseleave="continueVideo" />
+              <img :src="work.image" :alt="work.title" class="work-gif" />
             </div>
           </div>
         </div>
@@ -146,14 +146,14 @@ const checkMobile = () => {
 
 // Portfolio data
 const portfolioItems = ref([
-  { image: '/videos/1.mp4', title: 'Cyberpunk Showcase' },
-  { image: '/videos/2.mp4', title: 'Anime Art Series' },
-  { image: '/videos/3.mp4', title: 'Minimal Design' },
-  { image: '/videos/4.mp4', title: 'Premium Exclusive' },
-  { image: '/videos/5.mp4', title: 'Gaming Themes' },
-  { image: '/videos/6.mp4', title: 'Custom Designs' },
-  { image: '/videos/7.mp4', title: 'Retro Collection' },
-  { image: '/videos/8.mp4', title: 'Space Theme' }
+  { image: '/gifs/1.gif', title: 'Cyberpunk Showcase' },
+  { image: '/gifs/2.gif', title: 'Anime Art Series' },
+  { image: '/gifs/3.gif', title: 'Minimal Design' },
+  { image: '/gifs/4.gif', title: 'Premium Exclusive' },
+  { image: '/gifs/5.gif', title: 'Gaming Themes' },
+  { image: '/gifs/6.gif', title: 'Custom Designs' },
+  { image: '/gifs/7.gif', title: 'Retro Collection' },
+  { image: '/gifs/8.gif', title: 'Space Theme' }
 ]);
 
 // Testimonials data - reactive to language changes
@@ -162,19 +162,19 @@ const testimonials = computed(() => [
     id: 1,
     text: t('about.testimonials.testimonial1.text'),
     author: 'NIGHTFURYjke',
-    avatar: '/images/avatar1.jpg'
+    avatar: '/gifs/avatar1.jpg'
   },
   {
     id: 2,
     text: t('about.testimonials.testimonial2.text'),
     author: 'Amazing17',
-    avatar: '/images/avatar2.jpg'
+    avatar: '/gifs/avatar2.jpg'
   },
   {
     id: 3,
     text: t('about.testimonials.testimonial3.text'),
     author: 'KEkaterina',
-    avatar: '/images/avatar3.jpg'
+    avatar: '/gifs/avatar3.jpg'
   }
 ]);
 
@@ -221,26 +221,14 @@ function getCarouselItemClass(index: number): string {
 
 function goToSlide(index: number) {
   currentIndex.value = (index + totalItems.value) % totalItems.value;
-  // Запускаем видео после смены слайда
-  setTimeout(() => {
-    startAllVideos();
-  }, 100);
 }
 
 function nextSlide() {
   currentIndex.value = (currentIndex.value + 1) % totalItems.value;
-  // Запускаем видео после смены слайда
-  setTimeout(() => {
-    startAllVideos();
-  }, 100);
 }
 
 function prevSlide() {
   currentIndex.value = (currentIndex.value - 1 + totalItems.value) % totalItems.value;
-  // Запускаем видео после смены слайда
-  setTimeout(() => {
-    startAllVideos();
-  }, 100);
 }
 
 
@@ -342,55 +330,13 @@ function animateCounters() {
 }
 
 
-// Обработка наведения мыши на видео (только для десктопа)
-function restartVideo(event: Event) {
-  if (isMobile.value) return; // Не обрабатываем на мобильных
 
-  const video = event.target as HTMLVideoElement;
-  if (video && video.tagName === 'VIDEO') {
-    // Перезапускаем видео с начала
-    video.currentTime = 0;
-    video.play().catch(() => {
-      // Игнорируем ошибки воспроизведения
-    });
-  }
-}
-
-function continueVideo(event: Event) {
-  if (isMobile.value) return; // Не обрабатываем на мобильных
-
-  const video = event.target as HTMLVideoElement;
-  if (video && video.tagName === 'VIDEO') {
-    // Продолжаем воспроизведение (если видео было приостановлено)
-    video.play().catch(() => {
-      // Игнорируем ошибки воспроизведения
-    });
-  }
-}
-
-// Функция для принудительного запуска всех видео
-function startAllVideos() {
-  const videos = document.querySelectorAll('video');
-  videos.forEach(video => {
-    if (video instanceof HTMLVideoElement) {
-      video.currentTime = 0;
-      video.play().catch(() => {
-        // Игнорируем ошибки воспроизведения
-      });
-    }
-  });
-}
 
 onMounted(() => {
   checkMobile(); // Проверяем мобильное устройство при загрузке
   document.addEventListener('keydown', handleKeydown);
   startAutoplay();
   setupScrollAnimations();
-  
-  // Принудительно запускаем все видео через небольшую задержку
-  setTimeout(() => {
-    startAllVideos();
-  }, 500);
 });
 
 onUnmounted(() => {
@@ -746,7 +692,7 @@ body {
   overflow: hidden;
 }
 
-.work-preview video {
+.work-gif {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -756,7 +702,7 @@ body {
 
 /* Hover эффекты только для десктопа */
 @media (hover: hover) and (pointer: fine) {
-  .carousel-item:hover .work-preview video {
+  .carousel-item:hover .work-gif {
     transform: scale(1.05);
     filter: brightness(1.1);
   }
