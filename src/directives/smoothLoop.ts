@@ -5,7 +5,7 @@ export const smoothLoop: Directive = {
     if (el.tagName !== 'VIDEO') return;
 
     let animationFrameId: number | null = null;
-    const videoId = `video-${Math.random().toString(36).substr(2, 9)}`;
+    let intersectionObserver: IntersectionObserver | null = null;
 
     function checkLoop() {
       if (el.duration && el.currentTime >= el.duration - 0.033) {
@@ -15,71 +15,56 @@ export const smoothLoop: Directive = {
       animationFrameId = requestAnimationFrame(checkLoop);
     }
 
-    function startLoop() {
-      if (el.readyState >= 1) {
-        // Метаданные уже загружены
-        requestAnimationFrame(checkLoop);
-      } else {
-        // Ждем загрузки метаданных
-        el.addEventListener('loadedmetadata', () => {
-          requestAnimationFrame(checkLoop);
-        }, { once: true });
+    async function playVideo() {
+      if (!el) return;
+      
+      try {
+        await el.play();
+        if (!animationFrameId) {
+          animationFrameId = requestAnimationFrame(checkLoop);
+        }
+      } catch (e) {
+        console.warn('Не удалось воспроизвести видео:', e);
       }
     }
 
-    // Убираем стандартный loop атрибут
-    el.removeAttribute('loop');
-    
-    // Устанавливаем уникальный ID для видео
-    el.setAttribute('data-video-id', videoId);
-    
-    // Запускаем плавное зацикливание только если видео видимо
-    function handleVisibilityChange() {
-      if (el.readyState >= 1) {
-        const rect = el.getBoundingClientRect();
-        const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-        
-        if (isVisible && !animationFrameId) {
-          startLoop();
-        } else if (!isVisible && animationFrameId) {
-          if (animationFrameId) {
-            cancelAnimationFrame(animationFrameId);
-            animationFrameId = null;
-          }
-        }
+    function pauseVideo() {
+      if (el) {
+        el.pause();
       }
-    }
-
-    // Проверяем видимость при загрузке
-    el.addEventListener('loadedmetadata', () => {
-      handleVisibilityChange();
-    }, { once: true });
-
-    // Слушаем изменения видимости
-    const intersectionObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !animationFrameId) {
-          startLoop();
-        } else if (!entry.isIntersecting && animationFrameId) {
-          if (animationFrameId) {
-            cancelAnimationFrame(animationFrameId);
-            animationFrameId = null;
-          }
-        }
-      });
-    }, {
-      rootMargin: '50px'
-    });
-
-    intersectionObserver.observe(el);
-
-    // Сохраняем функции для cleanup
-    (el as any).__stopSmoothLoop = () => {
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
         animationFrameId = null;
       }
-      intersectionObserver.disconnect();
+    }
+
+    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          playVideo();
+        } else {
+          pauseVideo();
+        }
+      });
+    };
+
+    // Убираем стандартный loop атрибут
+    el.removeAttribute('loop');
+    
+    // Настраиваем Intersection Observer
+    intersectionObserver = new IntersectionObserver(handleIntersection, {
+      threshold: 0.1, // Срабатывает когда 10% видео видно
+      rootMargin: '50px' // +50px вокруг viewport
+    });
+    
+    intersectionObserver.observe(el);
+
+    // Сохраняем функции для cleanup
+    (el as any).__stopSmoothLoop = () => {
+      pauseVideo();
+      if (intersectionObserver) {
+        intersectionObserver.disconnect();
+      }
     };
   },
 
