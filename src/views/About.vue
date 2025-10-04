@@ -63,7 +63,7 @@
             :class="getCarouselItemClass(index)"
           >
             <div class="work-preview">
-              <video :src="work.image" :alt="work.title" :autoplay="isMobile" muted playsinline v-smooth-loop @mouseenter="restartVideo" @mouseleave="continueVideo" />
+              <video :src="work.image" :alt="work.title" :autoplay="isMobile" muted playsinline v-smooth-loop :ref="(el) => registerVideo(el as HTMLVideoElement, `portfolio-${index}`)" @mouseenter="restartVideo" @mouseleave="continueVideo" />
             </div>
           </div>
         </div>
@@ -134,8 +134,13 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Layout from '../components/Layout.vue';
 import { useI18n } from '../i18n';
+import { useVideoManager } from '../composables/useVideoManager';
 
 const { t } = useI18n();
+
+// Глобальный менеджер видео
+const { register } = useVideoManager();
+const videoUnregisterFunctions = new Map<string, () => void>();
 
 // Мобильное устройство
 const isMobile = ref(false);
@@ -329,6 +334,55 @@ function animateCounters() {
   });
 }
 
+// Регистрация видео в глобальном менеджере
+function registerVideo(el: HTMLVideoElement | null, videoId: string) {
+  if (!el) return;
+  
+  // Отменяем предыдущую регистрацию для этого видео
+  const existingUnregister = videoUnregisterFunctions.get(videoId);
+  if (existingUnregister) {
+    existingUnregister();
+  }
+  
+  const getPriority = () => {
+    const rect = el.getBoundingClientRect();
+    const centerY = rect.top + rect.height / 2;
+    const viewportHeight = window.innerHeight;
+    return Math.abs(centerY - viewportHeight / 2);
+  };
+
+  const getVisible = () => {
+    const rect = el.getBoundingClientRect();
+    return rect.top < window.innerHeight && rect.bottom > 0;
+  };
+
+  const unregister = register(el, getPriority, getVisible);
+  videoUnregisterFunctions.set(videoId, unregister);
+  
+  // Для мобильных устройств добавляем Intersection Observer для перезапуска видео
+  if (isMobile.value) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          // Перезапускаем видео при попадании в обзор
+          el.currentTime = 0;
+          el.play().catch(() => {
+            // Игнорируем ошибки воспроизведения
+          });
+        }
+      });
+    }, {
+      threshold: 0.5, // 50% видео должно быть видно
+      rootMargin: '50px'
+    });
+    
+    observer.observe(el);
+    
+    // Сохраняем observer для очистки
+    (el as any).__mobileObserver = observer;
+  }
+}
+
 // Обработка наведения мыши на видео (только для десктопа)
 function restartVideo(event: Event) {
   if (isMobile.value) return; // Не обрабатываем на мобильных
@@ -365,6 +419,10 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeydown);
   stopAutoplay();
+  
+  // Очищаем все зарегистрированные видео
+  videoUnregisterFunctions.forEach(unregister => unregister());
+  videoUnregisterFunctions.clear();
 });
 </script>
 
