@@ -219,7 +219,7 @@ type Product = ReturnType<typeof useProducts>['items'][number] & {
 
 const products = ref<Product[]>([]);
 const page = ref(Math.max(1, parseInt(String((route.query as any).page || '1'), 10) || 1));
-const per = ref(10);
+const per = ref(9);
 const total = ref(0);
 const pages = ref(1);
 const productsStore = useProducts();

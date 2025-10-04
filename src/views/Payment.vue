@@ -159,6 +159,12 @@ const { getCurrency } = usePrice();
 const { formatPriceByPaymentMethod, getCurrencyByPaymentMethod, getCartTotalByPaymentMethod } = usePaymentPrice();
 const orderId = computed(() => (route.params.productId as string) || (sessionStorage.getItem('orderId') || ''));
 const items = computed(() => {
+  // Если есть товары в корзине, показываем их (включая автоматически добавленный товар)
+  if (cart.items.length > 0) {
+    return cart.items;
+  }
+  
+  // Если корзина пуста, но есть selectedProduct, показываем его
   if (selectedProduct.value) {
     return [{
       id: selectedProduct.value.id,
@@ -170,7 +176,8 @@ const items = computed(() => {
       quantity: 1
     }];
   }
-  return cart.items;
+  
+  return [];
 });
 const total = computed(() => getCartTotalByPaymentMethod(payment.value));
 const submitting = ref(false);
