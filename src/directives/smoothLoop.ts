@@ -5,7 +5,6 @@ export const smoothLoop: Directive = {
     if (el.tagName !== 'VIDEO') return;
 
     let animationFrameId: number | null = null;
-    let intersectionObserver: IntersectionObserver | null = null;
 
     function checkLoop() {
       if (el.duration && el.currentTime >= el.duration - 0.033) {
@@ -15,56 +14,32 @@ export const smoothLoop: Directive = {
       animationFrameId = requestAnimationFrame(checkLoop);
     }
 
-    async function playVideo() {
-      if (!el) return;
-      
-      try {
-        await el.play();
-        if (!animationFrameId) {
-          animationFrameId = requestAnimationFrame(checkLoop);
-        }
-      } catch (e) {
-        console.warn('Не удалось воспроизвести видео:', e);
+    // Убираем стандартный loop атрибут
+    el.removeAttribute('loop');
+    
+    // Запускаем плавное зацикливание
+    function startLoop() {
+      if (!animationFrameId) {
+        animationFrameId = requestAnimationFrame(checkLoop);
       }
     }
 
-    function pauseVideo() {
-      if (el) {
-        el.pause();
-      }
+    function stopLoop() {
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
         animationFrameId = null;
       }
     }
 
-    const handleIntersection = (entries: IntersectionObserverEntry[]) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          playVideo();
-        } else {
-          pauseVideo();
-        }
-      });
-    };
-
-    // Убираем стандартный loop атрибут
-    el.removeAttribute('loop');
-    
-    // Настраиваем Intersection Observer
-    intersectionObserver = new IntersectionObserver(handleIntersection, {
-      threshold: 0.1, // Срабатывает когда 10% видео видно
-      rootMargin: '50px' // +50px вокруг viewport
-    });
-    
-    intersectionObserver.observe(el);
+    // Слушаем события воспроизведения для запуска зацикливания
+    el.addEventListener('play', startLoop);
+    el.addEventListener('pause', stopLoop);
 
     // Сохраняем функции для cleanup
     (el as any).__stopSmoothLoop = () => {
-      pauseVideo();
-      if (intersectionObserver) {
-        intersectionObserver.disconnect();
-      }
+      stopLoop();
+      el.removeEventListener('play', startLoop);
+      el.removeEventListener('pause', stopLoop);
     };
   },
 

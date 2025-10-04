@@ -52,12 +52,12 @@
                 <video 
                   :src="p.video || p.poster" 
                   :alt="p.title" 
-                  autoplay 
                   muted 
                   playsinline 
                   loading="lazy" 
                   preload="metadata"
                   v-smooth-loop 
+                  :ref="(el) => registerVideo(el as HTMLVideoElement, p.id)"
                 />
                 <span v-if="p?.badge" class="product-badge" :class="p.badgeClass">{{ p.badge }}</span>
               </div>
@@ -99,13 +99,14 @@
 
 <script setup lang="ts">
 import Layout from '../components/Layout.vue';
-import {computed, onMounted, reactive, ref, watch} from 'vue';
+import {computed, onMounted, reactive, ref, watch, onUnmounted} from 'vue';
 import {useCart} from '../stores/cart';
 import {useProducts} from '../stores/products';
 import { getProductsPaged } from '../lib/api';
 import { useI18n } from '../i18n';
 import { usePrice } from '../composables/usePrice';
 import { useRoute, useRouter } from 'vue-router';
+import { useVideoManager } from '../composables/useVideoManager';
 
 const query = ref('');
 const cart = useCart();
@@ -113,6 +114,42 @@ const route = useRoute();
 const router = useRouter();
 const { t, lang } = useI18n();
 const { formatPrice, getPrice, getCurrency } = usePrice();
+
+// Глобальный менеджер видео
+const { register } = useVideoManager();
+const videoUnregisterFunctions = new Map<string, () => void>();
+
+// Регистрация видео в глобальном менеджере
+function registerVideo(el: HTMLVideoElement | null, productId: string) {
+  if (!el) return;
+  
+  // Отменяем предыдущую регистрацию для этого продукта
+  const existingUnregister = videoUnregisterFunctions.get(productId);
+  if (existingUnregister) {
+    existingUnregister();
+  }
+  
+  const getPriority = () => {
+    const rect = el.getBoundingClientRect();
+    const centerY = rect.top + rect.height / 2;
+    const viewportHeight = window.innerHeight;
+    return Math.abs(centerY - viewportHeight / 2);
+  };
+
+  const getVisible = () => {
+    const rect = el.getBoundingClientRect();
+    return rect.top < window.innerHeight && rect.bottom > 0;
+  };
+
+  const unregister = register(el, getPriority, getVisible);
+  videoUnregisterFunctions.set(productId, unregister);
+}
+
+// Очистка при размонтировании
+onUnmounted(() => {
+  videoUnregisterFunctions.forEach(unregister => unregister());
+  videoUnregisterFunctions.clear();
+});
 
 type Product = ReturnType<typeof useProducts>['items'][number] & {
   poster?: string;

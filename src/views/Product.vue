@@ -4,7 +4,7 @@
       <div class="preview-wrapper">
         <div class="preview-container">
           <span v-if="product.badge" class="badge">{{ product.badge }}</span>
-          <video class="protected-video" :src="product.video" :alt="product.title" autoplay muted playsinline v-smooth-loop />
+          <video class="protected-video" :src="product.video" :alt="product.title" muted playsinline v-smooth-loop />
         </div>
       </div>
       <div class="info">
