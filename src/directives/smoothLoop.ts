@@ -5,6 +5,7 @@ export const smoothLoop: Directive = {
     if (el.tagName !== 'VIDEO') return;
 
     let animationFrameId: number | null = null;
+    const videoId = `video-${Math.random().toString(36).substr(2, 9)}`;
 
     function checkLoop() {
       if (el.duration && el.currentTime >= el.duration - 0.033) {
@@ -29,15 +30,56 @@ export const smoothLoop: Directive = {
     // Убираем стандартный loop атрибут
     el.removeAttribute('loop');
     
-    // Запускаем плавное зацикливание
-    startLoop();
+    // Устанавливаем уникальный ID для видео
+    el.setAttribute('data-video-id', videoId);
+    
+    // Запускаем плавное зацикливание только если видео видимо
+    function handleVisibilityChange() {
+      if (el.readyState >= 1) {
+        const rect = el.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
+        
+        if (isVisible && !animationFrameId) {
+          startLoop();
+        } else if (!isVisible && animationFrameId) {
+          if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+          }
+        }
+      }
+    }
 
-    // Сохраняем функцию остановки для cleanup
+    // Проверяем видимость при загрузке
+    el.addEventListener('loadedmetadata', () => {
+      handleVisibilityChange();
+    }, { once: true });
+
+    // Слушаем изменения видимости
+    const intersectionObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !animationFrameId) {
+          startLoop();
+        } else if (!entry.isIntersecting && animationFrameId) {
+          if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+          }
+        }
+      });
+    }, {
+      rootMargin: '50px'
+    });
+
+    intersectionObserver.observe(el);
+
+    // Сохраняем функции для cleanup
     (el as any).__stopSmoothLoop = () => {
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
         animationFrameId = null;
       }
+      intersectionObserver.disconnect();
     };
   },
 

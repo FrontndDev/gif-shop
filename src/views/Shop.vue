@@ -49,7 +49,16 @@
           <div v-for="p in filteredProducts" :key="p.id" class="product">
             <RouterLink :to="{ name: 'product', params: { slug: p.slug || p.id } }" class="product-link">
               <div class="preview">
-                <video :src="p.video || p.poster" :alt="p.title" autoplay muted playsinline v-smooth-loop />
+                <video 
+                  :src="p.video || p.poster" 
+                  :alt="p.title" 
+                  autoplay 
+                  muted 
+                  playsinline 
+                  loading="lazy" 
+                  preload="metadata"
+                  v-smooth-loop 
+                />
                 <span v-if="p?.badge" class="product-badge" :class="p.badgeClass">{{ p.badge }}</span>
               </div>
               <div class="product-info">
@@ -481,6 +490,11 @@ function isInCart(id: string) {
   top: 0;
   left: 0;
   border-radius: 16px;
+  /* Оптимизация производительности */
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .product-badge {

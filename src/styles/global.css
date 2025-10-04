@@ -48,8 +48,27 @@ a:hover, a:focus { text-decoration: none; }
 /* Global responsive improvements */
 img { max-width: 100%; height: auto; }
 
+/* Оптимизация видео для лучшей производительности */
+video {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  /* Улучшение качества рендеринга */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Оптимизация для мобильных устройств */
 @media (max-width: 768px) {
   .glow-effect { width: 200px; height: 200px; filter: blur(80px); }
+  
+  /* Дополнительная оптимизация видео на мобильных */
+  video {
+    /* Уменьшаем нагрузку на GPU */
+    will-change: auto;
+    transform: none;
+  }
 }
 
 
