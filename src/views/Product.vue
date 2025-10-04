@@ -4,13 +4,7 @@
       <div class="preview-wrapper">
         <div class="preview-container">
           <span v-if="product.badge" class="badge">{{ product.badge }}</span>
-          <video class="protected-video" :src="product.video" :alt="product.title" :autoplay="isMobile" muted playsinline loop v-smooth-loop @mouseenter="restartVideo" @mouseleave="continueVideo" @click="openVideoInNewWindow" />
-          <div class="video-overlay" @click="openVideoInNewWindow">
-            <div class="play-button">
-              <i class="fas fa-play"></i>
-            </div>
-            <div class="video-hint">Кликните для просмотра в полноэкранном режиме</div>
-          </div>
+          <video class="protected-video" :src="product.video" :alt="product.title" :autoplay="isMobile" muted playsinline loop v-smooth-loop @mouseenter="restartVideo" @mouseleave="continueVideo" />
         </div>
       </div>
       <div class="info">
@@ -243,86 +237,6 @@ function addToCart() {
   });
 }
 
-// Простая функция для открытия видео в новом окне
-const openVideoInNewWindow = () => {
-  if (!product.value?.video) return;
-  
-  // Простое открытие видео в новом окне с циклическим воспроизведением
-  const videoUrl = product.value.video;
-  const windowFeatures = 'width=800,height=600,scrollbars=yes,resizable=yes,toolbar=no,menubar=no,location=no,status=no';
-  
-  const newWindow = window.open('', '_blank', windowFeatures);
-  
-  if (newWindow) {
-    // Создаем простую HTML страницу
-    newWindow.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>${product.value.title} - Video</title>
-        <style>
-          body { 
-            margin: 0; 
-            padding: 0; 
-            background: #000; 
-            color: white; 
-            font-family: Arial, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            flex-direction: column;
-          }
-          .video-container { 
-            position: relative; 
-            max-width: 100%; 
-            max-height: 100vh; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            flex-direction: column;
-          }
-          video { 
-            width: 100%; 
-            max-width: 800px; 
-            height: auto; 
-            max-height: 80vh;
-          }
-          .title { 
-            font-size: 18px; 
-            margin-bottom: 20px; 
-            text-align: center;
-          }
-          .close-btn { 
-            position: fixed; 
-            top: 20px; 
-            right: 20px; 
-            background: red; 
-            color: white; 
-            border: none; 
-            padding: 10px; 
-            cursor: pointer; 
-            z-index: 10;
-          }
-        </style>
-      </head>
-      <body>
-        <div class="video-container">
-          <div class="title">${product.value.title}</div>
-          <video controls autoplay muted loop>
-            <source src="${videoUrl}" type="video/mp4">
-            <source src="${videoUrl.replace('.mp4', '.webm')}" type="video/webm">
-            Ваш браузер не поддерживает видео.
-          </video>
-        </div>
-        <button class="close-btn" onclick="window.close()">Закрыть</button>
-      </body>
-      </html>
-    `);
-    
-    newWindow.document.close();
-  }
-}
 
 const isInCart = computed(() => !!cart.items.find(i => i.id === (product.value?.id || '')));
 </script>
@@ -346,62 +260,6 @@ const isInCart = computed(() => !!cart.items.find(i => i.id === (product.value?.
   filter: brightness(1.1);
 }
 
-.video-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.3);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  cursor: pointer;
-  z-index: 2;
-}
-
-.preview-container:hover .video-overlay {
-  opacity: 1;
-}
-
-/* На мобильных устройствах overlay всегда видим */
-@media (max-width: 768px) {
-  .video-overlay {
-    opacity: 0.8;
-  }
-}
-
-.play-button {
-  width: 80px;
-  height: 80px;
-  background: rgba(0, 207, 255, 0.9);
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 32px;
-  color: #000;
-  margin-bottom: 15px;
-  transition: transform 0.3s ease, background 0.3s ease;
-}
-
-.play-button:hover {
-  transform: scale(1.1);
-  background: rgba(0, 207, 255, 1);
-}
-
-.video-hint {
-  color: white;
-  font-size: 14px;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 8px 12px;
-  border-radius: 4px;
-  max-width: 200px;
-}
 
 /* Hover эффекты только для десктопа */
 @media (hover: hover) and (pointer: fine) {
