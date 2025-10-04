@@ -460,7 +460,7 @@ function isInCart(id: string) {
 }
 
 .preview {
-  height: 320px;
+  height: 360px; /* 240px * 3/2 = 360px для соотношения 2:3 */
   position: relative;
   overflow: hidden;
 }
@@ -468,10 +468,12 @@ function isInCart(id: string) {
 .preview video {
   width: 100%;
   height: 100%;
-  object-fit: unset;
+  object-fit: cover;
+  object-position: center;
   position: absolute;
   top: 0;
   left: 0;
+  border-radius: 16px;
 }
 
 .product-badge {
@@ -566,9 +568,21 @@ function isInCart(id: string) {
   .sidebar.open { transform: translateX(0); }
 }
 
+@media (max-width: 1312px) {
+  .preview {
+    height: 450px;
+  }
+}
+
+@media (max-width: 973px) {
+  .preview {
+    height: 500px;
+  }
+}
+
 @media (max-width: 640px) {
   .preview {
-    height: 280px;
+    height: 500px;
   }
 
   .search-container {
